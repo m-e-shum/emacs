@@ -427,9 +427,6 @@
   :defer 1
   :init (global-auto-revert-mode t))
 
-(use-package savehist
-  :defer 2
-  :init (savehist-mode t)) ; Save command history
 
 (use-package hippie-exp
   :bind ([remap dabbrev-expand] . hippie-expand)
