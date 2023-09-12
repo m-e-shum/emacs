@@ -44,8 +44,6 @@
 (column-number-mode t)
 (size-indication-mode t)
 
-(load-theme 'dracula t)
-
 ;;; --- PACKAGE LIST ---
 (setq package-archives
       '(("melpa" . "https://melpa.org/packages/")
@@ -71,6 +69,9 @@
 ;; Keep custom-set-variables and friends out of my init.el
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 
+;;; THEME
+(load-theme 'dracula t)
+
 ;;; --- ASYNC ---
 ;; Emacs look SIGNIFICANTLY less often which is a good thing.
 ;; asynchronous bytecode compilation and various other actions makes
@@ -80,11 +81,6 @@
   :init
   (dired-async-mode 1))
 
-(use-package dwim-shell-command
-  :ensure t :demand t
-  :bind (([remap dired-do-shell-command] . dwim-shell-command))
-  :config
-  (require 'dwim-shell-commands))
 
 (use-package savehist
   :defer 2
@@ -110,23 +106,64 @@
   :demand t
   :config (global-undo-fu-session-mode))
 
-;;; UTF8
-(prefer-coding-system 'utf-8)
+(use-package emacs
+  :ensure nil
+  :defer nil
+  :bind (("C-c w"   . fixup-whitespace)
+         ("C-x C-d" . delete-pair)
+         ("M-c"     . capitalize-dwim)
+         ("M-u"     . upcase-dwim)
+         ("M-l"     . downcase-dwim)
+         ("M-z"     . zap-up-to-char)
+         ("C-x S"   . shell)
+         ("C-x M-t" . transpose-regions)
+         ("C-;"     . negative-argument)
+         ("C-M-;"   . negative-argument)
+         ("M-1" . delete-other-windows)
+         ("M-2" . split-window-below)
+         ("M-3" . split-window-right))
 
-;; Vim like scrolling
-(setq scroll-step            1
-      scroll-conservatively  10000
-      next-screen-context-lines 5
-      ;; move by logical lines rather than visual lines (better for macros)
-      line-move-visual nil)
+  :config
+  ;; Set the title of the frame to the current file - Emacs
+  (setq-default frame-title-format '("%b - Emacs"))
 
-;;TRAMP
-(setq tramp-default-method "ssh"
-      shell-file-name "bash")
+;;;; Defaults
+  ;; Handle long lines
+  (setq-default bidi-paragraph-direction 'left-to-right)
+  (setq-default bidi-inhibit-bpa t)
+  (global-so-long-mode 1)
 
-;; recentf
-(customize-set-value 'recentf-make-menu-items 150)
-(customize-set-value 'recentf-make-saved-items 150)
+  (setq-default history-length 1000
+                use-dialog-box nil
+                delete-by-moving-to-trash t
+                create-lockfiles nil
+                auto-save-default nil
+                inhibit-startup-screen t
+                ring-bell-function 'ignore)
+
+;;;; UTF-8
+  (prefer-coding-system 'utf-8)
+;;;; Remove Extra Ui
+  (fset 'yes-or-no-p 'y-or-n-p)    ; don't ask to spell out "yes"
+  (show-paren-mode 1)              ; Highlight parenthesis
+  (setq-default x-select-enable-primary t) ; use primary as clipboard in emacs
+  ;; avoid leaving a gap between the frame and the screen
+  (setq-default frame-resize-pixelwise t)
+
+  ;; Vim like scrolling
+  (setq scroll-step            1
+        scroll-conservatively  10000
+        next-screen-context-lines 5
+        ;; move by logical lines rather than visual lines (better for macros)
+        line-move-visual nil)
+
+  ;;TRAMP
+  (setq tramp-default-method "ssh"
+        shell-file-name "bash")         ; don't use zsh
+
+  ;; recentf
+  (customize-set-value 'recentf-make-menu-items 150)
+  (customize-set-value 'recentf-make-saved-items 150))
 
 
 ;;; Aligning Text
@@ -139,156 +176,6 @@
   (defadvice align-regexp (around align-regexp-with-spaces activate)
     (let ((indent-tabs-mode nil))
       ad-do-it)))
-
-;;; COMPLETION
-(use-package vertico
-  :init
-  ;; Enable vertico using the vertico-flat-mode
-  (require 'vertico-directory)
-  (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy)
-
-  (use-package orderless
-    :commands (orderless)
-    :custom (completion-styles '(orderless flex)))
-  (load (concat user-emacs-directory
-                "lisp/affe-config.el"))
-  (use-package marginalia
-    :custom
-    (marginalia-annotators
-     '(marginalia-annotators-heavy marginalia-annotators-light nil))
-    :init
-    (marginalia-mode))
-  (vertico-mode t)
-  :config
-  ;; Do not allow the cursor in the minibuffer prompt
-  (setq minibuffer-prompt-properties
-        '(read-only t cursor-intangible t face minibuffer-prompt))
-  (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
-  ;; Enable recursive minibuffers
-  (setq enable-recursive-minibuffers t))
-
-
-;;;; Extra Completion Functions
-(use-package consult
-  :after vertico
-  :bind (("C-x b"       . consult-buffer)
-         ("C-x C-k C-k" . consult-kmacro)
-         ("M-y"         . consult-yank-pop)
-         ("M-g g"       . consult-goto-line)
-         ("M-g M-g"     . consult-goto-line)
-         ("M-g f"       . consult-flymake)
-         ("M-g i"       . consult-imenu)
-         ("M-s l"       . consult-line)
-         ("M-s L"       . consult-line-multi)
-         ("M-s u"       . consult-focus-lines)
-         ("M-s g"       . consult-ripgrep)
-         ("M-s M-g"     . consult-ripgrep)
-         ("C-x C-SPC"   . consult-global-mark)
-         ("C-x M-:"     . consult-complex-command)
-         ("C-c n"       . consult-org-agenda)
-         ("C-c m"       . my/notegrep)
-         :map help-map
-         ("a" . consult-apropos)
-         :map minibuffer-local-map
-         ("M-r" . consult-history))
-  :custom
-  (completion-in-region-function #'consult-completion-in-region)
-  :config
-  (defun my/notegrep ()
-    "Use interactive grepping to search my notes"
-    (interactive)
-    (consult-ripgrep org-directory))
-  (recentf-mode t))
-(use-package consult-dir
-  :ensure t
-  :bind (("C-x C-j" . consult-dir)
-         ;; :map minibuffer-local-completion-map
-         :map vertico-map
-         ("C-x C-j" . consult-dir)))
-(use-package consult-recoll
-  :bind (("M-s r" . counsel-recoll)
-         ("C-c I" . recoll-index))
-  :init
-  (setq consult-recoll-inline-snippets t)
-  :config
-  (defun recoll-index (&optional arg) (interactive)
-    (start-process-shell-command "recollindex"
-                                 "*recoll-index-process*"
-                                 "recollindex")))
-
-
-;;;; Code Completion
-(use-package corfu
-  ;; Optional customizations
-  :custom
-  (corfu-cycle t)                 ; Allows cycling through candidates
-  (corfu-auto t)                  ; Enable auto completion
-  (corfu-auto-prefix 2)
-  (corfu-auto-delay 0.0)
-  (corfu-popupinfo-delay '(0.5 . 0.2))
-  (corfu-preview-current 'insert) ; Do not preview current candidate
-  (corfu-preselect 'prompt)
-  (corfu-on-exact-match nil)      ; Don't auto expand tempel snippets
-
-  ;; Optionally use TAB for cycling, default is `corfu-complete'.
-  :bind (:map corfu-map
-              ("M-SPC"      . corfu-insert-separator)
-              ("TAB"        . corfu-next)
-              ([tab]        . corfu-next)
-              ("S-TAB"      . corfu-previous)
-              ([backtab]    . corfu-previous)
-              ("S-<return>" . corfu-insert)
-              ("RET"        . nil))
-
-  :init
-  (global-corfu-mode)
-  (corfu-history-mode)
-  (corfu-popupinfo-mode) ; Popup completion info
-  :config
-  (add-hook 'eshell-mode-hook
-            (lambda () (setq-local corfu-quit-at-boundary t
-                              corfu-quit-no-match t
-                              corfu-auto nil)
-              (corfu-mode))))
-(use-package cape
-  :defer 10
-  :bind ("C-c f" . cape-file)
-  :init
-  ;; Add `completion-at-point-functions', used by `completion-at-point'.
-  (defalias 'dabbrev-after-2 (cape-capf-prefix-length #'cape-dabbrev 2))
-  (add-to-list 'completion-at-point-functions 'dabbrev-after-2 t)
-  (cl-pushnew #'cape-file completion-at-point-functions)
-  :config
-  ;; Silence then pcomplete capf, no errors or messages!
-  (advice-add 'pcomplete-completions-at-point :around #'cape-wrap-silent)
-
-  ;; Ensure that pcomplete does not write to the buffer
-  ;; and behaves as a pure `completion-at-point-function'.
-  (advice-add 'pcomplete-completions-at-point :around #'cape-wrap-purify))
-(use-package yasnippet
-  :ensure t
-  :init
-  (setq yas-nippet-dir "~/.emacs.d/snippets")
-  (yas-global-mode))
-(use-package yasnippet-snippets
-  :ensure t :after yasnippet)
-(use-package yasnippet-capf
-  :ensure nil
-  :quelpa (yasnippet-capf :fetcher github :repo "elken/yasnippet-capf")
-  :after yasnippet
-  :hook ((prog-mode . yas-setup-capf)
-         (text-mode . yas-setup-capf)
-         (lsp-mode  . yas-setup-capf)
-         (sly-mode  . yas-setup-capf))
-  :bind (("C-c y" . yasnippet-capf)
-         ("M-+"   . yas-insert-snippet))
-  :config
-  (defun yas-setup-capf ()
-    (setq-local completion-at-point-functions
-                (cons 'yasnippet-capf
-                      completion-at-point-functions)))
-  (push 'yasnippet-capf completion-at-point-functions))
-
 
 ;;; BUFFER MANAGMENT
 (use-package ibuffer
@@ -310,7 +197,7 @@
         '(("home"
            ("Windows" (and (mode . exwm-mode)
                            (not (name . "qutebrowser"))))
-           ("Qutebrowser" (name . "qutebrowser"))
+;;           ("Qutebrowser" (name . "qutebrowser"))
            ("Shells" (mode . shell-mode))
            ("emacs-config" (or (filename . ".emacs.d")
                                (filename . "emacs-config")))
@@ -365,6 +252,7 @@
                (not isearch-mode-end-hook-quit))
       (goto-char isearch-other-end))))
 
+
 (use-package ffap
   :ensure nil
   :bind ("C-x f" . ffap)
@@ -402,25 +290,6 @@
   (setq popper-display-control 'user)
   (popper-mode +1))
 
-(use-package mouse
-  :ensure nil
-  :defer 3
-  :bind(("<wheel-up>"    .  previous-line)
-        ("<wheel-down>"  .  next-line)
-        ("<wheel-left>"  .  backward-char)
-        ("<wheel-right>" .  forward-char)
-        ("<mouse-4>"     .  previous-line)
-        ("<mouse-5>"     . next-line)
-        ("<mouse-6>"     . backward-char)
-        ("<mouse-7>"     . forward-char)
-        ;; :map key-translation-map
-        ;; ("<mouse-4>"     . "<wheel-up>")
-        ;; ("<mouse-5>"     . "<wheel-down>")
-        ;; ("<mouse-6>"     . "<wheel-left>")
-        ;; ("<mouse-7>"     . "<wheel-right>")
-        )
-  :init
-  (context-menu-mode 1))
 
 (use-package autorevert
   :ensure nil
@@ -451,15 +320,10 @@
 (use-package apheleia
   :ensure t
   :config
-  (apheleia-global-mode +1)
-  ;; Setup auto formatting for purescript
-  (push '(purs-tidy "purs-tidy" "format") apheleia-formatters)
-  (setf (alist-get 'purescript-mode apheleia-mode-alist) '(purs-tidy))
-  ;; Setup auto formatting for haskell
-  (push '(fourmolu "fourmolu") apheleia-formatters)
-  (setf (alist-get 'haskell-mode apheleia-mode-alist) '(fourmolu)))
+  (apheleia-global-mode +1))
 
 
+;;; LSP
 (use-package lsp-mode
   :defer t
   :bind (("C-h ," . help-at-pt-buffer)
@@ -470,9 +334,11 @@
   (setenv "LSP_USE_PLISTS" "1")
   ;; Increase the amount of data emacs reads from processes
   (setq read-process-output-max (* 3 1024 1024))
-  (setq lsp-clients-clangd-args '("--header-insertion-decorators=0"
-                                  "--clang-tidy"
-                                  "--enable-config"))
+  ;; ;; Clang
+  ;; (setq lsp-clients-clangd-args '("--header-insertion-decorators=0"
+  ;;                                 "--clang-tidy"
+  ;;                                 "--enable-config"))
+  
   ;; General lsp-mode settings
   (setq lsp-completion-provider :none
         lsp-enable-snippet t
@@ -499,6 +365,7 @@
                    (view-mode +1))
                  (switch-to-buffer-other-window h-at-p-buf))
         (if (not arg) (message "No local help at point")))))
+  
   (use-package lsp-ui
     :ensure t
     :after lsp
@@ -510,27 +377,29 @@
   :no-require t :ensure nil
   :hook ((python-mode          . lsp-deferred))
   :init
-  (use-package lsp-rust :ensure nil :no-require t
-    :hook (rust-mode       . lsp-deferred)
-    :config
-    (lsp-rust-analyzer-inlay-hints-mode 1))
+  ;; (use-package lsp-rust :ensure nil :no-require t
+  ;;   :hook (rust-mode       . lsp-deferred)
+  ;;   :config
+  ;;   (lsp-rust-analyzer-inlay-hints-mode 1))
 
   (use-package lsp-pyright :ensure t
     :hook (python-mode . (lambda ()
                            (require 'lsp-pyright)
                            (lsp-deferred)))
     :init
-    (setq python-shell-enable-font-lock nil)))
+    (setq python-shell-enable-font-lock nil)
+    (setq lsp-use-plists nil)))
 
 
-;; Rust
-(use-package rust-mode    :ensure t :mode "\\.rs\\'"
-  :init
-  ;; scratchpad for rust
-  (setq lsp-rust-clippy-preference "on")
-  (use-package rust-playground
-    :commands (rust-playground)
-    :ensure t))
+
+;; ;; Rust
+;; (use-package rust-mode    :ensure t :mode "\\.rs\\'"
+;;   :init
+;;   ;; scratchpad for rust
+;;   (setq lsp-rust-clippy-preference "on")
+;;   (use-package rust-playground
+;;     :commands (rust-playground)
+;;     :ensure t))
 
 
 (use-package highlight-indent-guides
@@ -578,3 +447,237 @@
          (magit-pre-refresh . diff-hl-magit-post-refresh))
   :init (global-diff-hl-mode)
   :config (diff-hl-flydiff-mode))
+
+
+(use-package prog-mode
+  :ensure nil
+  :hook ((prog-mode       . infer-indentation-style)
+         (prog-mode       . (lambda () (setq-local show-trailing-whitespace t)))
+         (emacs-lisp-mode . (lambda () (add-hook 'local-write-file-hooks 'check-parens)))
+         (lisp-mode       . (lambda () (setq indent-tabs-mode nil)))
+         ;; Make all scripts executable. Ya this might be sketch but I don't
+         (after-save      . executable-make-buffer-file-executable-if-script-p))
+  :bind (:map emacs-lisp-mode-map
+              ("C-c RET" . emacs-lisp-macroexpand)
+              ("C-c C-k" . eval-buffer))
+  :init
+  ;; Don't prompt for a reference
+  (setq xref-prompt-for-identifier nil)
+  (global-prettify-symbols-mode)
+
+  ;; Smart Indentation
+  (defun infer-indentation-style ()
+    ;; if our source file uses tabs, we use tabs, if spaces spaces, and if
+    ;; neither, we use the current indent-tabs-mode
+    (let ((space-count (how-many "^  " (point-min) (point-max)))
+          (tab-count (how-many "^\t" (point-min) (point-max))))
+      (if (> space-count tab-count) (setq indent-tabs-mode nil))
+      (if (> tab-count space-count) (setq indent-tabs-mode t)))))
+
+
+
+;;; COMPLETION
+(use-package vertico
+  :init
+  ;; Enable vertico using the vertico-flat-mode
+  (require 'vertico-directory)
+  (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy)
+
+  (use-package orderless
+    :commands (orderless)
+    :custom (completion-styles '(orderless flex)))
+  (load (concat user-emacs-directory
+                "lisp/affe-config.el"))
+  (use-package marginalia
+    :custom
+    (marginalia-annotators
+     '(marginalia-annotators-heavy marginalia-annotators-light nil))
+    :init
+    (marginalia-mode))
+  (vertico-mode t)
+  :config
+  ;; Do not allow the cursor in the minibuffer prompt
+  (setq minibuffer-prompt-properties
+        '(read-only t cursor-intangible t face minibuffer-prompt))
+  (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
+  ;; Enable recursive minibuffers
+  (setq enable-recursive-minibuffers t))
+
+;;;; Extra Completion Functions
+(use-package consult
+  :after vertico
+  :bind (("C-x b"       . consult-buffer)
+         ("C-x C-k C-k" . consult-kmacro)
+         ("M-y"         . consult-yank-pop)
+         ("M-g g"       . consult-goto-line)
+         ("M-g M-g"     . consult-goto-line)
+         ("M-g f"       . consult-flymake)
+         ("M-g i"       . consult-imenu)
+         ("M-s l"       . consult-line)
+         ("M-s L"       . consult-line-multi)
+         ("M-s u"       . consult-focus-lines)
+         ("M-s g"       . consult-ripgrep)
+         ("M-s M-g"     . consult-ripgrep)
+         ("C-x C-SPC"   . consult-global-mark)
+         ("C-x M-:"     . consult-complex-command)
+         ("C-c n"       . consult-org-agenda)
+         ("C-c m"       . my/notegrep)
+         :map help-map
+         ("a" . consult-apropos)
+         :map minibuffer-local-map
+         ("M-r" . consult-history))
+  :custom
+  (completion-in-region-function #'consult-completion-in-region)
+  ;; :config
+  ;; (defun my/notegrep ()
+  ;;   "Use interactive grepping to search my notes"
+  ;;   (interactive)
+  ;;   (consult-ripgrep org-directory))
+  (recentf-mode t))
+
+(use-package consult-dir
+  :ensure t
+  :bind (("C-x C-j" . consult-dir)
+         ;; :map minibuffer-local-completion-map
+         :map vertico-map
+         ("C-x C-j" . consult-dir)))
+
+(use-package consult-recoll
+  :bind (("M-s r" . counsel-recoll)
+         ("C-c I" . recoll-index))
+  :init
+  (setq consult-recoll-inline-snippets t)
+  :config
+  (defun recoll-index (&optional arg) (interactive)
+    (start-process-shell-command "recollindex"
+                                 "*recoll-index-process*"
+                                 "recollindex")))
+
+(use-package embark
+  :ensure t
+  :bind
+  ;; pick some comfortable binding
+  (("C-="                     . embark-act)
+   ("C-<escape>"              . embark-act)
+   ([remap describe-bindings] . embark-bindings)
+   :map embark-file-map
+   ("C-d"                     . dragon-drop)
+   :map embark-defun-map
+   ("M-t" . chatgpt-gen-tests-for-region)
+   :map embark-general-map
+   ("M-c" . chatgpt-prompt)
+   :map embark-region-map
+   ("?"   . chatgpt-explain-region)
+   ("M-f" . chatgpt-fix-region)
+   ("M-f" . chatgpt-fix-region))
+  :custom
+  (embark-indicators
+   '(embark-highlight-indicator
+     embark-isearch-highlight-indicator
+     embark-minimal-indicator))
+  :init
+  ;; Optionally replace the key help with a completing-read interface
+  (setq prefix-help-command #'embark-prefix-help-command)
+  (setq embark-prompter 'embark-completing-read-prompter)
+  :config
+  (defun search-in-source-graph (text))
+  (defun dragon-drop (file)
+    (start-process-shell-command "dragon-drop" nil
+                                 (concat "dragon-drop " file))))
+
+;; Consult users will also want the embark-consult package.
+(use-package embark-consult
+  :ensure t
+  :after (:all embark consult)
+  :demand t
+  ;; if you want to have consult previews as you move around an
+  ;; auto-updating embark collect buffer
+  :hook
+  (embark-collect-mode . consult-preview-at-point-mode))
+
+;; For uploading files
+(use-package 0x0
+  :ensure t
+  :after embark
+  :bind (
+         :map embark-file-map
+         ("U"    . 0x0-upload-file)
+         :map embark-region-map
+         ("U"    . 0x0-dwim))
+  :commands (0x0-dwim 0x0-upload-file))
+
+;;;; Code Completion
+(use-package corfu
+  ;; Optional customizations
+  :custom
+  (corfu-cycle t)                 ; Allows cycling through candidates
+  (corfu-auto t)                  ; Enable auto completion
+  (corfu-auto-prefix 2)
+  (corfu-auto-delay 0.0)
+  (corfu-popupinfo-delay '(0.5 . 0.2))
+  (corfu-preview-current 'insert) ; Do not preview current candidate
+  (corfu-preselect 'prompt)
+  (corfu-on-exact-match nil)      ; Don't auto expand tempel snippets
+
+  ;; Optionally use TAB for cycling, default is `corfu-complete'.
+  :bind (:map corfu-map
+              ("M-SPC"      . corfu-insert-separator)
+              ("TAB"        . corfu-next)
+              ([tab]        . corfu-next)
+              ("S-TAB"      . corfu-previous)
+              ([backtab]    . corfu-previous)
+              ("S-<return>" . corfu-insert)
+              ("RET"        . nil))
+
+  :init
+  (global-corfu-mode)
+  (corfu-history-mode)
+  (corfu-popupinfo-mode) ; Popup completion info
+  :config
+  (add-hook 'eshell-mode-hook
+            (lambda () (setq-local corfu-quit-at-boundary t
+                              corfu-quit-no-match t
+                              corfu-auto nil)
+              (corfu-mode))))
+
+(use-package cape
+  :defer 10
+  :bind ("C-c f" . cape-file)
+  :init
+  ;; Add `completion-at-point-functions', used by `completion-at-point'.
+  (defalias 'dabbrev-after-2 (cape-capf-prefix-length #'cape-dabbrev 2))
+  (add-to-list 'completion-at-point-functions 'dabbrev-after-2 t)
+  (cl-pushnew #'cape-file completion-at-point-functions)
+  :config
+  ;; Silence then pcomplete capf, no errors or messages!
+  (advice-add 'pcomplete-completions-at-point :around #'cape-wrap-silent)
+
+  ;; Ensure that pcomplete does not write to the buffer
+  ;; and behaves as a pure `completion-at-point-function'.
+  (advice-add 'pcomplete-completions-at-point :around #'cape-wrap-purify))
+
+(use-package yasnippet
+  :ensure t
+  :init
+  (setq yas-nippet-dir "~/.emacs.d/snippets")
+  (yas-global-mode))
+
+(use-package yasnippet-snippets
+  :ensure t :after yasnippet)
+
+(use-package yasnippet-capf
+  :ensure nil
+  :quelpa (yasnippet-capf :fetcher github :repo "elken/yasnippet-capf")
+  :after yasnippet
+  :hook ((prog-mode . yas-setup-capf)
+         (text-mode . yas-setup-capf)
+         (lsp-mode  . yas-setup-capf)
+         (sly-mode  . yas-setup-capf))
+  :bind (("C-c y" . yasnippet-capf)
+         ("M-+"   . yas-insert-snippet))
+  :config
+  (defun yas-setup-capf ()
+    (setq-local completion-at-point-functions
+                (cons 'yasnippet-capf
+                      completion-at-point-functions)))
+  (push 'yasnippet-capf completion-at-point-functions))
