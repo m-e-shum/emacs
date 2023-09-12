@@ -1,4 +1,4 @@
-;;; --- init.el ---
+;;;--- init.el ---
 ;; It is more modern to use `.emacs.d/init.el`
 ;;   b/c now you can just git clone your emacs.d
 ;; This init.el is inspired by: https://github.com/Gavinok/emacs.d/blob/main/init.el
@@ -285,6 +285,21 @@
     :hook ((text-mode . company-mode)
            (prog-mode . company-mode)))
 
+
+;; uncomment when you start working with rust
+;; (defun my-project-try-cargo-toml (dir)
+;;  "Try to locate a Rust project above DIR."
+;;  (let ((found (locate-dominating-file dir "Cargo.toml")))
+;;    (if (stringp found) `(transient . ,found) nil)))
+
+(defun my-project-try-pyenv (dir)
+  (let ((found (locate-dominating-file dir ".python-version")))
+    (if (stringp found) `(transient . ,found) nil)))
+
+(add-hook 'project-find-functions
+	  ;;'(my-project-try-cargo-toml nil nil)
+	  '(my-project-try-pyenv nil nil)
+	  )
 
 ;; Open python files in tree-sitter mode.
 (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
