@@ -10,7 +10,7 @@
 ;;; --- Disable GUI ---
 (setq inhibit-startup-message t)
 (setq initial-scratch-message nil)
-(tool-bar-mode -1)
+;;(tool-bar-mode -1)
 (menu-bar-mode -1)
 ;;(scroll-bar-mode -1) ;; Function is void
 
@@ -226,6 +226,39 @@
     (exec-path-from-shell-initialize)))
 
 
+;;; Git
+(use-package magit
+  :bind (("C-x v SPC" . magit-status)
+         :map project-prefix-map
+         ("m" . project-magit))
+  :commands (magit project-magit)
+  :config
+  (add-to-list 'project-switch-commands
+               '(project-magit "Magit" m))
+  (defun project-magit  ()
+    (interactive)
+    (let ((dir (project-root (project-current t))))
+      (magit-status dir))))
+
+(use-package forge :ensure t :after magit)
+
+(use-package ediff
+  :after (magit vc)
+  :commands (ediff)
+  :init
+  ;; multiframe just doesn't make sense to me
+  (with-eval-after-load 'winner
+    (add-hook 'ediff-quit-hook 'winner-undo))
+  (setq ediff-window-setup-function 'ediff-setup-windows-plain))
+
+(use-package diff-hl
+  :defer 5
+  :hook ((magit-pre-refresh . diff-hl-magit-pre-refresh)
+         (magit-pre-refresh . diff-hl-magit-post-refresh))
+  :init (global-diff-hl-mode)
+  :config (diff-hl-flydiff-mode))
+
+
 ;; Provide drop-down completion.
 (use-package company
   :ensure t
@@ -251,6 +284,7 @@
   ;; Use company with text and programming modes.
     :hook ((text-mode . company-mode)
            (prog-mode . company-mode)))
+
 
 ;; Open python files in tree-sitter mode.
 (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
@@ -350,3 +384,27 @@
                                  "recollindex")))
 
 
+(use-package flymake
+  :defer 10
+  :bind (("M-g d"   . flymake-show-buffer-diagnostics)
+         ("M-g M-d" . flymake-show-project-diagnostics)
+         ("M-g M-n" . flymake-goto-next-error)
+         ("M-g M-p" . flymake-goto-prev-error)
+         :repeat-map flymake-repeatmap
+         ("p" . flymake-goto-prev-error)
+         ("n" . flymake-goto-next-error)
+         :map flymake-diagnostics-buffer-mode-map
+         ("?" . flymake-show-diagnostic-here)
+         :map flymake-project-diagnostics-mode-map
+         ("?" . flymake-show-diagnostic-here))
+  :hook (prog-mode . (lambda () (flymake-mode t)))
+  :config
+  (defun flymake-show-diagnostic-here (pos &optional other-window)
+    "Show the full diagnostic of this error.
+Used to see multiline flymake errors"
+    (interactive (list (point) t))
+    (let* ((id (or (tabulated-list-get-id pos)
+                   (user-error "Nothing at point")))
+           (text (flymake-diagnostic-text (plist-get id :diagnostic))))
+      (message text)))
+  (remove-hook 'flymake-diagnostic-functions #'flymake-proc-legacy-flymake))
