@@ -286,40 +286,25 @@
            (prog-mode . company-mode)))
 
 
-;; uncomment when you start working with rust
-;; (defun my-project-try-cargo-toml (dir)
-;;  "Try to locate a Rust project above DIR."
-;;  (let ((found (locate-dominating-file dir "Cargo.toml")))
-;;    (if (stringp found) `(transient . ,found) nil)))
-
-(defun my-project-try-pyenv (dir)
-  (let ((found (locate-dominating-file dir ".python-version")))
-    (if (stringp found) `(transient . ,found) nil)))
-
-(add-hook 'project-find-functions
-	  ;;'(my-project-try-cargo-toml nil nil)
-	  '(my-project-try-pyenv nil nil)
-	  )
-
 ;; Open python files in tree-sitter mode.
 (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
 
-(use-package eglot
-  :ensure t
-  :defer t
-  :bind (:map eglot-mode-map
-              ("C-c C-d" . eldoc)
-              ("C-c C-e" . eglot-rename)
-              ("C-c C-o" . python-sort-imports)
-              ("C-c C-f" . eglot-format-buffer))
-  :hook ((python-ts-mode . eglot-ensure)
-         (python-ts-mode . flyspell-prog-mode)
-         (python-ts-mode . superword-mode)
-         (python-ts-mode . hs-minor-mode)
-         (python-ts-mode . (lambda () (set-fill-column 88))))
-  :config
-  ;;
-  )
+;; (use-package eglot
+;;   :ensure t
+;;   :defer t
+;;   :bind (:map eglot-mode-map
+;;               ("C-c C-d" . eldoc)
+;;               ("C-c C-e" . eglot-rename)
+;;               ("C-c C-o" . python-sort-imports)
+;;               ("C-c C-f" . eglot-format-buffer))
+;;   :hook ((python-ts-mode . eglot-ensure)
+;;          (python-ts-mode . flyspell-prog-mode)
+;;          (python-ts-mode . superword-mode)
+;;          (python-ts-mode . hs-minor-mode)
+;;          (python-ts-mode . (lambda () (set-fill-column 88))))
+;;   :config
+;;   ;;
+;;   )
 
 ;;; COMPLETION
 (use-package vertico
