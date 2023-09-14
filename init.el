@@ -287,66 +287,6 @@
 
 (add-hook 'project-find-functions #'project-find-root)
 
-;; Open python files in tree-sitter mode.
-(add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
-
-;;; eglot
-;;; use with python-lsp-server
-(use-package eglot
-  :ensure t
-  :defer t
-  :bind (:map eglot-mode-map
-              ("C-c C-d" . eldoc)
-              ("C-c C-e" . eglot-rename)
-              ("C-c C-o" . python-sort-imports)
-              ("C-c C-f" . eglot-format-buffer))
-  :hook ((python-ts-mode . eglot-ensure)
-         (python-ts-mode . (lambda () (set-fill-column 88))))
-  :config
-  ;;
-  (add-to-list 'eglot-server-programs
-	       '(markdown-mode . ("marksman"))
-	       )
-  (add-hook 'markdown-mode-hook #'eglot-ensure))
-
-
-;; Provide drop-down completion.
-(use-package company
-  :after eglot
-  :ensure t
-  :defer t
-  :custom
-  ;; Search other buffers with the same modes for completion instead of
-  ;; searching all other buffers.
-  (company-dabbrev-other-buffers t)
-  (company-dabbrev-code-other-buffers t)
-  ;; M-<num> to select an option according to its number.
-  (company-show-numbers t)
-  ;; Only 2 letters required for completion to activate.
-  (company-minimum-prefix-length 2)
-  ;; Do not downcase completions by default.
-  (company-dabbrev-downcase nil)
-  ;; Even if I write something with the wrong case,
-  ;; provide the correct casing.
-  (company-dabbrev-ignore-case t)
-  ;; company completion wait
-  (company-idle-delay 0.2)
-  ;; No company-mode in shell & eshell
-  (company-global-modes '(not eshell-mode shell-mode))
-  ;; Use company with text and programming modes.
-    :hook ((text-mode . company-mode)
-           (prog-mode . company-mode)
-	   )
-    :hook (eglot-managed-mode . company-mode)
-    )
-
-
-(global-set-key (kbd "<tab>") #'company-indent-or-complete-common)
-(use-package company-box
-  :hook (company-mode . company-box-mode))
-
->>>>>>> 6f3fd4da1bb0cb4c92b3b81ae0dffe018d249934
-
 
 ;;; python
 (use-package python
