@@ -309,6 +309,16 @@
   (setq company-idle-delay 0.1
 	company-minimum-prefix-length 1))
 
+
+(use-package auto-virtualenv
+  :ensure t
+  :init
+  (use-package pyvenv
+    :ensure t)
+  :config
+  (add-hook 'python-mode-hook 'auto-virtualenv-set-virtualenv)
+  )
+
 	
 ;; Provide drop-down completion.
 ;; (use-package company
