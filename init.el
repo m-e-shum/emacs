@@ -1,4 +1,4 @@
-;;;--- init.el ---
+;;; --- init.el ---
 ;; It is more modern to use `.emacs.d/init.el`
 ;;   b/c now you can just git clone your emacs.d
 ;; This init.el is inspired by: https://github.com/Gavinok/emacs.d/blob/main/init.el
@@ -44,6 +44,9 @@
 (global-display-line-numbers-mode 1)
 (column-number-mode t)
 (size-indication-mode t)
+
+(use-package crux
+    :bind (("C-a" . crux-move-beginning-of-line)))
 
 ;;; --- PACKAGE LIST ---
 (setq package-archives
@@ -259,26 +262,91 @@
   :config (diff-hl-flydiff-mode))
 
 
+(defcustom project-root-markers
+  '("Cargo.toml" ".python-version" ".git" )
+       ;; added file identifier above
+  "Files or directories that indicate the root of a project."
+  :type '(repeat string)
+  :group 'project)
+
+(defun project-root-p (path)
+  "Check if the current PATH has any of the project root markers."
+  (catch 'found
+    (dolist (marker project-root-markers)
+      (when (file-exists-p (concat path marker))
+	(throw 'found marker)))))
+
+(defun project-find-root (path)
+  "Search up the PATH for `project-root-markers'."
+  (let ((path (expand-file-name path)))
+    (catch 'found
+      (while (not (equal "/" path))
+        (if (not (project-root-p path))
+            (setq path (file-name-directory (directory-file-name path)))
+          (throw 'found (cons 'transient path)))))))
+
+(add-hook 'project-find-functions #'project-find-root)
 
 ;; Open python files in tree-sitter mode.
-;;(add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
+(add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
 
-;; (use-package eglot
-;;   :ensure t
-;;   :defer t
-;;   :bind (:map eglot-mode-map
-;;               ("C-c C-d" . eldoc)
-;;               ("C-c C-e" . eglot-rename)
-;;               ("C-c C-o" . python-sort-imports)
-;;               ("C-c C-f" . eglot-format-buffer))
-;;   :hook ((python-ts-mode . eglot-ensure)
-;;          (python-ts-mode . flyspell-prog-mode)
-;;          (python-ts-mode . superword-mode)
-;;          (python-ts-mode . hs-minor-mode)
-;;          (python-ts-mode . (lambda () (set-fill-column 88))))
-;;   :config
-;;   ;;
-;;   )
+;;; eglot
+;;; use with python-lsp-server
+(use-package eglot
+  :ensure t
+  :defer t
+  :bind (:map eglot-mode-map
+              ("C-c C-d" . eldoc)
+              ("C-c C-e" . eglot-rename)
+              ("C-c C-o" . python-sort-imports)
+              ("C-c C-f" . eglot-format-buffer))
+  :hook ((python-ts-mode . eglot-ensure)
+         (python-ts-mode . (lambda () (set-fill-column 88))))
+  :config
+  ;;
+  (add-to-list 'eglot-server-programs
+	       '(markdown-mode . ("marksman"))
+	       )
+  (add-hook 'markdown-mode-hook #'eglot-ensure))
+
+
+;; Provide drop-down completion.
+(use-package company
+  :after eglot
+  :ensure t
+  :defer t
+  :custom
+  ;; Search other buffers with the same modes for completion instead of
+  ;; searching all other buffers.
+  (company-dabbrev-other-buffers t)
+  (company-dabbrev-code-other-buffers t)
+  ;; M-<num> to select an option according to its number.
+  (company-show-numbers t)
+  ;; Only 2 letters required for completion to activate.
+  (company-minimum-prefix-length 2)
+  ;; Do not downcase completions by default.
+  (company-dabbrev-downcase nil)
+  ;; Even if I write something with the wrong case,
+  ;; provide the correct casing.
+  (company-dabbrev-ignore-case t)
+  ;; company completion wait
+  (company-idle-delay 0.2)
+  ;; No company-mode in shell & eshell
+  (company-global-modes '(not eshell-mode shell-mode))
+  ;; Use company with text and programming modes.
+    :hook ((text-mode . company-mode)
+           (prog-mode . company-mode)
+	   )
+    :hook (eglot-managed-mode . company-mode)
+    )
+
+
+(global-set-key (kbd "<tab>") #'company-indent-or-complete-common)
+(use-package company-box
+  :hook (company-mode . company-box-mode))
+
+>>>>>>> 6f3fd4da1bb0cb4c92b3b81ae0dffe018d249934
+
 
 ;;; python
 (use-package python
