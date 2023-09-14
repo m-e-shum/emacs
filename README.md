@@ -1,12 +1,20 @@
 # README
 
 ## Description
-My `.emacs.d/init.el` is based/inspired off of [Gavin Freeborn](https://github.com/Gavinok/emacs.d/blob/main/init.el). I have yet to master all the functionality he includes but I like how he has chosen modern emacs packages that is fast. My previous `init.el` had very slow code completion and weird auto-indenting at times.
+My `.emacs.d/init.el` is based/inspired off of [Gavin Freeborn](https://github.com/Gavinok/emacs.d/blob/main/init.el) and [adventuresinwhy.com/post/eglot](https://www.adventuresinwhy.com/post/eglot/). I have yet to master all the functionality he includes but I like how he has chosen modern emacs packages that is fast. My previous `init.el` had very slow code completion and weird auto-indenting at times.
+
+## Tree-Sitter mode
+If you want "tree-sitter" support for individual language, clone this [repo](https://github.com/casouri/tree-sitter-module) and:
+```bash
+$ ./build.sh python
+$ mkdir ~/.emacs.d/tree-sitter/
+$ mv dist/libtree-sitter-python.dylib ~/.emacs.d/tree-sitter
+```
+
 
 ## Packages included (so far)
 * quelpa
 * async
-* dwim-shell-command
 * savehist
 * repeat
 * undo-fu
@@ -15,20 +23,9 @@ My `.emacs.d/init.el` is based/inspired off of [Gavin Freeborn](https://github.c
 * orderless
 * marginalia
 * consult
-* corfu
-* cape
-* yasnippet
 * ibuffer
 * isearch
 * ffap
-* popper
-* mouse
-* autorevert
-* hippie-exp
 * apheleia
 * lsp
 * highlight-indent-guides
-* magit
-* forge
-* ediff
-* diff-hl
