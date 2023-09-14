@@ -210,16 +210,22 @@
 (use-package highlight-indent-guides
   ;; provides column highlighting.  Useful when you start seeing too many nested
   ;; layers.
-  :hook (prog-mode . highlight-indent-guides-mode)
-  :custom-face
-  (highlight-indent-guides-stack-character-face ((t  :foreground "#FFF")))
-  (highlight-indent-guides-character-face       ((t  :foreground "#EEE")))
-  (highlight-indent-guides-top-character-face   ((t  :foreground "#CCC")))
-  (highlight-indent-guides-even-face            ((t  :foreground "#BBB")))
-  (highlight-indent-guides-odd-face             ((t  :foreground "#AAA")))
-  :custom
-  (highlight-indent-guides-method 'character)
-  (highlight-indent-guides-responsive 'top))
+  :ensure t
+  :hook (python-ts-mode . highlight-indent-guides-mode)
+  :config
+  (set-face-foreground 'highlight-indent-guides-character-face "dimgray")
+  (setq highlight-indent-guides-method 'character)
+  
+  ;; :custom-face
+  ;; (highlight-indent-guides-stack-character-face ((t  :foreground "#FFF")))
+  ;; (highlight-indent-guides-character-face       ((t  :foreground "#EEE")))
+  ;; (highlight-indent-guides-top-character-face   ((t  :foreground "#CCC")))
+  ;; (highlight-indent-guides-even-face            ((t  :foreground "#BBB")))
+  ;; (highlight-indent-guides-odd-face             ((t  :foreground "#AAA")))
+  ;; :custom
+  ;; (highlight-indent-guides-method 'character)
+  ;; (highlight-indent-guides-responsive 'top)
+  )
 
 ;; Fix path
 (use-package exec-path-from-shell
@@ -298,10 +304,10 @@
 ;;; company (minimal)
 (use-package company
   :ensure t
+  :hook ((prog-mode . company-mode))
   :config
   (setq company-idle-delay 0.1
 	company-minimum-prefix-length 1))
-
 
 	
 ;; Provide drop-down completion.
