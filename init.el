@@ -293,13 +293,23 @@
 
 (add-hook 'project-find-functions #'project-find-root)
 
+;;; eglot
+(use-package eglot
+  :defer t
+  :config
+  (add-to-list 'eglot-server-programs '(python-mode . ("pyright-langserver" "--stdio")))
+  (setq-default eglot-workspace-configuration
+		'((:pyright . ((useLibraryCodeForTypes . t))))))
+
+
+(add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
 
 ;;; python
-(use-package python
-  :hook ((python-ts-mode . eglot-ensure)
-	 (python-ts-mode . company-mode))
-  :mode (("\\.py\\'" . python-ts-mode))
-  )
+;; (use-package python
+;;   :hook ((python-ts-mode . eglot-ensure)
+;; 	 (python-ts-mode . company-mode))
+;;   :mode (("\\.py\\'" . python-ts-mode))
+;;   )
 
 ;;; company (minimal)
 (use-package company
@@ -318,34 +328,6 @@
   :config
   (add-hook 'python-mode-hook 'auto-virtualenv-set-virtualenv)
   )
-
-	
-;; Provide drop-down completion.
-;; (use-package company
-;;   :ensure t
-;;   :defer t
-;;   :custom
-;;   ;; Search other buffers with the same modes for completion instead of
-;;   ;; searching all other buffers.
-;;   (company-dabbrev-other-buffers t)
-;;   (company-dabbrev-code-other-buffers t)
-;;   ;; M-<num> to select an option according to its number.
-;;   (company-show-numbers t)
-;;   ;; Only 2 letters required for completion to activate.
-;;   (company-minimum-prefix-length 2)
-;;   ;; Do not downcase completions by default.
-;;   (company-dabbrev-downcase nil)
-;;   ;; Even if I write something with the wrong case,
-;;   ;; provide the correct casing.
-;;   (company-dabbrev-ignore-case t)
-;;   ;; company completion wait
-;;   (company-idle-delay 0.1)
-;;   ;; No company-mode in shell & eshell
-;;   (company-global-modes '(not eshell-mode shell-mode))
-;;   ;; Use company with tex t and programming modes.
-;;     :hook ((text-mode . company-mode)
-;;            (prog-mode . company-mode)))
-
 
 
 ;;; COMPLETION
