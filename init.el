@@ -76,6 +76,21 @@
 ;;; THEME
 (load-theme 'dracula t)
 
+
+;; Enable mouse support
+(unless window-system
+  (require 'mouse)
+  (xterm-mouse-mode t)
+  (global-set-key [mouse-4] (lambda ()
+                              (interactive)
+                              (scroll-down 1)))
+  (global-set-key [mouse-5] (lambda ()
+                              (interactive)
+                              (scroll-up 1)))
+  (defun track-mouse (e))
+  (setq mouse-sel-mode t)
+)
+
 ;;; --- ASYNC ---
 ;; Emacs look SIGNIFICANTLY less often which is a good thing.
 ;; asynchronous bytecode compilation and various other actions makes
@@ -85,6 +100,18 @@
   :init
   (dired-async-mode 1))
 
+;; icons
+(use-package all-the-icons
+  :ensure t
+  :if (display-graphic-p))
+
+(use-package all-the-icons-dired
+  :ensure t
+  :init (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
+
+(use-package all-the-icons-ibuffer
+  :ensure t
+  :init (all-the-icons-ibuffer-mode 1))
 
 (use-package savehist
   :defer 2
@@ -406,6 +433,17 @@
     (start-process-shell-command "recollindex"
                                  "*recoll-index-process*"
                                  "recollindex")))
+
+
+(use-package centaur-tabs
+  :demand
+  :init;; Set the style to rounded with icons
+  (setq centaur-tabs-style "bar")
+  (setq centaur-tabs-set-icons t)
+
+  :config
+  (centaur-tabs-mode 1))
+
 
 
 ;; (use-package flymake
