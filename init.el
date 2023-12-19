@@ -1,3 +1,4 @@
+
 ;;; --- init.el ---
 ;; It is more modern to use `.emacs.d/init.el`
 ;;   b/c now you can just git clone your emacs.d
@@ -91,6 +92,11 @@
   (setq mouse-sel-mode t)
 )
 
+
+
+(set-language-environment "UTF-8")
+(set-default-coding-systems 'utf-8)
+
 ;;; --- ASYNC ---
 ;; Emacs look SIGNIFICANTLY less often which is a good thing.
 ;; asynchronous bytecode compilation and various other actions makes
@@ -101,17 +107,9 @@
   (dired-async-mode 1))
 
 ;; icons
-(use-package all-the-icons
+(use-package nerd-icons
   :ensure t
-  :if (display-graphic-p))
-
-(use-package all-the-icons-dired
-  :ensure t
-  :init (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
-
-(use-package all-the-icons-ibuffer
-  :ensure t
-  :init (all-the-icons-ibuffer-mode 1))
+  )
 
 (use-package savehist
   :defer 2
@@ -439,6 +437,7 @@
   :demand
   :init;; Set the style to rounded with icons
   (setq centaur-tabs-style "bar")
+  (setq centaur-tabs-icon-type 'nerd-icons )
   (setq centaur-tabs-set-icons t)
 
   :config
