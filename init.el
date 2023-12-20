@@ -1,5 +1,4 @@
-
-;;; --- init.el ---
+;; --- init.el ---
 ;; It is more modern to use `.emacs.d/init.el`
 ;;   b/c now you can just git clone your emacs.d
 ;; This init.el is inspired by: https://github.com/Gavinok/emacs.d/blob/main/init.el
@@ -185,6 +184,11 @@
   (add-hook 'ibuffer-mode-hook
             (lambda ()
               (ibuffer-switch-to-saved-filter-groups "home"))))
+
+(use-package nerd-icons-ibuffer
+  :ensure t
+  :hook (ibuffer-mode . nerd-icons-ibuffer-mode))
+
 
 ;;; ISEARCH
 (use-package isearch
@@ -382,6 +386,13 @@
   ;; Enable recursive minibuffers
   (setq enable-recursive-minibuffers t))
 
+(use-package nerd-icons-completion
+  :after marginalia
+  :config
+  (nerd-icons-completion-mode))
+  ;;(add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup))
+
+
 ;;;; Extra Completion Functions
 (use-package consult
   :after vertico
@@ -432,17 +443,32 @@
                                  "*recoll-index-process*"
                                  "recollindex")))
 
+(use-package doom-modeline
+  :ensure t
+  :init (doom-modeline-mode 1))
 
-(use-package centaur-tabs
-  :demand
-  :init;; Set the style to rounded with icons
-  (setq centaur-tabs-style "bar")
-  (setq centaur-tabs-icon-type 'nerd-icons )
-  (setq centaur-tabs-set-icons t)
-
+;; use-package with package.el:
+(use-package dashboard
+  :ensure t
+  :init
+  (setq dashboard-display-icons-p t) ;; display icons on both GUI and terminal
+  (setq dashboard-icon-type 'nerd-icons) ;; use `nerd-icons' package
+  (setq dashboard-set-heading-icons t)
+  (setq dashboard-set-file-icons t)
   :config
-  (centaur-tabs-mode 1))
+  (dashboard-setup-startup-hook))
 
+
+;;; Doesn't seem to play well with vertico/marginalia
+;; (use-package centaur-tabs
+;;   :demand
+;;   :init;; Set the style to rounded with icons
+;;   (setq centaur-tabs-style "bar")
+;;   (setq centaur-tabs-icon-type 'nerd-icons )
+;;   (setq centaur-tabs-set-icons t)
+
+;;   :config
+;;   (centaur-tabs-mode 1))
 
 
 ;; (use-package flymake
