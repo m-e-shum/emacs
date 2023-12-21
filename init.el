@@ -73,6 +73,36 @@
 ;; Keep custom-set-variables and friends out of my init.el
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 
+;;; Org mode
+
+(use-package org
+  :mode (("\\.org$" . org-mode))
+  :init
+  (setq org-startup-indented t
+        org-ellipsis " <U+F107> " ;; folding symbol
+        org-pretty-entities t
+        org-hide-emphasis-markers nil
+        ;; show actually italicized text instead of /italicized text/
+        org-use-speed-commands t
+        org-return-follows-link t
+        org-completion-use-ido t
+        org-outline-path-complete-in-steps nil
+        org-src-fontify-natively t   ;; Pretty code blocks
+        org-src-tab-acts-natively t
+        org-confirm-babel-evaluate nil
+        org-todo-keywords '((sequence "TODO(t)" "IN-PROGRESS(i)" "|" "DONE(d)")
+                            (sequence "|" "CANCELED(c)"))
+        org-agenda-block-separator ""
+        org-fontify-whole-heading-line t
+        org-fontify-done-headline t
+        org-fontify-quote-and-verse-blocks t)
+  (add-hook 'org-mode-hook 'visual-line-mode)
+  )
+
+(use-package org-bullets
+   :ensure t
+   :init (add-hook 'org-mode-hook 'org-bullets-mode))
+
 ;;; THEME
 (load-theme 'dracula t)
 
@@ -330,23 +360,81 @@
   (setq-default eglot-workspace-configuration
 		'((:pyright . ((useLibraryCodeForTypes . t))))))
 
-
+;;; python
 (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
 
-;;; python
-;; (use-package python
-;;   :hook ((python-ts-mode . eglot-ensure)
-;; 	 (python-ts-mode . company-mode))
-;;   :mode (("\\.py\\'" . python-ts-mode))
-;;   )
+
+
 
 ;;; company (minimal)
-(use-package company
+;; (use-package company
+;;   :ensure t
+;;   :hook ((prog-mode . company-mode))
+;;   :config
+;;   (setq company-idle-delay 0.01
+;; 	company-minimum-prefix-length 1)
+;;   (setq company-backends
+;;         '((company-files
+;;            company-keywords
+;;            company-capf
+;;            company-dabbrev-code
+;;            company-etags
+;;            company-dabbrev)))
+;;   )
+
+
+(use-package corfu
   :ensure t
-  :hook ((prog-mode . company-mode))
+  ;; Optional customizations
+  :custom
+  (corfu-cycle t)                 ; Allows cycling through candidates
+  (corfu-auto t)                  ; Enable auto completion
+  (corfu-auto-prefix 1)
+  (corfu-auto-delay 0.3)
+  (corfu-popupinfo-delay '(0.5 . 0.2))
+  (corfu-preview-current 'insert) ; insert previewed candidate
+  (corfu-preselect 'prompt)
+  (corfu-on-exact-match nil)      ; Don't auto expand tempel snippets
+  ;; Optionally use TAB for cycling, default is `corfu-complete'.
+  :bind (:map corfu-map
+              ("M-SPC"      . corfu-insert-separator)
+              ("TAB"        . corfu-next)
+              ([tab]        . corfu-next)
+              ("S-TAB"      . corfu-previous)
+              ([backtab]    . corfu-previous)
+              ("S-<return>" . corfu-insert)
+              ("RET"        . nil))
+
+  :init
+  (global-corfu-mode)
+  (corfu-history-mode)
+  (corfu-popupinfo-mode) ; Popup completion info
   :config
-  (setq company-idle-delay 0.1
-	company-minimum-prefix-length 1))
+  (add-hook 'eshell-mode-hook
+            (lambda () (setq-local corfu-quit-at-boundary t
+                                   corfu-quit-no-match t
+                                   corfu-auto nil)
+              (corfu-mode))))
+
+
+(use-package hippie-exp
+  :bind ([remap dabbrev-expand] . hippie-expand)
+  :commands (hippie-expand)
+  :custom
+  (dabbrev-ignored-buffer-regexps '("\\.\\(?:pdf\\|jpe?g\\|png\\)\\'"))
+  :config
+  (setq hippie-expand-try-functions-list
+        '(try-expand-dabbrev
+          try-expand-dabbrev-all-buffers
+          try-expand-dabbrev-from-kill
+          try-complete-lisp-symbol-partially
+          try-complete-lisp-symbol
+          try-complete-file-name-partially
+          try-complete-file-name
+          try-expand-all-abbrevs
+          try-expand-list
+          try-expand-line)))
+
 
 
 (use-package auto-virtualenv
