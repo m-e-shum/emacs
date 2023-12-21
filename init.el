@@ -45,6 +45,15 @@
 (column-number-mode t)
 (size-indication-mode t)
 
+(use-package emacs
+  :init
+  ;; TAB cycle if there are only few candidates
+  (setq completion-cycle-threshold 3)
+
+  ;; Enable indentation+completion using the TAB key.
+  ;; Completion is often bound to M-TAB.
+  (setq tab-always-indent 'complete))
+
 (use-package crux
     :bind (("C-a" . crux-move-beginning-of-line)))
 
