@@ -88,7 +88,7 @@
   :mode (("\\.org$" . org-mode))
   :init
   (setq org-startup-indented t
-        org-ellipsis " <U+F107> " ;; folding symbol
+        org-ellipsis " 󰅀 " ;; folding symbol
         org-pretty-entities t
         org-hide-emphasis-markers nil
         ;; show actually italicized text instead of /italicized text/
