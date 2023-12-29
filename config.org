@@ -1,0 +1,27 @@
+#+TITLE: My EMACS Config
+#+AUTHOR: Matt Shum
+
+* PACKAGE
+* THEME
+* Fix GUI
+#+BEGIN_SRC emacs-lisp
+  (setq inhibit-startup-message t)
+  (setq initial-scratch-message nil)
+  (menu-bar-mode -1)
+#+END_SRC
+* STARTUP
+#+BEGIN_SRC emacs-lisp
+  ;; Minimize garbage collection
+  (defvar file-name-handler-alist-old file-name-handler-alist)
+  (setq file-name-hander-alist nil
+	gc-cons-threshold most-positive-fixnum)
+  ;; Lower threshold to speed up garbage collection
+  (add-hook 'after-init-hook
+	    `(lambda ()
+	       (setq file-name-handler-alist file-name-hander-alist-old)
+	       (setq gc-cons-threshold 20000000))
+	    t)
+#+END_SRC
+* BACKUP
+* EDITOR
+* COMPLETION
