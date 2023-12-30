@@ -55,8 +55,6 @@
   (setq inhibit-startup-message t)
   (setq initial-scratch-message nil)
   (menu-bar-mode -1)
-  (set-language-environment "UTF-8")
-  (set-default-coding-systems 'utf-8)
 #+END_SRC
 ** STARTUP
 #+BEGIN_SRC emacs-lisp
@@ -72,7 +70,72 @@
 	    t)
 #+END_SRC
 ** BACKUP
+Information about the [[backup directory][https://www.emacs.wiki.rg/emacs/BackupDirectory]].
+#+BEGIN_SRC emacs-lisp
+  (setq backup-directory-alist `(("." . ,(concat user-emacs-directory "backups")))
+	vc-make-backup-files t
+	version-control t
+	kept-old-versions 0
+	kept-new-versions 10
+	delete-old-versions t
+	backup-by-copying t)
+#+END_SRC
 ** ASYNC
+#+BEGIN_SRC emacs-lisp
+  (use-package async
+    :ensure t
+    :defer t
+    :init
+    (dired-async-mode 1))
+#+END_SRC
 ** EDITOR
+#+BEGIN_SRC emacs-lisp
+  (set-language-environment "UTF-8")
+  (set-default-coding-systems 'utf-8)
+  (global-hl-line-mode t)
+  (line-numer-mode +1)
+  (global-display-line-numbers-mode 1)
+  (column-number-mode t)
+  (size-indication-mode t)
+  ;;; ICONS
+  (use-package nerd-icons
+    :ensure t
+    )
+#+END_SRC
 ** ORG
+#+BEGIN_SRC emacs-lisp
+  (use-package org
+    :mode (("\\.org$" . org-mode))
+    :init
+    (setq org-startup-indented t
+	  org-ellipsis " " ;; folding symbol
+	  org-pretty-entities t
+	  org-hide-emphasis-markers nil
+	  org-use-speed-compounds t
+	  org-return-follows-link t
+	  org-completion-use-ido t
+	  org-outline-path-complete-in-steps nil
+	  org-src-fontify-natively t
+	  org-confirm-babel-evaluate nil
+	  org-todo-keywords '((sequence "TODO(t)" "IN-PROGRESS(i)" "|" "DONE(d)")
+			      (sequence "|" "CANCELLED(c)"))
+	  org-agenda-block-separator ""
+	  org-fontify-whole-heading-line t
+	  org-fontify-done-headline t
+	  org-fontify-quote-and-verse-blocks t)
+    (add-hook 'org-mode-hook 'visual-line-mode))
+  ;;; Pretty bullets
+  (use-package org-bullets
+    :ensure t
+    :init (add-hook 'org-mode-hook 'org-bullets-mode))
+  ;;; Coding languages
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((emacs-lisp . t)
+     (shell . t)
+     (python . t)
+     (jupyter . t) ;; must be last
+     ))
+#+END_SRC
 ** COMPLETION
+** Quality of Life
