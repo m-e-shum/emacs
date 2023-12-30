@@ -1,15 +1,64 @@
 #+TITLE: My EMACS Config
 #+AUTHOR: Matt Shum
 
-* PACKAGE
-* THEME
-* Fix GUI
+** PACKAGE
+#+BEGIN_SRC emacs-lisp
+  (setq package-archives
+	'(("melpa" . "https://melpa.org/packages")
+	  ("elpa" . "https://elpa.org/packages/")))
+  ;;; use-package
+  (package-initialize)
+  (setq use-package-always-ensure t)
+  (unless (package-installed-p 'use-package)
+    (package-refresh-contents)
+    (package-install 'use-package))
+  (eval-when-compile (require 'use-package))
+  (setq use-package-verbose t
+	comp-async-report-warnings-errors nil
+	comp-deferred-compilation t)
+  ;;; quelpa-use-package
+  (setq quelpa-update-melpa-p nil)
+  (package-install 'quelpa-use-package)
+  (require 'quelpa-use-package)
+  ;;; custom.el
+  (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+#+END_SRC
+** EMACS
+#+BEGIN_SRC emacs-lisp
+  (use-package emacs
+    :init
+    ;; TAB cycle if there are only a few candidates
+    (setq completion-cycle-threshold 3)
+    ;; Enable indentation+completion using TAB (completion is often bound to M-TAB)
+    (setq tab-always-indent 'complete))
+#+END_SRC
+** MOUSE
+#+BEGIN_SRC emacs-lisp
+  (unless window-system
+    (require 'mouse)
+    (xterm-mouse-mode t)
+    (global-set-key [mouse-4] (lambda ()
+				(interactive)
+				(scroll-down 1)))
+    (gloabl-set-key [mouse-5] (lambda ()
+				(interactive)
+				(scroll-up 1)))
+    (defun track-mouse (e))
+    (setq mouse-sel-mode t))
+#+END_SRC
+** THEME
+#+BEGIN_SRC emacs-lisp
+  (load-theme 'dracula t)
+#+END_SRC
+** Fix GUI
 #+BEGIN_SRC emacs-lisp
   (setq inhibit-startup-message t)
   (setq initial-scratch-message nil)
   (menu-bar-mode -1)
+  (set-language-environment "UTF-8")
+  (set-default-coding-systems 'utf-8)
 #+END_SRC
-* STARTUP
+** STARTUP
 #+BEGIN_SRC emacs-lisp
   ;; Minimize garbage collection
   (defvar file-name-handler-alist-old file-name-handler-alist)
@@ -22,6 +71,8 @@
 	       (setq gc-cons-threshold 20000000))
 	    t)
 #+END_SRC
-* BACKUP
-* EDITOR
-* COMPLETION
+** BACKUP
+** ASYNC
+** EDITOR
+** ORG
+** COMPLETION
