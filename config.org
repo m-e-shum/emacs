@@ -88,6 +88,31 @@ Information about the [[backup directory][https://www.emacs.wiki.rg/emacs/Backup
     :init
     (dired-async-mode 1))
 #+END_SRC
+** BUFFER
+#+BEGIN_SRC emacs-lisp
+  (use-package ibuffer
+    :ensure nil
+    :bind ("C-x C-b" . ibuffer)
+    :init
+    (setq ibuffer-expert t)
+    (setq ibuffer-show-empty-filter-groups nil)
+    ;; Modify the default ibuffer formats
+    (setq ibuffer-formats
+	  '((mark modified read-only " "
+		  (name 40 40 :left :elide)
+		  " "
+		  (mode 16 16 :left :elide)
+		  " "
+		  filename-and-process)))
+    (setq ibuffer-saved-filter-groups
+	  '(("home"
+	     ("Shells" (mode . shell-mode))
+	     ("Magit" (name . "*magit"))
+	     ("Org" (or (mode . org-mode))))))
+    (add-hook 'ibuffer-mode-hook
+	      (lambda ()
+		(ibuffer-switch-to-saved-filter-groups "home"))))
+#+END_SRC
 ** EDITOR
 #+BEGIN_SRC emacs-lisp
   (set-language-environment "UTF-8")
@@ -99,8 +124,17 @@ Information about the [[backup directory][https://www.emacs.wiki.rg/emacs/Backup
   (size-indication-mode t)
   ;;; ICONS
   (use-package nerd-icons
+    :ensure t)
+  (use-package nerd-icons-ibuffer
     :ensure t
-    )
+    :hook (ibuffer-mode . nerd-icons-ibuffer-mode))
+  ;;; Highlight indent guides
+  (use-package highlight-indent-guides
+    :ensure t
+    :hook (python-ts-mode . highlight-indent-guides-mode)
+    :config
+    (set-face-foreground 'highlight-indent-guides-character-face "dimgray")
+    (setq highlight-indent-guides-method 'character))
 #+END_SRC
 ** ORG
 #+BEGIN_SRC emacs-lisp
@@ -108,7 +142,7 @@ Information about the [[backup directory][https://www.emacs.wiki.rg/emacs/Backup
     :mode (("\\.org$" . org-mode))
     :init
     (setq org-startup-indented t
-	  org-ellipsis " " ;; folding symbol
+	  org-ellipsis " 󰅀 " ;; folding symbol
 	  org-pretty-entities t
 	  org-hide-emphasis-markers nil
 	  org-use-speed-compounds t
@@ -137,5 +171,85 @@ Information about the [[backup directory][https://www.emacs.wiki.rg/emacs/Backup
      (jupyter . t) ;; must be last
      ))
 #+END_SRC
+
+#+RESULTS:
+
 ** COMPLETION
+*** Vertico
+*** Consult
+** GIT
 ** Quality of Life
+*** Search
+#+BEGIN_SRC emacs-lisp
+  (use-package isearch
+    :ensure nil
+    :bind (("C-s" . isearch-forward)
+	   ("M-R" . isearch-replace)
+	   ("C-r" . isearch-backward)
+	   (:map isearch-mode-map
+		 ("M-w" . isearch-save-and-exit)
+		 ("M-R" . isearch-query-replace)
+		 ("M-/" . isearch-complete)))
+    :custom ((isearch-lazy-count t)
+	     (lazy-count-prefix-format nil)
+	     (lazy-count-suffix-format " [%s of %s]")
+	     (search-whitespace-regexp ".*?")
+	     (isearch-lazy-highlight t)
+	     (isearch-lax-whitespace t)
+	     (isearch-regexp-lax-whitespace nil))
+    :config
+    (defun isearch-save-and-exit ()
+      "Exit search normally, and save the search-string on kill-ring."
+      (interactive)
+      (isearch-done)
+      (isearch-clean-overlays)
+      (kill-new isearch-string))
+    ;; Place cursor at the start of the match similar to vim's t
+    ;; C-g will return the cursor to its original position
+    (add-hook 'isearch-mode-end-hook 'my-goto-match-beginning)
+    (defun my-goto-match-beginning ()
+      (when (and isearch-forward isearch-other-end
+		 (not isearch-mode-end-hook-quit))
+	(goto-char isearch-other-end))))
+#+END_SRC
+*** Undo
+#+BEGIN_SRC emacs-lisp
+  (use-package undo-fu
+    :ensure t
+    :bind (("C-x u" . undo-fu-only-undo)
+	   ("C-/" . undo-fu-only-undo)
+	   ("C-z" . undo-fu-only-undo)
+	   ("C-S-z" . undo-fu-only-redo)
+	   ("C-x C-u" . undo-fu-only-redo)
+	   ("C-?" . undo-fu-only-redo)))
+  (use-package undo-fu-session ;; Persistant undo history
+    :ensure t
+    :demand t
+    :config (global-undo-fu-session-mode))
+#+END_SRC
+*** Dashboard
+*** Other
+#+BEGIN_SRC emacs-lisp
+  (use-package crux
+    :bind (("C-a" . crux-move-beginning-of-line)))
+  ;;; ffap
+  (use-package ffap
+    :ensure nil
+    :bind ("C-x f" . ffap)
+    :custom (find-file-visit-truename t)
+    :init
+    ;; Save my spot when I jump to another file
+    (advice-add 'ffap :before #'push-mark))
+  ;;; Fix path
+  (use-package exec-path-from-shell
+    :ensure t
+    :config
+    (when (memq window-system '(mac ns x))
+      (exec-path-from-shell-initialize)))
+#+END_SRC
+
+
+
+
+
+
