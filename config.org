@@ -1,28 +1,6 @@
 #+TITLE: My EMACS Config
 #+AUTHOR: Matt Shum
 
-** PACKAGE
-#+BEGIN_SRC emacs-lisp
-  (setq package-archives
-	'(("melpa" . "https://melpa.org/packages")
-	  ("elpa" . "https://elpa.org/packages/")))
-  ;;; use-package
-  (package-initialize)
-  (setq use-package-always-ensure t)
-  (unless (package-installed-p 'use-package)
-    (package-refresh-contents)
-    (package-install 'use-package))
-  (eval-when-compile (require 'use-package))
-  (setq use-package-verbose t
-	comp-async-report-warnings-errors nil
-	comp-deferred-compilation t)
-  ;;; quelpa-use-package
-  (setq quelpa-update-melpa-p nil)
-  (package-install 'quelpa-use-package)
-  (require 'quelpa-use-package)
-  ;;; custom.el
-  (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
-#+END_SRC
 ** EMACS
 #+BEGIN_SRC emacs-lisp
   (use-package emacs
@@ -65,7 +43,7 @@
   ;; Lower threshold to speed up garbage collection
   (add-hook 'after-init-hook
 	    `(lambda ()
-	       (setq file-name-handler-alist file-name-hander-alist-old)
+	       (setq file-name-handler-alist file-name-handler-alist-old)
 	       (setq gc-cons-threshold 20000000))
 	    t)
 #+END_SRC
@@ -313,8 +291,6 @@ Information about the [[backup directory][https://www.emacs.wiki.rg/emacs/Backup
   (use-package hippie-exp
     :bind ([remap dabbrev-expand] . hippie-expand)
     :commands (hippie-expand)
-    :custom
-    (dabbrev-ignored-buffer-regexps '("\\.\\(?:pdf\\|jpe?g\\|png\\)
     :config
     (setq hippie-expand-try-functions-list
 	  '(try-expand-dabbrev
@@ -465,7 +441,7 @@ Information about the [[backup directory][https://www.emacs.wiki.rg/emacs/Backup
 	  (throw 'found marker)))))
   ;;
   (defun project-find-root (path)
-    "Search up the PATH for 'project-root-markers'."
+    "Search up the PATH for project-root-markers."
     (let ((path (expand-file-name path)))
       (catch 'found
 	(while (not (equal "/" path))
