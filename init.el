@@ -28,7 +28,7 @@
           t)
 
 ;;; --- BACKUPS ---
-;; Info about this: https://www.emacswiki.org/emacs/BackupDirectory
+;; Info about this: https://www.emacswiki.rg/emacs/BackupDirectory
 (setq backup-directory-alist `(("." . ,(concat user-emacs-directory "backups")))
       vc-make-backup-files t
       version-control t
@@ -83,6 +83,8 @@
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 
 ;;; Org mode
+;; Note: doesn't seem like I can change font size in terminal mode `emacs -nw`
+
 
 (use-package org
   :mode (("\\.org$" . org-mode))
@@ -104,13 +106,26 @@
         org-agenda-block-separator ""
         org-fontify-whole-heading-line t
         org-fontify-done-headline t
-        org-fontify-quote-and-verse-blocks t)
+        org-fontify-quote-and-verse-blocks t
+	org-agenda-files (list "/da/dmp/cb/shumma1/notes/")) ;; You can list directories or individual files https://orgmode.org/worg/org-tutorials/orgtutorial_dto.html
   (add-hook 'org-mode-hook 'visual-line-mode)
   )
 
 (use-package org-bullets
    :ensure t
    :init (add-hook 'org-mode-hook 'org-bullets-mode))
+
+
+;; Coding languages
+(advice-remove 'org-babel-do-load-languages #'ignore)
+
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((emacs-lisp . t)
+   (shell . t)
+   (python . t)
+   (jupyter . t))) ;; must be last
+
 
 ;;; THEME
 (load-theme 'dracula t)
