@@ -102,12 +102,13 @@
         org-src-tab-acts-natively t
         org-confirm-babel-evaluate nil
         org-todo-keywords '((sequence "TODO(t)" "IN-PROGRESS(i)" "|" "DONE(d)")
-                            (sequence "|" "CANCELED(c)"))
-        org-agenda-block-separator ""
+                            (sequence "|" "WAITING(w)" "CANCELED(c)"))
         org-fontify-whole-heading-line t
         org-fontify-done-headline t
         org-fontify-quote-and-verse-blocks t
-	org-agenda-files (list "/da/dmp/cb/shumma1/notes/")) ;; You can list directories or individual files https://orgmode.org/worg/org-tutorials/orgtutorial_dto.html
+	org-agenda-block-separator ""
+	org-agenda-files '("/da/dmp/cb/shumma1/notes/2024/"
+			   )) ;; You can list directories or individual files https://orgmode.org/worg/org-tutorials/orgtutorial_dto.html
   (add-hook 'org-mode-hook 'visual-line-mode)
   )
 
@@ -123,8 +124,10 @@
  'org-babel-load-languages
  '((emacs-lisp . t)
    (shell . t)
-   (python . t)
-   (jupyter . t))) ;; must be last
+   (python . t)))
+;;; Still can't make below work
+   ;;(ipython . t))) 
+   ;;(jupyter . t))) ;; must be last
 
 
 ;;; THEME
@@ -163,6 +166,10 @@
 (use-package nerd-icons
   :ensure t
   )
+
+(use-package nerd-icons-dired
+  :hook
+  (dired-mode . nerd-icons-dired-mode))
 
 (use-package savehist
   :defer 2
@@ -567,9 +574,19 @@
   (setq dashboard-icon-type 'nerd-icons) ;; use `nerd-icons' package
   (setq dashboard-set-heading-icons t)
   (setq dashboard-set-file-icons t)
+  (setq dashboard-items '((recents . 5)
+			  (agenda . 10)))
+  ;;(setq dashboard-filter-agenda-entry 'dashboard-no-filter-agenda)
   :config
   (dashboard-setup-startup-hook))
 
+
+
+(use-package yasnippet
+  :config
+  (setq yas-snippet-dirs '("~/.emacs.d/snippets/"))
+			   
+  (yas-global-mode 1))
 
 ;;; Doesn't seem to play well with vertico/marginalia
 ;; (use-package centaur-tabs
