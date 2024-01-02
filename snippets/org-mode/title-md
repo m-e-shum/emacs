@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: Title Metadata
+# key: <m
+# --
+#+TITLE: $0
+#+AUTHOR: Matthew Shum
