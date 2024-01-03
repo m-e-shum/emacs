@@ -14,6 +14,8 @@
 (menu-bar-mode -1)
 ;;(scroll-bar-mode -1) ;; Function is void
 
+(add-to-list 'auto-mode-alist '(".bashrc_c7" . shell-script-mode))
+
 ;;; --- STARTUP ---
 ;; Minimize garbage collection
 (defvar file-name-handler-alist-old file-name-handler-alist)
@@ -111,6 +113,8 @@
 			   )) ;; You can list directories or individual files https://orgmode.org/worg/org-tutorials/orgtutorial_dto.html
   (add-hook 'org-mode-hook 'visual-line-mode)
   )
+
+
 
 (use-package org-bullets
    :ensure t
