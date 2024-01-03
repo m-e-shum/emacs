@@ -1,7 +1,7 @@
 #+TITLE: My EMACS Config
 #+AUTHOR: Matt Shum
 
-** EMACS
+* EMACS
 #+BEGIN_SRC emacs-lisp
   (use-package emacs
     :init
@@ -10,7 +10,7 @@
     ;; Enable indentation+completion using TAB (completion is often bound to M-TAB)
     (setq tab-always-indent 'complete))
 #+END_SRC
-** MOUSE
+* MOUSE
 #+BEGIN_SRC emacs-lisp
   (unless window-system
     (require 'mouse)
@@ -24,17 +24,17 @@
     (defun track-mouse (e))
     (setq mouse-sel-mode t))
 #+END_SRC
-** THEME
+* THEME
 #+BEGIN_SRC emacs-lisp
   (load-theme 'dracula t)
 #+END_SRC
-** Fix GUI
+* Fix GUI
 #+BEGIN_SRC emacs-lisp
   (setq inhibit-startup-message t)
   (setq initial-scratch-message nil)
   (menu-bar-mode -1)
 #+END_SRC
-** STARTUP
+* STARTUP
 #+BEGIN_SRC emacs-lisp
   ;; Minimize garbage collection
   (defvar file-name-handler-alist-old file-name-handler-alist)
@@ -47,7 +47,7 @@
 	       (setq gc-cons-threshold 20000000))
 	    t)
 #+END_SRC
-** BACKUP
+* BACKUP
 Information about the [[backup directory][https://www.emacs.wiki.rg/emacs/BackupDirectory]].
 #+BEGIN_SRC emacs-lisp
   (setq backup-directory-alist `(("." . ,(concat user-emacs-directory "backups")))
@@ -58,7 +58,7 @@ Information about the [[backup directory][https://www.emacs.wiki.rg/emacs/Backup
 	delete-old-versions t
 	backup-by-copying t)
 #+END_SRC
-** ASYNC
+* ASYNC
 #+BEGIN_SRC emacs-lisp
   (use-package async
     :ensure t
@@ -66,7 +66,7 @@ Information about the [[backup directory][https://www.emacs.wiki.rg/emacs/Backup
     :init
     (dired-async-mode 1))
 #+END_SRC
-** BUFFER
+* BUFFER
 #+BEGIN_SRC emacs-lisp
   ;;; DOOM
   (use-package doom-modeline
@@ -96,7 +96,7 @@ Information about the [[backup directory][https://www.emacs.wiki.rg/emacs/Backup
 	      (lambda ()
 		(ibuffer-switch-to-saved-filter-groups "home"))))
 #+END_SRC
-** EDITOR
+* EDITOR
 #+BEGIN_SRC emacs-lisp
   (set-language-environment "UTF-8")
   (set-default-coding-systems 'utf-8)
@@ -111,6 +111,9 @@ Information about the [[backup directory][https://www.emacs.wiki.rg/emacs/Backup
   (use-package nerd-icons-ibuffer
     :ensure t
     :hook (ibuffer-mode . nerd-icons-ibuffer-mode))
+  (use-package nerd-icons-dired
+    :hook
+    (dired-mode . nerd-icons-dired-mode))
   ;;; Highlight indent guides
   (use-package highlight-indent-guides
     :ensure t
@@ -119,27 +122,28 @@ Information about the [[backup directory][https://www.emacs.wiki.rg/emacs/Backup
     (set-face-foreground 'highlight-indent-guides-character-face "dimgray")
     (setq highlight-indent-guides-method 'character))
 #+END_SRC
-** ORG
+* ORG
 #+BEGIN_SRC emacs-lisp
   (use-package org
     :mode (("\\.org$" . org-mode))
     :init
     (setq org-startup-indented t
-	  org-ellipsis " 󰅀 " ;; folding symbol
-	  org-pretty-entities t
-	  org-hide-emphasis-markers nil
-	  org-use-speed-compounds t
-	  org-return-follows-link t
-	  org-completion-use-ido t
-	  org-outline-path-complete-in-steps nil
-	  org-src-fontify-natively t
-	  org-confirm-babel-evaluate nil
-	  org-todo-keywords '((sequence "TODO(t)" "IN-PROGRESS(i)" "|" "DONE(d)")
-			      (sequence "|" "CANCELLED(c)"))
-	  org-agenda-block-separator ""
-	  org-fontify-whole-heading-line t
-	  org-fontify-done-headline t
-	  org-fontify-quote-and-verse-blocks t)
+          org-startup-folded t ;; start up folded
+          org-ellipsis " 󰅀 " ;; folding symbol
+          org-pretty-entities t
+          org-hide-emphasis-markers nil
+          org-use-speed-compounds t
+          org-return-follows-link t
+          org-completion-use-ido t
+          org-outline-path-complete-in-steps nil
+          org-src-fontify-natively t
+          org-confirm-babel-evaluate nil
+          org-todo-keywords '((sequence "TODO(t)" "IN-PROGRESS(i)" "|" "DONE(d)")
+                              (sequence "|" "CANCELLED(c)"))
+          org-agenda-block-separator ""
+          org-fontify-whole-heading-line t
+          org-fontify-done-headline t
+          org-fontify-quote-and-verse-blocks t)
     (add-hook 'org-mode-hook 'visual-line-mode))
   ;;; Pretty bullets
   (use-package org-bullets
@@ -154,14 +158,14 @@ Information about the [[backup directory][https://www.emacs.wiki.rg/emacs/Backup
      (jupyter . t) ;; must be last
      ))
 #+END_SRC
+* Treesitter
 ** Treesitter
-*** Treesitter
 #+BEGIN_SRC emacs-lisp
   (use-package treesit-auto
     :config
     (global-treesit-auto-mode))
 #+END_SRC
-*** Python
+** Python
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
   ;;;
@@ -173,8 +177,8 @@ Information about the [[backup directory][https://www.emacs.wiki.rg/emacs/Backup
     :config
     (add-hook 'python-ts-mode-hook 'auto-virtualenv-set-virtualenv))
 #+END_SRC
-** COMPLETION
-*** Vertico
+* COMPLETION
+** Vertico
 #+BEGIN_SRC emacs-lisp
   (use-package vertico
     :init
@@ -201,7 +205,7 @@ Information about the [[backup directory][https://www.emacs.wiki.rg/emacs/Backup
     ;; Enable recursive minibuffers
     (setq enable-recursive-minibuffers t))
 #+END_SRC
-*** Consult
+** Consult
 #+BEGIN_SRC emacs-lisp
   (use-package consult
     :after vertico
@@ -243,7 +247,7 @@ Information about the [[backup directory][https://www.emacs.wiki.rg/emacs/Backup
 					"*recoll-index-process*"
 					"recollindex")))
 #+END_SRC
-*** EGLOT
+** EGLOT
 #+BEGIN_SRC emacs-lisp
   (use-package eglot
     :defer t
@@ -252,7 +256,7 @@ Information about the [[backup directory][https://www.emacs.wiki.rg/emacs/Backup
     (setq-default eglot-workspace-configuration
 		  '((:pyright . ((useLibraryCodeForTypes . t))))))
 #+END_SRC
-*** CORFU
+** CORFU
 #+BEGIN_SRC emacs-lisp
   (use-package corfu
     :ensure t
@@ -286,7 +290,7 @@ Information about the [[backup directory][https://www.emacs.wiki.rg/emacs/Backup
 				     corfu-auto nil)
 	      (corfu-mode))))
 #+END_SRC
-*** Hippie
+** Hippie
 #+BEGIN_SRC emacs-lisp
   (use-package hippie-exp
     :bind ([remap dabbrev-expand] . hippie-expand)
@@ -304,7 +308,7 @@ Information about the [[backup directory][https://www.emacs.wiki.rg/emacs/Backup
 	    try-expand-list
 	    try-expand-line)))
 #+END_SRC
-** GIT
+* GIT
 #+BEGIN_SRC emacs-lisp
   (use-package magit
     :bind (("C-x v SPC" . magit-status)
@@ -336,8 +340,8 @@ Information about the [[backup directory][https://www.emacs.wiki.rg/emacs/Backup
     :init (global-diff-hl-mode)
     :config (diff-hl-flydiff-mode))
 #+END_SRC
-** Quality of Life
-*** Search
+* Quality of Life
+** Search
 #+BEGIN_SRC emacs-lisp
   (use-package isearch
     :ensure nil
@@ -370,7 +374,7 @@ Information about the [[backup directory][https://www.emacs.wiki.rg/emacs/Backup
 		 (not isearch-mode-end-hook-quit))
 	(goto-char isearch-other-end))))
 #+END_SRC
-*** Undo
+** Undo
 #+BEGIN_SRC emacs-lisp
   (use-package undo-fu
     :ensure t
@@ -385,7 +389,7 @@ Information about the [[backup directory][https://www.emacs.wiki.rg/emacs/Backup
     :demand t
     :config (global-undo-fu-session-mode))
 #+END_SRC
-*** Dashboard
+** Dashboard
 #+BEGIN_SRC emacs-lisp
   (use-package dashboard
     :ensure t
@@ -394,18 +398,19 @@ Information about the [[backup directory][https://www.emacs.wiki.rg/emacs/Backup
     (setq dashboard-icon-type 'nerd-icons) ;; use 'nerd-icons'
     (setq dashboard-set-heading-icons t)
     (setq dashboard-set-file-icons t)
+    (setq dashboard-items '((recents . 5)
+                            (agenda . 10)))
     :config
     (dashboard-setup-startup-hook))
 #+END_SRC
-*** Snippet
+** Snippet
 #+BEGIN_SRC emacs-lisp
   (use-package yasnippet
     :config
-    (setq yas-snippet-dirs '("~/.emacs.d/snippets/"
-			     "~/.emacs.d/elpa/yasnippet-snippets-20231219.1505/snippets/"))
+    (setq yas-snippet-dirs '("~/.emacs.d/snippets/"))
     (yas-global-mode 1))
 #+END_SRC
-*** Other
+** Other
 #+BEGIN_SRC emacs-lisp
   (use-package crux
     :bind (("C-a" . crux-move-beginning-of-line)))
@@ -424,7 +429,7 @@ Information about the [[backup directory][https://www.emacs.wiki.rg/emacs/Backup
     (when (memq window-system '(mac ns x))
       (exec-path-from-shell-initialize)))
 #+END_SRC
-*** Project Root
+** Project Root
 #+BEGIN_SRC emacs-lisp
   ;;
   (defcustom project-root-markers
