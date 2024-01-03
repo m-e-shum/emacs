@@ -139,11 +139,12 @@ Information about the [[backup directory][https://www.emacs.wiki.rg/emacs/Backup
           org-src-fontify-natively t
           org-confirm-babel-evaluate nil
           org-todo-keywords '((sequence "TODO(t)" "IN-PROGRESS(i)" "|" "DONE(d)")
-                              (sequence "|" "CANCELLED(c)"))
-          org-agenda-block-separator ""
+                              (sequence "|" "WAITING(w)" "CANCELLED(c)"))
           org-fontify-whole-heading-line t
           org-fontify-done-headline t
-          org-fontify-quote-and-verse-blocks t)
+          org-fontify-quote-and-verse-blocks t
+          org-agenda-files '("~/notes/")
+          org-agenda-block-separator "")
     (add-hook 'org-mode-hook 'visual-line-mode))
   ;;; Pretty bullets
   (use-package org-bullets
