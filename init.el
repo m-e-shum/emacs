@@ -109,7 +109,7 @@
         org-fontify-done-headline t
         org-fontify-quote-and-verse-blocks t
 	org-agenda-block-separator ""
-	org-agenda-files '("/da/dmp/cb/shumma1/notes/2024/"
+	org-agenda-files '("~/notes/2024/"
 			   )) ;; You can list directories or individual files https://orgmode.org/worg/org-tutorials/orgtutorial_dto.html
   (add-hook 'org-mode-hook 'visual-line-mode)
   )
