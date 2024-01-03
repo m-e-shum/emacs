@@ -48,9 +48,9 @@
 	    t)
 #+END_SRC
 * BACKUP
-Information about the [[backup directory][https://www.emacs.wiki.rg/emacs/BackupDirectory]].
+# Information about the [[backup directory][https://www.emacs.wiki.rg/emacs/BackupDirectory]].
 #+BEGIN_SRC emacs-lisp
-  (setq backup-directory-alist `(("." . ,(concat user-emacs-directory "backups")))
+  (setq backup-directory-alist '(("." . "~/.emacs.d/backups"))
 	vc-make-backup-files t
 	version-control t
 	kept-old-versions 0
@@ -156,7 +156,7 @@ Information about the [[backup directory][https://www.emacs.wiki.rg/emacs/Backup
    '((emacs-lisp . t)
      (shell . t)
      (python . t)
-     (jupyter . t) ;; must be last
+     ;;(jupyter . t) ;; must be last
      ))
 #+END_SRC
 * Treesitter
