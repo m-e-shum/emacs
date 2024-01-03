@@ -1,0 +1,463 @@
+#+TITLE: My EMACS Config
+#+AUTHOR: Matt Shum
+
+* EMACS
+#+BEGIN_SRC emacs-lisp
+  (use-package emacs
+    :init
+    ;; TAB cycle if there are only a few candidates
+    (setq completion-cycle-threshold 3)
+    ;; Enable indentation+completion using TAB (completion is often bound to M-TAB)
+    (setq tab-always-indent 'complete))
+#+END_SRC
+* MOUSE
+#+BEGIN_SRC emacs-lisp
+  (unless window-system
+    (require 'mouse)
+    (xterm-mouse-mode t)
+    (global-set-key [mouse-4] (lambda ()
+				(interactive)
+				(scroll-down 1)))
+    (global-set-key [mouse-5] (lambda ()
+				(interactive)
+				(scroll-up 1)))
+    (defun track-mouse (e))
+    (setq mouse-sel-mode t))
+#+END_SRC
+* THEME
+#+BEGIN_SRC emacs-lisp
+  (load-theme 'dracula t)
+#+END_SRC
+* Fix GUI
+#+BEGIN_SRC emacs-lisp
+  (setq inhibit-startup-message t)
+  (setq initial-scratch-message nil)
+  (menu-bar-mode -1)
+#+END_SRC
+* STARTUP
+#+BEGIN_SRC emacs-lisp
+  ;; Minimize garbage collection
+  (defvar file-name-handler-alist-old file-name-handler-alist)
+  (setq file-name-handler-alist nil
+	gc-cons-threshold most-positive-fixnum)
+  ;; Lower threshold to speed up garbage collection
+  (add-hook 'after-init-hook
+	    `(lambda ()
+	       (setq file-name-handler-alist file-name-handler-alist-old)
+	       (setq gc-cons-threshold 20000000))
+	    t)
+#+END_SRC
+* BACKUP
+Information about the [[backup directory][https://www.emacs.wiki.rg/emacs/BackupDirectory]].
+#+BEGIN_SRC emacs-lisp
+  (setq backup-directory-alist `(("." . ,(concat user-emacs-directory "backups")))
+	vc-make-backup-files t
+	version-control t
+	kept-old-versions 0
+	kept-new-versions 10
+	delete-old-versions t
+	backup-by-copying t)
+#+END_SRC
+* ASYNC
+#+BEGIN_SRC emacs-lisp
+  (use-package async
+    :ensure t
+    :defer t
+    :init
+    (dired-async-mode 1))
+#+END_SRC
+* BUFFER
+#+BEGIN_SRC emacs-lisp
+  ;;; DOOM
+  (use-package doom-modeline
+    :ensure t
+    :init (doom-modeline-mode 1))
+  ;;; ibuffer
+  (use-package ibuffer
+    :ensure nil
+    :bind ("C-x C-b" . ibuffer)
+    :init
+    (setq ibuffer-expert t)
+    (setq ibuffer-show-empty-filter-groups nil)
+    ;; Modify the default ibuffer formats
+    (setq ibuffer-formats
+	  '((mark modified read-only " "
+		  (name 40 40 :left :elide)
+		  " "
+		  (mode 16 16 :left :elide)
+		  " "
+		  filename-and-process)))
+    (setq ibuffer-saved-filter-groups
+	  '(("home"
+	     ("Shells" (mode . shell-mode))
+	     ("Magit" (name . "*magit"))
+	     ("Org" (or (mode . org-mode))))))
+    (add-hook 'ibuffer-mode-hook
+	      (lambda ()
+		(ibuffer-switch-to-saved-filter-groups "home"))))
+#+END_SRC
+* EDITOR
+#+BEGIN_SRC emacs-lisp
+  (set-language-environment "UTF-8")
+  (set-default-coding-systems 'utf-8)
+  (global-hl-line-mode t)
+  (line-number-mode +1)
+  (global-display-line-numbers-mode 1)
+  (column-number-mode t)
+  (size-indication-mode t)
+  ;;; ICONS
+  (use-package nerd-icons
+    :ensure t)
+  (use-package nerd-icons-ibuffer
+    :ensure t
+    :hook (ibuffer-mode . nerd-icons-ibuffer-mode))
+  (use-package nerd-icons-dired
+    :hook
+    (dired-mode . nerd-icons-dired-mode))
+  ;;; Highlight indent guides
+  (use-package highlight-indent-guides
+    :ensure t
+    :hook (python-ts-mode . highlight-indent-guides-mode)
+    :config
+    (set-face-foreground 'highlight-indent-guides-character-face "dimgray")
+    (setq highlight-indent-guides-method 'character))
+#+END_SRC
+* ORG
+#+BEGIN_SRC emacs-lisp
+  (use-package org
+    :mode (("\\.org$" . org-mode))
+    :init
+    (setq org-startup-indented t
+          org-startup-folded t ;; start up folded
+          org-ellipsis " 󰅀 " ;; folding symbol
+          org-pretty-entities t
+          org-hide-emphasis-markers nil
+          org-use-speed-compounds t
+          org-return-follows-link t
+          org-completion-use-ido t
+          org-outline-path-complete-in-steps nil
+          org-src-fontify-natively t
+          org-confirm-babel-evaluate nil
+          org-todo-keywords '((sequence "TODO(t)" "IN-PROGRESS(i)" "|" "DONE(d)")
+                              (sequence "|" "WAITING(w)" "CANCELLED(c)"))
+          org-fontify-whole-heading-line t
+          org-fontify-done-headline t
+          org-fontify-quote-and-verse-blocks t
+          org-agenda-files '("~/notes/")
+          org-agenda-block-separator "")
+    (add-hook 'org-mode-hook 'visual-line-mode))
+  ;;; Pretty bullets
+  (use-package org-bullets
+    :ensure t
+    :init (add-hook 'org-mode-hook 'org-bullets-mode))
+  ;;; Coding languages
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((emacs-lisp . t)
+     (shell . t)
+     (python . t)
+     (jupyter . t) ;; must be last
+     ))
+#+END_SRC
+* Treesitter
+** Treesitter
+#+BEGIN_SRC emacs-lisp
+  (use-package treesit-auto
+    :config
+    (global-treesit-auto-mode))
+#+END_SRC
+** Python
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
+  ;;;
+  (use-package auto-virtualenv
+    :ensure t
+    :init
+    (use-package pyvenv
+      :ensure t)
+    :config
+    (add-hook 'python-ts-mode-hook 'auto-virtualenv-set-virtualenv))
+#+END_SRC
+* COMPLETION
+** Vertico
+#+BEGIN_SRC emacs-lisp
+  (use-package vertico
+    :init
+    (require 'vertico-directory)
+    (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy)
+    ;;
+    (use-package orderless
+      :commands (orderless)
+      :custom (completion-styles '(orderless flex)))
+    ;;
+    (use-package marginalia
+      :custom
+      (marginalia-annotators
+       '(marginalia-annotators-heavy marginalia-annotators-light nil))
+      :init
+      (marginalia-mode))
+    ;;
+    (vertico-mode t)
+    :config
+    ;; Do not allow cursor in minibuffer prompt
+    (setq minibuffer-prompt-properties
+	  '(read-only t cursor-intangible t face minibuffer-prompt))
+    (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
+    ;; Enable recursive minibuffers
+    (setq enable-recursive-minibuffers t))
+#+END_SRC
+** Consult
+#+BEGIN_SRC emacs-lisp
+  (use-package consult
+    :after vertico
+    :bind (("C-x b" . consult-buffer)
+	   ("C-x C-k C-k" . consult-kmacro)
+	   ("M-y" . consult-yank-pop)
+	   ("M-g g" . consult-goto-line)
+	   ("M-g M-g" . consult-goto-line)
+	   ("M-s l" . consult-line)
+	   ("M-s L" . consult-line-multi)
+	   ("M-s u" . consult-focus-lines)
+	   ("M-s M-g" . consult-ripgrep)
+	   ("M-s g" . consult-ripgrep)
+	   ("C-x C-SPC" . consult-global-mark)
+	   ("C-x M-:" . consult-complex-command)
+	   ("C-c n" . consult-org-agenda)
+	   :map help-map
+	   ("a" . consult-apropos)
+	   :map minibuffer-local-map
+	   ("M-r" . consult-history))
+    :custom
+    (completion-in-region-function #'consult-completion-in-region)
+    (recentf-mode t))
+  ;;; Consult dir
+  (use-package consult-dir
+    :ensure t
+    :bind (("C-x C-j" . consult-dir)
+	   :map vertico-map
+	   ("C-x C-j" . consult-dir)))
+  ;;; Consult recoll
+  (use-package consult-recoll
+    :bind (("M-s r" . counsel-recoll)
+	   ("C-c I" . recoll-index))
+    :init
+    (setq consult-recoll-inline-snippets t)
+    :config
+    (defun recoll-index (&optional arg) (interactive)
+	   (start-process-shell-command "recollindex"
+					"*recoll-index-process*"
+					"recollindex")))
+#+END_SRC
+** EGLOT
+#+BEGIN_SRC emacs-lisp
+  (use-package eglot
+    :defer t
+    :config
+    (add-to-list 'eglot-server-programs '(python-mode . ("pyright-langserver" "--stdio")))
+    (setq-default eglot-workspace-configuration
+		  '((:pyright . ((useLibraryCodeForTypes . t))))))
+#+END_SRC
+** CORFU
+#+BEGIN_SRC emacs-lisp
+  (use-package corfu
+    :ensure t
+    ;; optional customizations
+    :custom
+    (corfu-cycle t)
+    (corfu-auto t)
+    (corfu-auto-prefix 1)
+    (corfu-auto-delay 0.3)
+    (corfu-popupinfo-delay '(0.5 . 0.2))
+    (corfu-preview-current 'insert)
+    (corfu-preselect 'prompt)
+    (corfu-on-exact-match nil)
+    ;; Optionally use TAB for cycling, default is corfu-complete
+    :bind (:map corfu-map
+		("M-SPC" . corfu-insert-separator)
+		("TAB" . corfu-next)
+		("[tab]" . corfu-next)
+		("S-TAB" . corfu-previous)
+		("[backtab]" . corfu-previous)
+		("S-<return>" . corfu-insert)
+		("RET" . nil))
+    :init
+    (global-corfu-mode)
+    (corfu-popupinfo-mode)
+    (corfu-history-mode)
+    :config
+    (add-hook 'eshell-mode-hook
+	      (lambda () (setq-local corfu-quit-at-boundary t
+				     corfu-quit-no-match t
+				     corfu-auto nil)
+	      (corfu-mode))))
+#+END_SRC
+** Hippie
+#+BEGIN_SRC emacs-lisp
+  (use-package hippie-exp
+    :bind ([remap dabbrev-expand] . hippie-expand)
+    :commands (hippie-expand)
+    :config
+    (setq hippie-expand-try-functions-list
+	  '(try-expand-dabbrev
+	    try-expand-dabbrev-all-buffers
+	    try-expand-dabbrev-from-kill
+	    try-complete-lisp-symbol-partially
+	    try-complete-lisp-symbol
+	    try-complete-file-name-partially
+	    try-complete-file-name
+	    try-expand-all-abbrevs
+	    try-expand-list
+	    try-expand-line)))
+#+END_SRC
+* GIT
+#+BEGIN_SRC emacs-lisp
+  (use-package magit
+    :bind (("C-x v SPC" . magit-status)
+	   :map project-prefix-map
+	   ("m" . project-magit))
+    :commands (magit project-magit)
+    :config
+    (add-to-list 'project-switch-commands
+		 '(project-magit "Magit" m ))
+    (defun project-magit ()
+      (interactive)
+      (let ((dir (project-root (project-current t))))
+	(magit-status dir))))
+  ;;; forge
+  (use-package forge :ensure t :after magit)
+  ;;; ediff
+  (use-package ediff
+    :after (magit vc)
+    :commands (ediff)
+    :init
+    (with-eval-after-load 'winner
+      (add-hook 'ediff-quit-hook 'winner-undo))
+    (setq ediff-window-setup-function 'ediff-setup-windows-plain))
+  ;;;
+  (use-package diff-hl
+    :defer 5
+    :hook ((magit-pre-refresh . diff-hl-magit-pre-refresh)
+	   (magit-pre-refresh . diff-hl-magit-post-refresh))
+    :init (global-diff-hl-mode)
+    :config (diff-hl-flydiff-mode))
+#+END_SRC
+* Quality of Life
+** Search
+#+BEGIN_SRC emacs-lisp
+  (use-package isearch
+    :ensure nil
+    :bind (("C-s" . isearch-forward)
+	   ("M-R" . isearch-replace)
+	   ("C-r" . isearch-backward)
+	   (:map isearch-mode-map
+		 ("M-w" . isearch-save-and-exit)
+		 ("M-R" . isearch-query-replace)
+		 ("M-/" . isearch-complete)))
+    :custom ((isearch-lazy-count t)
+	     (lazy-count-prefix-format nil)
+	     (lazy-count-suffix-format " [%s of %s]")
+	     (search-whitespace-regexp ".*?")
+	     (isearch-lazy-highlight t)
+	     (isearch-lax-whitespace t)
+	     (isearch-regexp-lax-whitespace nil))
+    :config
+    (defun isearch-save-and-exit ()
+      "Exit search normally, and save the search-string on kill-ring."
+      (interactive)
+      (isearch-done)
+      (isearch-clean-overlays)
+      (kill-new isearch-string))
+    ;; Place cursor at the start of the match similar to vim's t
+    ;; C-g will return the cursor to its original position
+    (add-hook 'isearch-mode-end-hook 'my-goto-match-beginning)
+    (defun my-goto-match-beginning ()
+      (when (and isearch-forward isearch-other-end
+		 (not isearch-mode-end-hook-quit))
+	(goto-char isearch-other-end))))
+#+END_SRC
+** Undo
+#+BEGIN_SRC emacs-lisp
+  (use-package undo-fu
+    :ensure t
+    :bind (("C-x u" . undo-fu-only-undo)
+	   ("C-/" . undo-fu-only-undo)
+	   ("C-z" . undo-fu-only-undo)
+	   ("C-S-z" . undo-fu-only-redo)
+	   ("C-x C-u" . undo-fu-only-redo)
+	   ("C-?" . undo-fu-only-redo)))
+  (use-package undo-fu-session ;; Persistant undo history
+    :ensure t
+    :demand t
+    :config (global-undo-fu-session-mode))
+#+END_SRC
+** Dashboard
+#+BEGIN_SRC emacs-lisp
+  (use-package dashboard
+    :ensure t
+    :init
+    (setq dashboard-display-icons-p t) ;; display icons on both GUI and terminal
+    (setq dashboard-icon-type 'nerd-icons) ;; use 'nerd-icons'
+    (setq dashboard-set-heading-icons t)
+    (setq dashboard-set-file-icons t)
+    (setq dashboard-items '((recents . 5)
+                            (agenda . 10)))
+    :config
+    (dashboard-setup-startup-hook))
+#+END_SRC
+** Snippet
+#+BEGIN_SRC emacs-lisp
+  (use-package yasnippet
+    :config
+    (setq yas-snippet-dirs '("~/.emacs.d/snippets/"))
+    (yas-global-mode 1))
+#+END_SRC
+** Other
+#+BEGIN_SRC emacs-lisp
+  (use-package crux
+    :bind (("C-a" . crux-move-beginning-of-line)))
+  ;;; ffap
+  (use-package ffap
+    :ensure nil
+    :bind ("C-x f" . ffap)
+    :custom (find-file-visit-truename t)
+    :init
+    ;; Save my spot when I jump to another file
+    (advice-add 'ffap :before #'push-mark))
+  ;;; Fix path
+  (use-package exec-path-from-shell
+    :ensure t
+    :config
+    (when (memq window-system '(mac ns x))
+      (exec-path-from-shell-initialize)))
+#+END_SRC
+** Project Root
+#+BEGIN_SRC emacs-lisp
+  ;;
+  (defcustom project-root-markers
+    '("Cargo.toml" ".python-version" ".git")
+    "Files or directories that indicate the root of a project"
+    :type '(repeat string)
+    :group 'project)
+  ;;
+  (defun project-root-p (path)
+    "Check if the current PATH has any of the project root markers."
+    (catch 'found
+      (dolist (marker project-root-markers)
+	(when (file-exists-p (concat path marker))
+	  (throw 'found marker)))))
+  ;;
+  (defun project-find-root (path)
+    "Search up the PATH for project-root-markers."
+    (let ((path (expand-file-name path)))
+      (catch 'found
+	(while (not (equal "/" path))
+	  (if (not (project-root-p path))
+	      (setq path (file-name-directory (directory-file-name path)))
+	    (throw 'found (cons 'transient path)))))))
+#+END_SRC
+
+
+
+
+
+
