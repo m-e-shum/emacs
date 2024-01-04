@@ -96,6 +96,29 @@
 	      (lambda ()
 		(ibuffer-switch-to-saved-filter-groups "home"))))
 #+END_SRC
+* BROWSER
+#+BEGIN_SRC emacs-lisp
+  (setq browse-url-browser-function 'eww-browse-url)
+  ;;; engine-mode
+  (use-package engine-mode
+    :ensure t
+    :config
+    ;; search engines via e.g. "M-x github"
+    ;; ... or if there is a keybinding use e.g. "C-x / g"
+    (defengine google "https://www.google.com/search?ie=utf-8&oe=utf-8&q=%s"
+               :keybinding "g")
+    (defengine github "https://github.com/search?ref=simplesearch&q=%s")
+    (defengine pandas "https://pandas.pydata.org/docs/search.html?q=%s")
+    (defengine numpy "https://numpy.org/doc/stable/search.html?q=%s")
+    (defengine scikit-learn "https://scikit-learn.org/stable/search.html?q=%s")
+    (defengine matplotlib "https://matplotlib.org/stable/search.html?q=%s")
+    (defengine sns "https://seaborn.pydata.org/search.html?q=%s")
+    (defengine networkx "https://networkx.org/documentation/stable/search.html?q=%s")
+    (defengine networkit "https://networkit.github.io/dev-docs/search.html?q=%s&check_keywords=yes&area=default")
+    (defengine genecards "https://www.genecards.org/cgi-bin/carddisp.pl?gene=%s")
+
+    (engine-mode t))
+#+END_SRC
 * EDITOR
 #+BEGIN_SRC emacs-lisp
   (set-language-environment "UTF-8")
@@ -143,6 +166,7 @@
           org-fontify-whole-heading-line t
           org-fontify-done-headline t
           org-fontify-quote-and-verse-blocks t
+          org-return-follows-link t
           org-agenda-files '("/da/dmp/cb/shumma1/notes/2024/")
           org-agenda-block-separator "")
     (add-hook 'org-mode-hook 'visual-line-mode))
@@ -177,6 +201,13 @@
       :ensure t)
     :config
     (add-hook 'python-ts-mode-hook 'auto-virtualenv-set-virtualenv))
+  ;;; emacs-jupyter
+  ;; (use-package jupyter
+  ;;   :demand t
+  ;;   :after (:all org python))
+  ;; ;;; test
+  ;; (use-package zmq
+  ;;   :ensure t)
 #+END_SRC
 * COMPLETION
 ** Vertico
@@ -413,6 +444,8 @@
 #+END_SRC
 ** Other
 #+BEGIN_SRC emacs-lisp
+  (add-to-list 'auto-mode-alist '(".bashrc_c7" . shell-script-mode))
+  ;;;
   (use-package crux
     :bind (("C-a" . crux-move-beginning-of-line)))
   ;;; ffap
