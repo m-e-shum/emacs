@@ -195,7 +195,7 @@
           org-fontify-done-headline t
           org-fontify-quote-and-verse-blocks t
           org-return-follows-link t
-          org-agenda-files '("/da/dmp/cb/shumma1/notes/2024/" "~/notes/2024/")
+          org-agenda-files '("~/notes/2024/")
           org-agenda-block-separator "")
     (add-hook 'org-mode-hook 'visual-line-mode))
   ;;; Pretty bullets
