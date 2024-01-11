@@ -98,7 +98,31 @@
 #+END_SRC
 * BROWSER
 #+BEGIN_SRC emacs-lisp
-  (setq browse-url-browser-function 'eww-browse-url)
+  (setq browse-url-browser-function 'eww-browse-url
+        shr-folding-mode t)
+  (use-package shrface
+    :defer t
+    :config
+    (shrface-basic)
+    (shrface-trial)
+    (shrface-default-keybindings)
+    (setq shrface-href-versatile t))
+  ;;;
+  (use-package eww
+    :defer t
+    :init
+    (add-hook 'eww-after-render-hook #'shrface-mode)
+    :config
+    (require 'shrface))
+  ;;;
+  (use-package nov
+    :defer t
+    :init
+    (add-hook 'nov-mode-hook #'shrface-mode)
+    :config
+    (require 'shrface)
+    (setq nov-shr-rendering-functions '((img . nov-render-img) (title . nov-render-title)))
+    (setq nov-shr-rendering-functions (append nov-shr-rendering-functions shr-external-rendering-functions)))
   ;;; engine-mode
   (use-package engine-mode
     :ensure t
@@ -107,6 +131,8 @@
     ;; ... or if there is a keybinding use e.g. "C-x / g"
     (defengine google "https://www.google.com/search?ie=utf-8&oe=utf-8&q=%s"
                :keybinding "g")
+    (defengine wiki "https://www.wikipedia.org/search-redirect.php?language=en&go=Go&search=%s"
+               :keybinding "w")
     (defengine github "https://github.com/search?ref=simplesearch&q=%s")
     (defengine pandas "https://pandas.pydata.org/docs/search.html?q=%s")
     (defengine numpy "https://numpy.org/doc/stable/search.html?q=%s")
@@ -119,6 +145,7 @@
 
     (engine-mode t))
 #+END_SRC
+
 * EDITOR
 #+BEGIN_SRC emacs-lisp
   (set-language-environment "UTF-8")
@@ -286,7 +313,10 @@
     :config
     (add-to-list 'eglot-server-programs '(python-mode . ("pyright-langserver" "--stdio")))
     (setq-default eglot-workspace-configuration
-		  '((:pyright . ((useLibraryCodeForTypes . t))))))
+                  '((:pyright . (
+                                 (useLibraryCodeForTypes . t)
+                                 (typeCheckingMode . "off")
+                                 )))))
 #+END_SRC
 ** CORFU
 #+BEGIN_SRC emacs-lisp
