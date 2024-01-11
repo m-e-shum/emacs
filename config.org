@@ -100,12 +100,13 @@
 #+BEGIN_SRC emacs-lisp
   (setq browse-url-browser-function 'eww-browse-url
         shr-folding-mode t)
+  ;;; to make things look nicer in eww
   (use-package shrface
     :defer t
     :config
     (shrface-basic)
     (shrface-trial)
-    (shrface-default-keybindings)
+    ;;(shrface-default-keybindings)
     (setq shrface-href-versatile t))
   ;;;
   (use-package eww
@@ -114,7 +115,7 @@
     (add-hook 'eww-after-render-hook #'shrface-mode)
     :config
     (require 'shrface))
-  ;;;
+  ;;; for reading EPUB files
   (use-package nov
     :defer t
     :init
@@ -171,11 +172,6 @@
     :config
     (set-face-foreground 'highlight-indent-guides-character-face "dimgray")
     (setq highlight-indent-guides-method 'character))
-  ;;; elpy
-  (use-package elpy
-    :ensure t
-    :init
-    (elpy-enable))
 #+END_SRC
 * ORG
 #+BEGIN_SRC emacs-lisp
