@@ -171,6 +171,11 @@
     :config
     (set-face-foreground 'highlight-indent-guides-character-face "dimgray")
     (setq highlight-indent-guides-method 'character))
+  ;;; elpy
+  (use-package elpy
+    :ensure t
+    :init
+    (elpy-enable))
 #+END_SRC
 * ORG
 #+BEGIN_SRC emacs-lisp
