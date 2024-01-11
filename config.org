@@ -190,7 +190,7 @@
           org-src-fontify-natively t
           org-confirm-babel-evaluate nil
           org-todo-keywords '((sequence "TODO(t)" "IN-PROGRESS(i)" "|" "DONE(d)")
-                              (sequence "|" "WAITING(w)" "CANCELLED(c)"))
+                              (sequence "|" "WAITING(w)" "PAUSED(p)" "CANCELLED(c)"))
           org-fontify-whole-heading-line t
           org-fontify-done-headline t
           org-fontify-quote-and-verse-blocks t
@@ -311,8 +311,11 @@
 #+BEGIN_SRC emacs-lisp
   (use-package eglot
     :defer t
+    :bind (:map eglot-mode-map
+                ("C-c C-d" . eldoc))
     :config
     (add-to-list 'eglot-server-programs '(python-mode . ("pyright-langserver" "--stdio")))
+    (setq eldoc-echo-area-use-multiline-p nil)
     (setq-default eglot-workspace-configuration
                   '((:pyright . (
                                  (useLibraryCodeForTypes . t)
