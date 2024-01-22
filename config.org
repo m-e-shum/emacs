@@ -5,9 +5,13 @@
 #+BEGIN_SRC emacs-lisp
   (use-package emacs
     :init
-    ;; TAB cycle if there are only a few candidates
+    ;;; TAB cycle if there are only a few candidates
     (setq completion-cycle-threshold 3)
-    ;; Enable indentation+completion using TAB (completion is often bound to M-TAB)
+    ;;; Tab width
+    ;;(setq-default indent-tabs-mode nil)
+    (setq-default tab-width 4)
+    ;;(setq indent-line-function 'insert-tab)
+    ;;; Enable indentation+completion using TAB (completion is often bound to M-TAB)
     (setq tab-always-indent 'complete))
 #+END_SRC
 * MOUSE
@@ -177,6 +181,11 @@
 #+BEGIN_SRC emacs-lisp
   (use-package org
     :mode (("\\.org$" . org-mode))
+    ;;; Rebind commands (below currently doesn't work)
+    ;; :bind
+    ;; (:map org-mode-map
+    ;;       ("M-S-<left>" . org-metaleft)
+    ;;       ("M-S-<right>" . org-metaright))
     :init
     (setq org-startup-indented t
           org-startup-folded t ;; start up folded
@@ -220,8 +229,44 @@
 #+END_SRC
 ** Python
 #+BEGIN_SRC emacs-lisp
+  ;;; indent
+  (defun how-many-region (begin end regexp &optional interactive)
+    "Print number of non-trivial matches for REGEXP in region.                    
+     Non-interactive arguments are Begin End Regexp"
+    (interactive "r\nsHow many matches for (regexp): \np")
+    (let ((count 0) opoint)
+      (save-excursion
+        (setq end (or end (point-max)))
+        (goto-char (or begin (point)))
+        (while (and (< (setq opoint (point)) end)
+                    (re-search-forward regexp end t))
+          (if (= opoint (point))
+              (forward-char 1)
+            (setq count (1+ count))))
+        (if interactive (message "%d occurrences" count))
+        count)))
+
+  (defun infer-indentation-style ()
+    ;; if our source file uses tabs, we use tabs, if spaces spaces, and if        
+    ;; neither, we use the current indent-tabs-mode                               
+    (let ((space-count (how-many-region (point-min) (point-max) "^  "))
+          (tab-count (how-many-region (point-min) (point-max) "^\t")))
+      (if (> space-count tab-count) (setq indent-tabs-mode nil))
+      (if (> tab-count space-count) (setq indent-tabs-mode t))))
+
+  ;;; python hook
+  (add-hook 'python-mode-hook
+    (lambda ()
+        (setq indent-tabs-mode t)
+        (infer-indentation-style)
+        (setq py-indent-tabs-mode t)
+        (setq python-indent-def-block-scale 1)
+        )
+    )
+
+  ;;; Ensure python treesitter
   (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
-  ;;;
+
   (use-package auto-virtualenv
     :ensure t
     :init
@@ -229,13 +274,13 @@
       :ensure t)
     :config
     (add-hook 'python-ts-mode-hook 'auto-virtualenv-set-virtualenv))
-  ;;; emacs-jupyter
-  ;; (use-package jupyter
-  ;;   :demand t
-  ;;   :after (:all org python))
-  ;; ;;; test
-  ;; (use-package zmq
-  ;;   :ensure t)
+    ;;; emacs-jupyter
+    ;; (use-package jupyter
+    ;;   :demand t
+    ;;   :after (:all org python))
+    ;; ;;; test
+    ;; (use-package zmq
+    ;;   :ensure t)
 #+END_SRC
 * COMPLETION
 ** Vertico
