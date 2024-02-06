@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: PROPERTIES drawer
+# key: <p
+# --
+:PROPERTIES:
+:type: ${1:type}
+:attendees: ${2:who?}
+:date: ${3:MMDDYY}
+:END:
