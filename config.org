@@ -10,8 +10,9 @@
     ;;; Tab width
     (setq-default indent-tabs-mode nil)
     (setq-default tab-width 4)
+    (setq-default python-indent 4)
     ;;; Enable indentation+completion using TAB (completion is often bound to M-TAB)
-    ;;(setq tab-always-indent 'complete) ;; comment out b/c it makes python docstring indentation screwy
+    (setq tab-always-indent 'complete) ;; comment out b/c it makes python docstring indentation screwy
     )
 #+END_SRC
 * MOUSE
@@ -463,7 +464,6 @@
   (use-package undo-fu
     :ensure t
     :bind (("C-x u" . undo-fu-only-undo)
-	   ("C-/" . undo-fu-only-undo)
 	   ("C-z" . undo-fu-only-undo)
 	   ("C-S-z" . undo-fu-only-redo)
 	   ("C-x C-u" . undo-fu-only-redo)
@@ -541,17 +541,25 @@
 	      (setq path (file-name-directory (directory-file-name path)))
 	    (throw 'found (cons 'transient path)))))))
 #+END_SRC
+** Golden Ratio
+#+BEGIN_SRC emacs-lisp
+  (use-package golden-ratio
+    :ensure t
+    :init
+    (golden-ratio-mode 1))
+#+END_SRC
 ** Indent
 #+BEGIN_SRC emacs-lisp
-  (defun my-python-indent-line ()
-    (if (eq (car (python-indent-context)) :inside-docstring)
-        'noindent
-      (python-indent-line)))
+  ;; (defun my-python-indent-line ()
+  ;;   (if (eq (car (python-indent-context)) :inside-docstring)
+  ;;       'noindent
+  ;;     (python-indent-line)))
 
-  (defun my-python-mode-hook ()
-    (setq indent-line-function #'my-python-indent-line))
-  (add-hook 'python-mode-hook #'my-python-mode-hook)
-    ;; (defun my-python-noindent-docstring (&optional _previous)
+  ;; (defun my-python-mode-hook ()
+  ;;   (setq indent-line-function #'my-python-indent-line))
+  ;; (add-hook 'python-mode-hook #'my-python-mode-hook)
+  ;;   ;; (defun
+  ;;my-python-noindent-docstring (&optional _previous)
     ;;   (if (eq (car (python-indent-context)) :inside-docstring)
     ;;       'noindent))
 
