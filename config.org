@@ -8,11 +8,12 @@
     ;;; TAB cycle if there are only a few candidates
     (setq completion-cycle-threshold 3)
     ;;; Tab width
-    ;;(setq-default indent-tabs-mode nil)
+    (setq-default indent-tabs-mode nil)
     (setq-default tab-width 4)
-    ;;(setq indent-line-function 'insert-tab)
+    (setq-default python-indent 4)
     ;;; Enable indentation+completion using TAB (completion is often bound to M-TAB)
-    (setq tab-always-indent 'complete))
+    (setq tab-always-indent 'complete) ;; comment out b/c it makes python docstring indentation screwy
+    )
 #+END_SRC
 * MOUSE
 #+BEGIN_SRC emacs-lisp
@@ -229,37 +230,10 @@
 #+END_SRC
 ** Python
 #+BEGIN_SRC emacs-lisp
-  ;;; indent
-  ;; (defun how-many-region (begin end regexp &optional interactive)
-  ;;   "Print number of non-trivial matches for REGEXP in region.                    
-  ;;    Non-interactive arguments are Begin End Regexp"
-  ;;   (interactive "r\nsHow many matches for (regexp): \np")
-  ;;   (let ((count 0) opoint)
-  ;;     (save-excursion
-  ;;       (setq end (or end (point-max)))
-  ;;       (goto-char (or begin (point)))
-  ;;       (while (and (< (setq opoint (point)) end)
-  ;;                   (re-search-forward regexp end t))
-  ;;         (if (= opoint (point))
-  ;;             (forward-char 1)
-  ;;           (setq count (1+ count))))
-  ;;       (if interactive (message "%d occurrences" count))
-  ;;       count)))
-
-  ;; (defun infer-indentation-style ()
-  ;;   ;; if our source file uses tabs, we use tabs, if spaces spaces, and if        
-  ;;   ;; neither, we use the current indent-tabs-mode                               
-  ;;   (let ((space-count (how-many-region (point-min) (point-max) "^  "))
-  ;;         (tab-count (how-many-region (point-min) (point-max) "^\t")))
-  ;;     (if (> space-count tab-count) (setq indent-tabs-mode nil))
-  ;;     (if (> tab-count space-count) (setq indent-tabs-mode t))))
-
-  ;; ;;; python hook
+  ;;; python hook
   (add-hook 'python-mode-hook
     (lambda ()
         (setq indent-tabs-mode nil)
-        ;;(infer-indentation-style)
-        ;;(setq py-indent-tabs-mode t)
         (setq python-indent-def-block-scale 1)
         )
     )
@@ -490,7 +464,6 @@
   (use-package undo-fu
     :ensure t
     :bind (("C-x u" . undo-fu-only-undo)
-	   ("C-/" . undo-fu-only-undo)
 	   ("C-z" . undo-fu-only-undo)
 	   ("C-S-z" . undo-fu-only-redo)
 	   ("C-x C-u" . undo-fu-only-redo)
@@ -568,4 +541,27 @@
 	      (setq path (file-name-directory (directory-file-name path)))
 	    (throw 'found (cons 'transient path)))))))
 #+END_SRC
+** Golden Ratio
+#+BEGIN_SRC emacs-lisp
+  (use-package golden-ratio
+    :ensure t
+    :init
+    (golden-ratio-mode 1))
+#+END_SRC
+** Indent
+#+BEGIN_SRC emacs-lisp
+  ;; (defun my-python-indent-line ()
+  ;;   (if (eq (car (python-indent-context)) :inside-docstring)
+  ;;       'noindent
+  ;;     (python-indent-line)))
 
+  ;; (defun my-python-mode-hook ()
+  ;;   (setq indent-line-function #'my-python-indent-line))
+  ;; (add-hook 'python-mode-hook #'my-python-mode-hook)
+  ;;   ;; (defun
+  ;;my-python-noindent-docstring (&optional _previous)
+    ;;   (if (eq (car (python-indent-context)) :inside-docstring)
+    ;;       'noindent))
+
+    ;; (advice-add 'python-indent-line :before-until #'my-python-noindent-docstring)
+#+END_SRC
