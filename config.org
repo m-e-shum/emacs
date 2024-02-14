@@ -7,12 +7,13 @@
     :init
     ;;; TAB cycle if there are only a few candidates
     (setq completion-cycle-threshold 3)
+    ;;; Enable indentation+completion using TAB (completion is often bound to M-TAB)
+    (setq tab-always-indent t) ;; comment out b/c it makes python docstring indentation screwy
     ;;; Tab width
     (setq-default indent-tabs-mode nil)
     (setq-default tab-width 4)
     (setq-default python-indent 4)
-    ;;; Enable indentation+completion using TAB (completion is often bound to M-TAB)
-    (setq tab-always-indent 'complete) ;; comment out b/c it makes python docstring indentation screwy
+    (setq python-indent-guess-indent-offset nil)
     )
 #+END_SRC
 * MOUSE
@@ -348,8 +349,8 @@
     ;; optional customizations
     :custom
     (corfu-cycle t)
-    (corfu-auto t)
-    (corfu-auto-prefix 1)
+    (corfu-auto nil)
+    (corfu-auto-prefix 2)
     (corfu-auto-delay 0.3)
     (corfu-popupinfo-delay '(0.5 . 0.2))
     (corfu-preview-current 'insert)
@@ -357,23 +358,23 @@
     (corfu-on-exact-match nil)
     ;; Optionally use TAB for cycling, default is corfu-complete
     :bind (:map corfu-map
-		("M-SPC" . corfu-insert-separator)
-		("TAB" . corfu-next)
-		("[tab]" . corfu-next)
-		("S-TAB" . corfu-previous)
-		("[backtab]" . corfu-previous)
-		("S-<return>" . corfu-insert)
-		("RET" . nil))
+                ("M-SPC" . corfu-insert-separator)
+                ;;("C-TAB" . corfu-next)
+                ("[tab]" . corfu-next)
+                ;;("C-S-TAB" . corfu-previous)
+                ("[backtab]" . corfu-previous)
+                ("S-<return>" . corfu-insert)
+                ("RET" . nil))
     :init
     (global-corfu-mode)
     (corfu-popupinfo-mode)
     (corfu-history-mode)
     :config
     (add-hook 'eshell-mode-hook
-	      (lambda () (setq-local corfu-quit-at-boundary t
-				     corfu-quit-no-match t
-				     corfu-auto nil)
-	      (corfu-mode))))
+          (lambda () (setq-local corfu-quit-at-boundary t
+                     corfu-quit-no-match t
+                     corfu-auto nil)
+          (corfu-mode))))
 #+END_SRC
 ** Hippie
 #+BEGIN_SRC emacs-lisp
@@ -550,18 +551,17 @@
 #+END_SRC
 ** Indent
 #+BEGIN_SRC emacs-lisp
-  ;; (defun my-python-indent-line ()
-  ;;   (if (eq (car (python-indent-context)) :inside-docstring)
-  ;;       'noindent
-  ;;     (python-indent-line)))
+  (defun electric-indent-ignore-python (char)
+    "Ignore electric indentation for python-mode"
+    (if (equal major-mode 'python-mode)
+        'no-indent
+      nil))
+  (add-hook 'electric-indent-functions 'electric-indent-ignore-python)
 
-  ;; (defun my-python-mode-hook ()
-  ;;   (setq indent-line-function #'my-python-indent-line))
-  ;; (add-hook 'python-mode-hook #'my-python-mode-hook)
-  ;;   ;; (defun
-  ;;my-python-noindent-docstring (&optional _previous)
-    ;;   (if (eq (car (python-indent-context)) :inside-docstring)
-    ;;       'noindent))
-
-    ;; (advice-add 'python-indent-line :before-until #'my-python-noindent-docstring)
+  ;; Enter key executes newline-and-indent
+  (defun set-newline-and-indent ()
+    "Map the return key with `newline-and-indent'"
+    (local-set-key (kbd "RET") 'newline-and-indent))
+  (add-hook 'python-mode-hook 'set-newline-and-indent)
+    
 #+END_SRC
