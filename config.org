@@ -45,19 +45,6 @@ Set the garbage collector threshold, to avoid collections.
   (setq gc-cons-percentage 0.5
       gc-cons-threshold (* 128 1024 1024))
 #+END_SRC
-Report time loading this module.
-#+BEGIN_SRC emacs-lisp
-  (defconst emacs-start-time (current-time))
-
-  (defun report-time-since-load (&optional suffix)
-    (message "Loading init...done (%.3fs)%s"
-             (float-time (time-subtract (current-time) emacs-start-time))
-             suffix))
-
-  (add-hook 'after-init-hook
-            #'(lambda () (report-time-since-load " [after-init]"))
-            t)
-#+END_SRC
 During load of this module, clear ~file-name-handler-alist~.
 #+BEGIN_SRC emacs-lisp
   (defvar file-name-handler-alist-old file-name-handler-alist)
@@ -338,6 +325,8 @@ Information about the [[backup directory][https://www.emacs.wiki.rg/emacs/Backup
     :defer t
     :bind (:map eglot-mode-map
                 ("C-c C-d" . eldoc))
+    :custom
+    (eglot-autoshutdown t)
     :config
     (add-to-list 'eglot-server-programs '(python-mode . ("pyright-langserver" "--stdio")))
     (setq eldoc-echo-area-use-multiline-p nil)
@@ -355,7 +344,7 @@ Information about the [[backup directory][https://www.emacs.wiki.rg/emacs/Backup
     :custom
     (corfu-cycle t)
     (corfu-auto t)
-    (corfu-auto-prefix 1)
+    (corfu-auto-prefix 2)
     (corfu-auto-delay 0.3)
     (corfu-popupinfo-delay '(0.5 . 0.2))
     (corfu-preview-current 'insert)
@@ -363,23 +352,23 @@ Information about the [[backup directory][https://www.emacs.wiki.rg/emacs/Backup
     (corfu-on-exact-match nil)
     ;; Optionally use TAB for cycling, default is corfu-complete
     :bind (:map corfu-map
-		("M-SPC" . corfu-insert-separator)
-		("TAB" . corfu-next)
-		("[tab]" . corfu-next)
-		("S-TAB" . corfu-previous)
-		("[backtab]" . corfu-previous)
-		("S-<return>" . corfu-insert)
-		("RET" . nil))
+        ("M-SPC" . corfu-insert-separator)
+        ("TAB" . corfu-next)
+        ("[tab]" . corfu-next)
+        ("S-TAB" . corfu-previous)
+        ("[backtab]" . corfu-previous)
+        ("S-<return>" . corfu-insert)
+        ("RET" . nil))
     :init
     (global-corfu-mode)
     (corfu-popupinfo-mode)
     (corfu-history-mode)
     :config
     (add-hook 'eshell-mode-hook
-	      (lambda () (setq-local corfu-quit-at-boundary t
-				     corfu-quit-no-match t
-				     corfu-auto nil)
-	      (corfu-mode))))
+          (lambda () (setq-local corfu-quit-at-boundary t
+                     corfu-quit-no-match t
+                     corfu-auto nil)
+          (corfu-mode))))
 #+END_SRC
 ** Hippie
 #+BEGIN_SRC emacs-lisp
