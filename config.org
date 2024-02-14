@@ -22,11 +22,11 @@
     (require 'mouse)
     (xterm-mouse-mode t)
     (global-set-key [mouse-4] (lambda ()
-				(interactive)
-				(scroll-down 1)))
+                                (interactive)
+                                (scroll-down 1)))
     (global-set-key [mouse-5] (lambda ()
-				(interactive)
-				(scroll-up 1)))
+                                (interactive)
+                                (scroll-up 1)))
     (defun track-mouse (e))
     (setq mouse-sel-mode t))
 #+END_SRC
@@ -41,28 +41,35 @@
   (menu-bar-mode -1)
 #+END_SRC
 * STARTUP
+Set the garbage collector threshold, to avoid collections.
 #+BEGIN_SRC emacs-lisp
-  ;; Minimize garbage collection
+  (setq gc-cons-percentage 0.5
+      gc-cons-threshold (* 128 1024 1024))
+#+END_SRC
+During load of this module, clear ~file-name-handler-alist~.
+#+BEGIN_SRC emacs-lisp
   (defvar file-name-handler-alist-old file-name-handler-alist)
-  (setq file-name-handler-alist nil
-	gc-cons-threshold most-positive-fixnum)
-  ;; Lower threshold to speed up garbage collection
+  
+  (setq file-name-handler-alist nil)
+
   (add-hook 'after-init-hook
-	    `(lambda ()
-	       (setq file-name-handler-alist file-name-handler-alist-old)
-	       (setq gc-cons-threshold 20000000))
-	    t)
+          #'(lambda ()
+              (setq file-name-handler-alist file-name-handler-alist-old)))
+#+END_SRC
+Garbage at end of startup.
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'after-init-hook #'garbage-collect t)
 #+END_SRC
 * BACKUP
-# Information about the [[backup directory][https://www.emacs.wiki.rg/emacs/BackupDirectory]].
+Information about the [[backup directory][https://www.emacs.wiki.rg/emacs/BackupDirectory]].
 #+BEGIN_SRC emacs-lisp
   (setq backup-directory-alist '(("." . "~/.emacs.d/backups"))
-	vc-make-backup-files t
-	version-control t
-	kept-old-versions 0
-	kept-new-versions 10
-	delete-old-versions t
-	backup-by-copying t)
+        vc-make-backup-files t
+        version-control t
+        kept-old-versions 0
+        kept-new-versions 10
+        delete-old-versions t
+        backup-by-copying t)
 #+END_SRC
 * ASYNC
 #+BEGIN_SRC emacs-lisp
@@ -87,20 +94,20 @@
     (setq ibuffer-show-empty-filter-groups nil)
     ;; Modify the default ibuffer formats
     (setq ibuffer-formats
-	  '((mark modified read-only " "
-		  (name 40 40 :left :elide)
-		  " "
-		  (mode 16 16 :left :elide)
-		  " "
-		  filename-and-process)))
+          '((mark modified read-only " "
+                  (name 40 40 :left :elide)
+                  " "
+                  (mode 16 16 :left :elide)
+                  " "
+                  filename-and-process)))
     (setq ibuffer-saved-filter-groups
-	  '(("home"
-	     ("Shells" (mode . shell-mode))
-	     ("Magit" (name . "*magit"))
-	     ("Org" (or (mode . org-mode))))))
+          '(("home"
+             ("Shells" (mode . shell-mode))
+             ("Magit" (name . "*magit"))
+             ("Org" (or (mode . org-mode))))))
     (add-hook 'ibuffer-mode-hook
-	      (lambda ()
-		(ibuffer-switch-to-saved-filter-groups "home"))))
+              (lambda ()
+                (ibuffer-switch-to-saved-filter-groups "home"))))
 #+END_SRC
 * BROWSER
 #+BEGIN_SRC emacs-lisp
@@ -228,20 +235,11 @@
   (use-package treesit-auto
     :config
     (global-treesit-auto-mode))
-#+END_SRC
-** Python
-#+BEGIN_SRC emacs-lisp
-  ;;; python hook
-  (add-hook 'python-mode-hook
-    (lambda ()
-        (setq indent-tabs-mode nil)
-        (setq python-indent-def-block-scale 1)
-        )
-    )
 
-  ;;; Ensure python treesitter
   (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
-
+#+END_SRC
+** Pyvenv
+#+BEGIN_SRC emacs-lisp
   (use-package auto-virtualenv
     :ensure t
     :init
@@ -249,43 +247,11 @@
       :ensure t)
     :config
     (add-hook 'python-ts-mode-hook 'auto-virtualenv-set-virtualenv))
-    ;;; emacs-jupyter
-    ;; (use-package jupyter
-    ;;   :demand t
-    ;;   :after (:all org python))
-    ;; ;;; test
-    ;; (use-package zmq
-    ;;   :ensure t)
+    
 #+END_SRC
 * COMPLETION
-** Vertico
-#+BEGIN_SRC emacs-lisp
-  (use-package vertico
-    :init
-    (require 'vertico-directory)
-    (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy)
-    ;;
-    (use-package orderless
-      :commands (orderless)
-      :custom (completion-styles '(orderless flex)))
-    ;;
-    (use-package marginalia
-      :custom
-      (marginalia-annotators
-       '(marginalia-annotators-heavy marginalia-annotators-light nil))
-      :init
-      (marginalia-mode))
-    ;;
-    (vertico-mode t)
-    :config
-    ;; Do not allow cursor in minibuffer prompt
-    (setq minibuffer-prompt-properties
-	  '(read-only t cursor-intangible t face minibuffer-prompt))
-    (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
-    ;; Enable recursive minibuffers
-    (setq enable-recursive-minibuffers t))
-#+END_SRC
 ** Consult
+=consult= provides search and navigation commands based on ~completing-read~.
 #+BEGIN_SRC emacs-lisp
   (use-package consult
     :after vertico
@@ -327,12 +293,41 @@
 					"*recoll-index-process*"
 					"recollindex")))
 #+END_SRC
+** Vertico
+#+BEGIN_SRC emacs-lisp
+  (use-package vertico
+    :init
+    (require 'vertico-directory)
+    (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy)
+    ;;
+    (use-package orderless
+      :commands (orderless)
+      :custom (completion-styles '(orderless flex)))
+    ;;
+    (use-package marginalia
+      :custom
+      (marginalia-annotators
+       '(marginalia-annotators-heavy marginalia-annotators-light nil))
+      :init
+      (marginalia-mode))
+    ;;
+    (vertico-mode t)
+    :config
+    ;; Do not allow cursor in minibuffer prompt
+    (setq minibuffer-prompt-properties
+	  '(read-only t cursor-intangible t face minibuffer-prompt))
+    (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
+    ;; Enable recursive minibuffers
+    (setq enable-recursive-minibuffers t))
+#+END_SRC
 ** EGLOT
 #+BEGIN_SRC emacs-lisp
   (use-package eglot
     :defer t
     :bind (:map eglot-mode-map
                 ("C-c C-d" . eldoc))
+    :custom
+    (eglot-autoshutdown t)
     :config
     (add-to-list 'eglot-server-programs '(python-mode . ("pyright-langserver" "--stdio")))
     (setq eldoc-echo-area-use-multiline-p nil)
@@ -349,7 +344,7 @@
     ;; optional customizations
     :custom
     (corfu-cycle t)
-    (corfu-auto nil)
+    (corfu-auto t)
     (corfu-auto-prefix 2)
     (corfu-auto-delay 0.3)
     (corfu-popupinfo-delay '(0.5 . 0.2))
@@ -358,13 +353,13 @@
     (corfu-on-exact-match nil)
     ;; Optionally use TAB for cycling, default is corfu-complete
     :bind (:map corfu-map
-                ("M-SPC" . corfu-insert-separator)
-                ;;("C-TAB" . corfu-next)
-                ("[tab]" . corfu-next)
-                ;;("C-S-TAB" . corfu-previous)
-                ("[backtab]" . corfu-previous)
-                ("S-<return>" . corfu-insert)
-                ("RET" . nil))
+        ("M-SPC" . corfu-insert-separator)
+        ("TAB" . corfu-next)
+        ("[tab]" . corfu-next)
+        ("S-TAB" . corfu-previous)
+        ("[backtab]" . corfu-previous)
+        ("S-<return>" . corfu-insert)
+        ("RET" . nil))
     :init
     (global-corfu-mode)
     (corfu-popupinfo-mode)
@@ -564,4 +559,18 @@
     (local-set-key (kbd "RET") 'newline-and-indent))
   (add-hook 'python-mode-hook 'set-newline-and-indent)
     
+#+END_SRC
+** Disable warnings
+#+BEGIN_SRC emacs-lisp
+  (eval-when-compile
+    (dolist (sym '(cl-flet lisp-complete-symbol))
+      (setplist sym (use-package-plist-delete
+                     (symbol-plist sym) 'byte-obsolete-info))))
+#+END_SRC
+** aggressive-indent
+Just during emacs-lisp mode.
+#+BEGIN_SRC emacs-lisp
+  (use-package aggressive-indent
+    :diminish
+    :hook (emacs-lisp-mode . aggressive-indent-mode))
 #+END_SRC
