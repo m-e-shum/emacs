@@ -1,6 +1,8 @@
 #+TITLE: My EMACS Config
 #+AUTHOR: Matt Shum
 
+This config.org is largely inspired by John Wiegley's (/the/ maintainer of =emacs=) [[https://github.com/jwiegley/dot-emacs/blob/master/init.org][dot-emacs]] github repo.
+
 * EMACS
 #+BEGIN_SRC emacs-lisp
   (use-package emacs
@@ -8,7 +10,7 @@
     ;;; TAB cycle if there are only a few candidates
     (setq completion-cycle-threshold 3)
     ;;; Enable indentation+completion using TAB (completion is often bound to M-TAB)
-    (setq tab-always-indent t) ;; comment out b/c it makes python docstring indentation screwy
+    ;;(setq tab-always-indent t) ;; comment out b/c it makes python docstring indentation screwy
     ;;; Tab width
     (setq-default indent-tabs-mode nil)
     (setq-default tab-width 4)
@@ -252,47 +254,53 @@ Information about the [[backup directory][https://www.emacs.wiki.rg/emacs/Backup
 #+END_SRC
 * COMPLETION
 ** Consult
-=consult= provides search and navigation commands based on ~completing-read~.
+=consult= provides search and navigation commands based on =emacs= completion function: ~completing-read~. \
+Completion allows you to quickly select an item from a list of candidates.
 #+BEGIN_SRC emacs-lisp
   (use-package consult
     :after vertico
-    :bind (("C-x b" . consult-buffer)
-	   ("C-x C-k C-k" . consult-kmacro)
-	   ("M-y" . consult-yank-pop)
-	   ("M-g g" . consult-goto-line)
-	   ("M-g M-g" . consult-goto-line)
-	   ("M-s l" . consult-line)
-	   ("M-s L" . consult-line-multi)
-	   ("M-s u" . consult-focus-lines)
-	   ("M-s M-g" . consult-ripgrep)
-	   ("M-s g" . consult-ripgrep)
-	   ("C-x C-SPC" . consult-global-mark)
-	   ("C-x M-:" . consult-complex-command)
-	   ("C-c n" . consult-org-agenda)
-	   :map help-map
-	   ("a" . consult-apropos)
-	   :map minibuffer-local-map
-	   ("M-r" . consult-history))
+    :bind (
+       ("C-x b" . consult-buffer)
+       ("C-x C-k C-k" . consult-kmacro)
+       ("M-y" . consult-yank-pop)
+       ("M-g g" . consult-goto-line)
+       ("M-g M-g" . consult-goto-line)
+       ("M-s l" . consult-line)
+       ("M-s L" . consult-line-multi)
+       ("M-s u" . consult-focus-lines)
+       ("M-s M-g" . consult-ripgrep)
+       ("M-s g" . consult-ripgrep)
+       ("C-x C-SPC" . consult-global-mark)
+       ("C-x M-:" . consult-complex-command)
+       ("C-c n" . consult-org-agenda)
+       :map help-map
+       ("a" . consult-apropos)
+       :map minibuffer-local-map
+       ("M-r" . consult-history))
+    :hook
+    (completion-list-mode . consult-preview-at-point-mode)
     :custom
     (completion-in-region-function #'consult-completion-in-region)
     (recentf-mode t))
   ;;; Consult dir
   (use-package consult-dir
     :ensure t
-    :bind (("C-x C-j" . consult-dir)
-	   :map vertico-map
-	   ("C-x C-j" . consult-dir)))
+    :bind (
+       ("M-g d" . consult-dir)
+       :map vertico-map
+       ("M-g d" . consult-dir))
+    )
   ;;; Consult recoll
   (use-package consult-recoll
     :bind (("M-s r" . counsel-recoll)
-	   ("C-c I" . recoll-index))
+       ("C-c I" . recoll-index))
     :init
     (setq consult-recoll-inline-snippets t)
     :config
     (defun recoll-index (&optional arg) (interactive)
-	   (start-process-shell-command "recollindex"
-					"*recoll-index-process*"
-					"recollindex")))
+       (start-process-shell-command "recollindex"
+                    "*recoll-index-process*"
+                    "recollindex")))
 #+END_SRC
 ** Vertico
 #+BEGIN_SRC emacs-lisp
@@ -344,23 +352,29 @@ Information about the [[backup directory][https://www.emacs.wiki.rg/emacs/Backup
     :ensure t
     ;; optional customizations
     :custom
-    (corfu-cycle t)
-    (corfu-auto t)
+    ;;(tab-always-indent 'complete)
+    (corfu-cycle nil)
+    (corfu-auto nil)
     (corfu-auto-prefix 2)
-    (corfu-auto-delay 0.3)
+    (corfu-auto-delay 0.25)
     (corfu-popupinfo-delay '(0.5 . 0.2))
     (corfu-preview-current 'insert)
     (corfu-preselect 'prompt)
     (corfu-on-exact-match nil)
     ;; Optionally use TAB for cycling, default is corfu-complete
-    :bind (:map corfu-map
-        ("M-SPC" . corfu-insert-separator)
-        ("TAB" . corfu-next)
-        ("[tab]" . corfu-next)
-        ("S-TAB" . corfu-previous)
-        ("[backtab]" . corfu-previous)
-        ("S-<return>" . corfu-insert)
-        ("RET" . nil))
+    :bind (("<C>-/" . completion-at-point)
+           :map corfu-map
+           ("M-SPC" . corfu-insert-separator)
+           ("C-n" . corfu-next)
+           ("C-p" . corfu-previous)
+           ("M-d" . corfu-info-documentation)
+           ;;("TAB" . corfu-next)
+           ;;("[tab]" . corfu-next)
+           ;;("S-TAB" . corfu-previous)
+           ;;("[backtab]" . corfu-previous)
+           ("S-<return>" . corfu-insert)
+           ("RET" . nil))
+
     :init
     (global-corfu-mode)
     (corfu-popupinfo-mode)
@@ -370,7 +384,9 @@ Information about the [[backup directory][https://www.emacs.wiki.rg/emacs/Backup
           (lambda () (setq-local corfu-quit-at-boundary t
                      corfu-quit-no-match t
                      corfu-auto nil)
-          (corfu-mode))))
+          (corfu-mode)))
+    
+    )
 #+END_SRC
 ** Hippie
 #+BEGIN_SRC emacs-lisp
@@ -460,11 +476,10 @@ Information about the [[backup directory][https://www.emacs.wiki.rg/emacs/Backup
 #+BEGIN_SRC emacs-lisp
   (use-package undo-fu
     :ensure t
-    :bind (("C-x u" . undo-fu-only-undo)
-	   ("C-z" . undo-fu-only-undo)
-	   ("C-S-z" . undo-fu-only-redo)
-	   ("C-x C-u" . undo-fu-only-redo)
-	   ("C-?" . undo-fu-only-redo)))
+    :bind (
+           ("C-x u" . undo-fu-only-undo)
+           ("C-x C-u" . undo-fu-only-redo)
+           ))
   (use-package undo-fu-session ;; Persistant undo history
     :ensure t
     :demand t
@@ -538,12 +553,12 @@ Information about the [[backup directory][https://www.emacs.wiki.rg/emacs/Backup
 	      (setq path (file-name-directory (directory-file-name path)))
 	    (throw 'found (cons 'transient path)))))))
 #+END_SRC
-** Golden Ratio
+** Golden Ratio (commented out)
 #+BEGIN_SRC emacs-lisp
-  (use-package golden-ratio
-    :ensure t
-    :init
-    (golden-ratio-mode 1))
+  ;; (use-package golden-ratio
+  ;;   :ensure t
+  ;;   :init
+  ;;   (golden-ratio-mode 1))
 #+END_SRC
 ** Indent
 #+BEGIN_SRC emacs-lisp
