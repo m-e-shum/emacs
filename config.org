@@ -14,6 +14,7 @@
     (setq-default tab-width 4)
     (setq-default python-indent 4)
     (setq python-indent-guess-indent-offset nil)
+    (global-unset-key "C-/")
     )
 #+END_SRC
 * MOUSE
