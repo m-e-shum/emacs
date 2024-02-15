@@ -4,10 +4,11 @@
 
 (setq package-archives
       '(("melpa" . "https://melpa.org/packages/")
-	("elpa" . "https://elpa.gnu.org/packages/")))
-;;; use-package
+	    ("elpa" . "https://elpa.gnu.org/packages/")))
+
 (package-initialize)
 
+;;; use-package
 (setq use-package-always-ensure t)
 
 (unless (package-installed-p 'use-package)
@@ -27,4 +28,6 @@
 
 ;;; custom.el
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+
+;;; Load from `config.org`
 (org-babel-load-file (expand-file-name "~/.emacs.d/config.org"))
