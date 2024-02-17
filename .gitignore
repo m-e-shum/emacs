@@ -10,3 +10,6 @@ transient
 tree-sitter
 undo*
 config.el
+old_config*
+.yas-compiled-snippets.el
+*~
