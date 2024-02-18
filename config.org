@@ -1,7 +1,7 @@
 #+TITLE: dotemacs
 #+AUTHOR: Matt Shum
 
-Inspired by the maintainer of emacs, Jon Wiegley. 
+Inspired by the maintainer of =emacs=, Jon Wiegley.
 
 * Startup
 ** use-package
@@ -9,7 +9,6 @@ Inspired by the maintainer of emacs, Jon Wiegley.
   (eval-and-compile
     (defsubst emacs-path (path)
       (expand-file-name path user-emacs-directory))
-
     (setq-local package-enable-at-startup nil
                 load-path
                 (append (list (emacs-path "use-package"))
@@ -47,6 +46,12 @@ Top level.
     (global-display-line-numbers-mode 1)
     (column-number-mode 1)
     (size-indication-mode t)
+    (visible-bell t)
+    (backup-directory-alist '(("." . "~/.emacs.d/backups")))
+    (delete-old-versions t)
+    (version-control t)
+    (vc-make-backup-files t)
+    (indent-tabs-mode nil)
     )
   ;;; Garbage collect at the end
   (add-hook 'after-init-hook #'garbage-collect t)
@@ -207,6 +212,19 @@ Highlights.
     (yas-reload-all)
     (yas-global-mode 1))
 #+END_SRC
+** git
+*** magit
+#+BEGIN_SRC emacs-lisp
+  (use-package magit
+    :demand t
+    :bind
+    (("C-x g" . magit-status))
+    )
+#+END_SRC
+*** ediff
+#+BEGIN_SRC emacs-lisp
+  (use-package ediff)
+#+END_SRC
 ** Completion
 *** Consult
 Provides search and navigation commands.
@@ -220,6 +238,13 @@ Provides search and navigation commands.
   (use-package consult-dir
     :bind (("M-g d" . consult-dir))
     )
+  (use-package consult-dir-vertico
+    :no-require t
+    :after (consult-dir vertico)
+    :defines (vertico-map)
+    :bind (:map vertico-map
+                ("M-g d"   . consult-dir)
+                ("M-s f"   . consult-dir-jump-file)))
   (use-package consult-yasnippet
     :after (consult yasnippet))
 #+END_SRC
@@ -251,7 +276,7 @@ Completion.
     (corfu-count 10) ;; max number of candidates to show (default is 10)
     (corfu-cycle nil)
     ;; Other
-    (corfu-echo-documentation t)        ; Already use corfu-popupinfo
+    (corfu-echo-documentation nil)        ; Already use corfu-popupinfo
     :preface
     (defun corfu-enable-always-in-minibuffer ()
       "Enable Corfu in the minibuffer if Vertico/Mct are not active."
@@ -273,6 +298,21 @@ Completion.
     ;; https://github.com/minad/corfu#completing-with-corfu-in-the-minibuffer
     (add-hook 'minibuffer-setup-hook #'corfu-enable-always-in-minibuffer 1)
     )
+  (use-package corfu-popupinfo
+    :after corfu
+    :hook (corfu-mode . corfu-popupinfo-mode)
+    :bind (:map corfu-map
+                ("M-n" . corfu-popupinfo-scroll-up)
+                ("M-p" . corfu-popupinfo-scroll-down)
+                ([remap corfu-show-documentation] . corfu-popupinfo-toggle))
+    :custom
+    (corfu-popupinfo-delay 0.5)
+    (corfu-popupinfo-max-width 70)
+    (corfu-popupinfo-max-height 20)
+    ;; Also here to be extra-safe that this is set when `corfu-popupinfo' is
+    ;; loaded. I do not want documentation shown in both the echo area and in
+    ;; the `corfu-popupinfo' popup.
+    (corfu-echo-documentation nil))
 #+END_SRC
 *** Vertico
 #+BEGIN_SRC emacs-lisp
@@ -325,7 +365,7 @@ To be used in combination with Corfu.
     (completion-category-overrides
      '((file (styles basic partial-completion)))))
 #+END_SRC
-*** embark
+*** Embark
 [[https://github.com/oantolin/embark][Embark]]
 #+BEGIN_SRC emacs-lisp
   (use-package embark
@@ -349,14 +389,28 @@ To be used in combination with Corfu.
     :hook
     (embark-collect-mode . consult-preview-at-point-mode))
 #+END_SRC
-*** Code completion
-**** Treesit
+** Languages
+*** Markdown
 #+BEGIN_SRC emacs-lisp
-  (use-package treesit-auto
-    :config
-    (global-treesit-auto-mode))
+  (use-package markdown-mode
+    :demand t
+    :mode (("\\`README\\.md\\'" . gfm-mode)
+           ("\\.md\\'"          . markdown-mode)
+           ("\\.markdown\\'"    . markdown-mode))
+    :custom
+    ;;(markdown-command "pandoc -f markdown_github+smart")
+    (markdown-command-needs-filename t)
+    (markdown-enable-math t)
+    (markdown-open-command "marked")
+    :custom-face
+    (markdown-header-face-1 ((t (:inherit markdown-header-face :height 2.0))))
+    (markdown-header-face-2 ((t (:inherit markdown-header-face :height 1.6))))
+    (markdown-header-face-3 ((t (:inherit markdown-header-face :height 1.4))))
+    (markdown-header-face-4 ((t (:inherit markdown-header-face :height 1.2))))
+    :init
+    (setq markdown-command-needs-filename "multimarkdown"))
 #+END_SRC
-**** Python
+*** Python Environment
 Autovirtualenv
 #+BEGIN_SRC emacs-lisp
   (use-package auto-virtualenv
@@ -365,10 +419,18 @@ Autovirtualenv
     (use-package pyvenv)
     :hook (python-ts-mode . 'autovirtualenv-set-virtualenv))
 #+END_SRC
-**** Eglot
+*** Grammar
+#+BEGIN_SRC emacs-lisp
+  (use-package treesit-auto
+    :config
+    (global-treesit-auto-mode))
+#+END_SRC
+*** Eglot
 #+BEGIN_SRC emacs-lisp
   (use-package eglot
     :defer t
+    :custom
+    (eglot-autoshutdown t)
     :config
     (add-to-list 'eglot-server-programs
                  '(python-ts-mode . ("pyright-langserver" "--stdio")))
@@ -382,6 +444,13 @@ Autovirtualenv
                  '(eglot (styles orderless basic))))
 #+END_SRC
 * Quality of life
+** crux
+A Collection of Ridiculously Useful eXtensions (=CRUX=) for =emacs=.
+#+BEGIN_SRC emacs-lisp
+  (use-package crux
+    :bind
+    (("C-a" . crux-move-beginning-of-line)))
+#+END_SRC
 ** Undo
 #+BEGIN_SRC emacs-lisp
   (use-package undo-fu
@@ -395,8 +464,31 @@ Autovirtualenv
     :config
     (global-undo-fu-session-mode))
 #+END_SRC
-
-
+** Search
+#+BEGIN_SRC emacs-lisp
+  (use-package isearch
+    :bind
+    (("C-s" . isearch-forward)
+     ("C-r" . isearch-backward))
+    :custom
+    (isearch-lazy-count t)
+    (isearch-lazy-highlight t)
+    (isearch-lax-whitespace t))
+#+END_SRC
+** Dashboard
+#+BEGIN_SRC emacs-lisp
+  (use-package dashboard
+    :ensure t
+    :init
+    (setq dashboard-display-icons-p t
+          dashboard-icon-type 'nerd-icons
+          dashboard-set-heading-icons t
+          dashboard-set-file-icons t
+          dashboard-items '((recents . 5)
+                            (agenda . 10)))
+    :config
+    (dashboard-setup-startup-hook))
+#+END_SRC
 
 
 
