@@ -13,7 +13,7 @@ Top level.
   ;;; Emacs defaults
   (use-package emacs
     :custom
-    (fill-column 88) ;; max line width
+    (fill-column 81) ;; max line width (for 1/2 of iterm)
     (inhibit-startup-message t)
     (initial-scratch-message nil)
     (user-full-name "Matthew Shum")
@@ -180,6 +180,7 @@ Highlights.
 #+BEGIN_SRC emacs-lisp
   (use-package yasnippet
     :mode ("~/.emacs.d/snippets/" . snippet-mode)
+    :hook (prog-mode . yas-minor-mode-on)
     :config
     (setq yas-snippet-dirs '("~/.emacs.d/snippets/"))
     (yas-recompile-all)
@@ -199,6 +200,8 @@ Provides search and navigation commands.
   (use-package consult-dir
     :bind (("M-g d" . consult-dir))
     )
+  (use-package consult-yasnippet
+    :after (consult yasnippet))
 #+END_SRC
 *** Corfu
 Completion.
@@ -326,6 +329,41 @@ To be used in combination with Corfu.
     :hook
     (embark-collect-mode . consult-preview-at-point-mode))
 #+END_SRC
+*** Code completion
+**** Treesit
+#+BEGIN_SRC emacs-lisp
+  (use-package treesit-auto
+    :config
+    (global-treesit-auto-mode))
+#+END_SRC
+**** Python
+Autovirtualenv
+
+**** Eglot
+#+BEGIN_SRC emacs-lisp
+  (use-package eglot
+    :defer t
+    :config
+    (add-to-list 'eglot-server-programs
+                 '(python-ts-mode . ("pyright-langserver" "--stdio")))
+    (setq eglot-workspace-configuration
+          '((:pyright . ((useLibraryCodeForTypes . t))))))
+#+END_SRC
+* Quality of life
+** Undo
+#+BEGIN_SRC emacs-lisp
+  (use-package undo-fu
+    :ensure t
+    :bind
+    (("C-x u" . undo-fu-only-undo)
+     ("C-x C-u" . undo-fu-only-redo)))
+  (use-package undo-fu-session
+    :ensure t
+    :demand t
+    :config
+    (global-undo-fu-session-mode))
+#+END_SRC
+
 
 
 
