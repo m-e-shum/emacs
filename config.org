@@ -111,6 +111,9 @@ Highlights.
 #+BEGIN_SRC emacs-lisp
   (use-package nerd-icons
     :ensure t)
+  (use-package nerd-icons-ibuffer
+    :ensure t
+    :hook (ibuffer-mode . nerd-icons-ibuffer-mode))
   (use-package nerd-icons-dired
     :hook (dired-mode . nerd-icons-dired-mode))
 #+END_SRC
