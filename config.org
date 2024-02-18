@@ -116,6 +116,13 @@ Highlights.
     :hook (ibuffer-mode . nerd-icons-ibuffer-mode))
   (use-package nerd-icons-dired
     :hook (dired-mode . nerd-icons-dired-mode))
+  (use-package nerd-icons-completion
+    :after marginalia
+    :hook
+    (marginalia-mode . nerd-icons-completion-marginalia-setup)
+    :config
+    (nerd-icons-completion-mode))
+
 #+END_SRC
 *** Buffers
 #+BEGIN_SRC emacs-lisp
@@ -291,6 +298,8 @@ Completion.
         (apply #'consult-completion-in-region completion-in-region--data)))
     :config
     (global-corfu-mode)
+    ;; Nerd icons in corfu
+    (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter)
 
     ;; Enable Corfu more generally for every minibuffer, as long as no other
     ;; completion UI is active. If you use Mct or Vertico as your main
