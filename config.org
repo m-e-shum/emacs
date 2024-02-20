@@ -494,7 +494,7 @@ A Collection of Ridiculously Useful eXtensions (=CRUX=) for =emacs=.
           dashboard-set-heading-icons t
           dashboard-set-file-icons t
           dashboard-items '((recents . 5)
-                            ;;(projects . 10)
+                            ;;(projects . 5)
                             (agenda . 10)))
     :config
     ;; (defun dashboard-insert-custom (list-size)
