@@ -9,14 +9,14 @@ This config.org is largely inspired by John Wiegley's (/the/ maintainer of =emac
     :init
     ;;; TAB cycle if there are only a few candidates
     (setq completion-cycle-threshold 3)
-    ;;; Enable indentation+completion using TAB (completion is often bound to M-TAB)
-    ;;(setq tab-always-indent t) ;; comment out b/c it makes python docstring indentation screwy
     ;;; Tab width
     (setq-default indent-tabs-mode nil)
     (setq-default tab-width 4)
     (setq-default python-indent 4)
     (setq python-indent-guess-indent-offset nil)
-    (global-unset-key "C-/")
+    (setq tab-always-indent t)
+    :config
+    (unbind-key (kbd "C-_") 'global-map)
     )
 #+END_SRC
 * MOUSE
@@ -236,10 +236,18 @@ Information about the [[backup directory][https://www.emacs.wiki.rg/emacs/Backup
 ** Treesitter
 #+BEGIN_SRC emacs-lisp
   (use-package treesit-auto
+    :custom
+    (treesit-auto-install 'prompt)
     :config
-    (global-treesit-auto-mode))
-
-  (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
+    (treesit-auto-add-to-auto-mode-alist 'all)
+    (global-treesit-auto-mode)
+    (use-package combobulate
+      :preface
+      (setq combobulate-key-prefix "C-c o")
+      :hook ((python-ts-mode . combobulate-mode))
+      :load-path ("~/.emacs.d/combobulate")
+      )
+    )
 #+END_SRC
 ** Pyvenv
 #+BEGIN_SRC emacs-lisp
@@ -344,7 +352,11 @@ Completion allows you to quickly select an item from a list of candidates.
                   '((:pyright . (
                                  (useLibraryCodeForTypes . t)
                                  (typeCheckingMode . "off")
-                                 )))))
+                                 ))))
+    (setq completion-category-overrides '((eglot (styles orderless))
+                                          (eglot-capf (styles orderless))))
+    (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)
+    )
 #+END_SRC
 ** CORFU
 #+BEGIN_SRC emacs-lisp
@@ -361,8 +373,13 @@ Completion allows you to quickly select an item from a list of candidates.
     (corfu-preview-current 'insert)
     (corfu-preselect 'prompt)
     (corfu-on-exact-match nil)
+    :init
+    (global-corfu-mode)
+    (corfu-popupinfo-mode)
+    (corfu-history-mode)
     ;; Optionally use TAB for cycling, default is corfu-complete
-    :bind (("<C>-/" . completion-at-point)
+    :bind (("C-/" . completion-at-point)
+           ("C-_" . completion-at-point)
            :map corfu-map
            ("M-SPC" . corfu-insert-separator)
            ("C-n" . corfu-next)
@@ -374,18 +391,13 @@ Completion allows you to quickly select an item from a list of candidates.
            ;;("[backtab]" . corfu-previous)
            ("S-<return>" . corfu-insert)
            ("RET" . nil))
-
-    :init
-    (global-corfu-mode)
-    (corfu-popupinfo-mode)
-    (corfu-history-mode)
     :config
     (add-hook 'eshell-mode-hook
           (lambda () (setq-local corfu-quit-at-boundary t
                      corfu-quit-no-match t
                      corfu-auto nil)
           (corfu-mode)))
-    
+
     )
 #+END_SRC
 ** Hippie
@@ -590,3 +602,4 @@ Just during emacs-lisp mode.
     :diminish
     :hook (emacs-lisp-mode . aggressive-indent-mode))
 #+END_SRC
+
