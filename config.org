@@ -195,7 +195,9 @@ Highlights.
           org-ellipsis " 󰅀 " ;; folding symbol
           org-hide-emphasis-markers nil
           org-pretty-entities t
-          org-agenda-files '("/da/dmp/cb/shumma1/notes/")
+          org-todo-keywords '((sequence "TODO(t)" "IN-PROGRESS(i)" "|" "DONE(d)")
+                              (sequence "|" "WAITING(w)" "PAUSED(p)" "CANCELLED(c)"))
+          org-agenda-files '("/da/dmp/cb/shumma1/notes/2024")
           ))
   (use-package org-bullets
     :ensure t
@@ -497,6 +499,14 @@ A Collection of Ridiculously Useful eXtensions (=CRUX=) for =emacs=.
                             ;;(projects . 5)
                             (agenda . 10)))
     :config
+    (defun read-lines (filePath)
+      "Return a list of lines of a file at filePath."
+      (with-temp-buffer
+        (insert-file-contents filePath)
+        (split-string (buffer-string) "\n" t)))
+    ;; Use file as random footer message
+    (setq dashboard-footer-messages (read-lines "~/.emacs.d/dashboard-quotes.txt"))
+    
     ;; (defun dashboard-insert-custom (list-size)
     ;;   (insert "I really only love God as much as I love the person I love the least. (Dorothy Day)"))
     ;; (add-to-list 'dashboard-item-generators  '(custom . dashboard-insert-custom))
