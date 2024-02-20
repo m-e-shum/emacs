@@ -494,8 +494,13 @@ A Collection of Ridiculously Useful eXtensions (=CRUX=) for =emacs=.
           dashboard-set-heading-icons t
           dashboard-set-file-icons t
           dashboard-items '((recents . 5)
+                            ;;(projects . 10)
                             (agenda . 10)))
     :config
+    ;; (defun dashboard-insert-custom (list-size)
+    ;;   (insert "I really only love God as much as I love the person I love the least. (Dorothy Day)"))
+    ;; (add-to-list 'dashboard-item-generators  '(custom . dashboard-insert-custom))
+    ;; (add-to-list 'dashboard-items '(custom) t)
     (dashboard-setup-startup-hook))
 #+END_SRC
 
