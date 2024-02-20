@@ -427,8 +427,11 @@ Autovirtualenv
   (use-package auto-virtualenv
     :ensure t
     :init
-    (use-package pyvenv)
-    :hook (python-ts-mode . 'autovirtualenv-set-virtualenv))
+    (use-package pyvenv
+      :ensure t)
+    :config
+    (add-hook 'python-mode-hook 'auto-virtualenv-set-virtualenv)
+    )
 #+END_SRC
 *** Grammar
 #+BEGIN_SRC emacs-lisp
