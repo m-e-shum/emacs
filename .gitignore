@@ -18,3 +18,5 @@ tree-sitter*
 undo-fu-session
 url/
 .yas*
+old*
+test*
