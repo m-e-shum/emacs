@@ -52,6 +52,7 @@ Top level.
     (version-control t)
     (vc-make-backup-files t)
     (indent-tabs-mode nil)
+    (debug-on-error t)
     )
   ;;; Garbage collect at the end
   (add-hook 'after-init-hook #'garbage-collect t)
@@ -149,12 +150,12 @@ Highlights.
          (or
           (mode . python-mode)
           (mode . python-ts-mode))
-        ("Rust"
-         (or
-          (mode . rust-mode)
-          (mode . cargo-mode)
-          (name . "\\*Cargo")
-          (name . "^\\*rls\\(::stderr\\)?\\*")))
+        ;; ("Rust"
+        ;;  (or
+        ;;   (mode . rust-mode)
+        ;;   (mode . cargo-mode)
+        ;;   (name . "\\*Cargo")
+        ;;   (name . "^\\*rls\\(::stderr\\)?\\*")))
         ("Lisp"
          (mode . emacs-lisp-mode))
         ("Dired"
@@ -177,6 +178,12 @@ Highlights.
                #'(lambda ()
                    (ibuffer-switch-to-saved-filter-groups "default")))
     )
+#+END_SRC
+*** Modeline
+#+BEGIN_SRC emacs-lisp
+  (use-package doom-modeline
+    :ensure t
+    :init (doom-modeline-mode 1))
 #+END_SRC
 ** ~emacs-lisp~ formatting
 #+BEGIN_SRC emacs-lisp
@@ -425,13 +432,13 @@ To be used in combination with Corfu.
 Autovirtualenv
 #+BEGIN_SRC emacs-lisp
   (use-package auto-virtualenv
-    :ensure t
-    :init
-    (use-package pyvenv
-      :ensure t)
-    :config
-    (add-hook 'python-mode-hook 'auto-virtualenv-set-virtualenv)
-    )
+     :ensure t
+     :init
+     (use-package pyvenv
+       :ensure t)
+     :config
+     (add-hook 'python-mode-hook 'auto-virtualenv-set-virtualenv)
+     )
 #+END_SRC
 *** Grammar
 #+BEGIN_SRC emacs-lisp
