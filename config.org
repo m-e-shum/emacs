@@ -149,13 +149,13 @@ Highlights.
         ("Python"
          (or
           (mode . python-mode)
-          (mode . python-ts-mode))
-        ;; ("Rust"
-        ;;  (or
-        ;;   (mode . rust-mode)
-        ;;   (mode . cargo-mode)
-        ;;   (name . "\\*Cargo")
-        ;;   (name . "^\\*rls\\(::stderr\\)?\\*")))
+          (mode . python-ts-mode)))
+        ("Rust"
+         (or
+          (mode . rust-mode)
+          (mode . cargo-mode)
+          (name . "\\*Cargo")
+          (name . "^\\*rls\\(::stderr\\)?\\*")))
         ("Lisp"
          (mode . emacs-lisp-mode))
         ("Dired"
@@ -172,7 +172,7 @@ Highlights.
           (name . "^\\*scratch\\*$")
           (name . "^\\*Messages\\*$")
           (name . "^\\*\\(Customize\\|Help\\)")
-          (name . "\\*\\(Echo\\|Minibuf\\)")))))))
+          (name . "\\*\\(Echo\\|Minibuf\\)"))))))
      :init
      (add-hook 'ibuffer-mode-hook
                #'(lambda ()
