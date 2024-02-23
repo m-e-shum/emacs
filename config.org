@@ -186,10 +186,16 @@ Highlights.
     :init (doom-modeline-mode 1))
 #+END_SRC
 ** ~emacs-lisp~ formatting
+Aggressive indent.
 #+BEGIN_SRC emacs-lisp
   (use-package aggressive-indent
     :diminish
     :hook (emacs-lisp-mode . aggressive-indent-mode))
+#+END_SRC
+Setting correct mode based on file extension.
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'auto-mode-alist '(".bashrc_c7" . shell-script-mode))
+  (add-to-list 'auto-mode-alist '(".yml" . yaml-ts-mode))
 #+END_SRC
 * ORG
 #+BEGIN_SRC emacs-lisp  
