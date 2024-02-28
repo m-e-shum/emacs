@@ -529,6 +529,13 @@ A Collection of Ridiculously Useful eXtensions (=CRUX=) for =emacs=.
     ;; (add-to-list 'dashboard-items '(custom) t)
     (dashboard-setup-startup-hook))
 #+END_SRC
+** browse-ur
+#+BEGIN_SRC emacs-lisp
+  (use-package browse-url
+    :defer t
+    :custom
+    (browse-url-browser-function 'browse-url-default-macosx-browser))
+#+END_SRC
 
 
 
