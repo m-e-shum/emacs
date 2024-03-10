@@ -51,7 +51,15 @@ Top level.
     (delete-old-versions t)
     (version-control t)
     (vc-make-backup-files t)
+    (frame-resize-pixelwise t)
+    (window-sides-vertical t)
+    ;;; code
     (indent-tabs-mode nil)
+    ;;; apple stuff
+    (mac-command-modifier 'meta)
+    (mac-option-modifier 'alt)
+    (mac-pass-command-to-system nil)
+    ;;; debug
     (debug-on-error t)
     )
   ;;; Garbage collect at the end
