@@ -55,6 +55,10 @@ Top level.
     (window-sides-vertical t)
     ;;; code
     (indent-tabs-mode nil)
+    (tab-width 4)
+    ;;; python
+    (python-indent-guess-indent-offset nil)
+    (python-indent-offset 4)
     ;;; apple stuff
     (mac-command-modifier 'meta)
     (mac-option-modifier 'alt)
@@ -102,11 +106,47 @@ Set up mouse movement to work with emacs.
     :init (dired-async-mode 1))
 #+END_SRC
 ** appearance
-*** Added looks
+*** Choose Theme
 Dracula theme.
 #+BEGIN_SRC emacs-lisp
-  (load-theme 'dracula t)
+  ;;(load-theme 'dracula t)
 #+END_SRC
+Modus theme.
+#+BEGIN_SRC emacs-lisp
+  ;; Configure the Modus Themes' appearance
+  (setq modus-themes-mode-line '(modus-themes-tabs-accented borderless)
+        modus-themes-bold-constructs t
+        modus-themes-italic-constructs t
+        modus-themes-fringes 'subtle
+        modus-themes-tabs-accented t
+        modus-themes-paren-match '(bold intense)
+        modus-themes-prompts '(bold intense)
+        modus-themes-completions '((matches . (extrabold underline))
+                                   (selection . (semibold italic)))
+        modus-themes-org-blocks 'tinted-background
+        modus-themes-scale-headings t
+        modus-themes-region '(bg-only)
+        modus-themes-headings
+        '((1 . (rainbow overline background 1.4))
+          (2 . (rainbow background 1.3))
+          (3 . (rainbow bold 1.2))
+          (t . (semilight 1.1))))
+  ;; 
+  (load-theme 'modus-vivendi t)
+#+END_SRC
+
+#+RESULTS:
+: t
+Spacious Padding.
+#+BEGIN_SRC emacs-lisp
+  (use-package spacious-padding
+    :ensure t
+    :hook (after-init . spacious-padding-mode))
+#+END_SRC
+
+#+RESULTS:
+: #s(hash-table size 65 test eql rehash-size 1.5 rehash-threshold 0.8125 data (:use-package (26113 35172 677614 701000) :init (26113 35172 677588 952000) :init-secs (0 0 56 748000) :use-package-secs (0 10 117723 880000)))
+
 Highlights.
 #+BEGIN_SRC emacs-lisp
   ;;; highlight indent
@@ -188,11 +228,16 @@ Highlights.
     )
 #+END_SRC
 *** Modeline
+Doom Modeline.
 #+BEGIN_SRC emacs-lisp
   (use-package doom-modeline
     :ensure t
     :init (doom-modeline-mode 1))
 #+END_SRC
+
+#+RESULTS:
+: #s(hash-table size 65 test eql rehash-size 1.5 rehash-threshold 0.8125 data (:use-package (26113 34639 323804 620000) :init (26113 34639 323798 416000) :config (26113 34639 323779 816000) :config-secs (0 0 5 643000) :init-secs (0 0 172858 163000) :use-package-secs (0 0 173126 742000)))
+
 ** ~emacs-lisp~ formatting
 Aggressive indent.
 #+BEGIN_SRC emacs-lisp
@@ -465,13 +510,18 @@ Autovirtualenv
 #+BEGIN_SRC emacs-lisp
   (use-package eglot
     :defer t
+    :hook ((bash-ts-mode . eglot-ensure)
+           (yaml-ts-mode . eglot-ensure)
+           (markdown-mode . eglot-ensure)
+           (rust-ts-mode-hook . eglot-ensure))
     :custom
     (eglot-autoshutdown t)
     :config
-    (add-to-list 'eglot-server-programs
-                 '(python-ts-mode . ("pyright-langserver" "--stdio")))
     (setq eglot-workspace-configuration
-          '((:pyright . ((useLibraryCodeForTypes . t))))))
+          '( :pylsp (:plugins (:ruff ( :enabled t
+                                       :linelength 88
+                                       :indent-style "space"
+                                       ))))))
   (use-package eglot-orderless
     :no-require t
     :after (eglot orderless)
