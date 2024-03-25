@@ -3,7 +3,7 @@
 
 Inspired by the maintainer of =emacs=, John Wiegley.
 
-* Startup
+ Startup
 ** use-package
 #+BEGIN_SRC emacs-lisp
   (eval-and-compile
@@ -264,7 +264,7 @@ Setting correct mode based on file extension.
           org-return-follows-link t
           org-todo-keywords '((sequence "TODO(t)" "IN-PROGRESS(i)" "|" "DONE(d)")
                               (sequence "|" "WAITING(w)" "PAUSED(p)" "CANCELLED(c)"))
-          org-agenda-files '("/da/dmp/cb/shumma1/notes/2024")
+          org-agenda-files '("~/notes/2024")
           ))
   (use-package org-bullets
     :ensure t
