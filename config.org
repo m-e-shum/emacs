@@ -1,5 +1,5 @@
-#+TITLE: dotemacs
 #+AUTHOR: Matt Shum
+#+TITLE: dotemacs
 
 Inspired by the maintainer of =emacs=, John Wiegley.
 
@@ -125,7 +125,7 @@ Modus theme.
                                    (selection . (semibold italic)))
         modus-themes-org-blocks 'tinted-background
         modus-themes-scale-headings t
-        modus-themes-region '(bg-only)
+        modus-themes-region '(bg-only accented)
         modus-themes-headings
         '((1 . (rainbow overline background 1.4))
           (2 . (rainbow background 1.3))
@@ -234,10 +234,6 @@ Doom Modeline.
     :ensure t
     :init (doom-modeline-mode 1))
 #+END_SRC
-
-#+RESULTS:
-: #s(hash-table size 65 test eql rehash-size 1.5 rehash-threshold 0.8125 data (:use-package (26113 34639 323804 620000) :init (26113 34639 323798 416000) :config (26113 34639 323779 816000) :config-secs (0 0 5 643000) :init-secs (0 0 172858 163000) :use-package-secs (0 0 173126 742000)))
-
 ** ~emacs-lisp~ formatting
 Aggressive indent.
 #+BEGIN_SRC emacs-lisp
@@ -251,6 +247,7 @@ Setting correct mode based on file extension.
   (add-to-list 'auto-mode-alist '(".yml" . yaml-ts-mode))
 #+END_SRC
 * ORG
+Org-mode.
 #+BEGIN_SRC emacs-lisp  
   (use-package org
     :mode (("\\.org$" . org-mode))
