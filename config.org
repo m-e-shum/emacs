@@ -143,10 +143,6 @@ Spacious Padding.
     :ensure t
     :hook (after-init . spacious-padding-mode))
 #+END_SRC
-
-#+RESULTS:
-: #s(hash-table size 65 test eql rehash-size 1.5 rehash-threshold 0.8125 data (:use-package (26113 35172 677614 701000) :init (26113 35172 677588 952000) :init-secs (0 0 56 748000) :use-package-secs (0 10 117723 880000)))
-
 Highlights.
 #+BEGIN_SRC emacs-lisp
   ;;; highlight indent
