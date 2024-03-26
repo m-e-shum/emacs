@@ -1,7 +1,0 @@
-# -*- mode: snippet -*-
-# name: meeting_properties
-# key: <mp
-# --
-:type: ${1:type}
-:attendees: ${2:who?}
-:date: ${3:MMDDYY}

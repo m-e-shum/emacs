@@ -4,6 +4,7 @@
 # --
 :PROPERTIES:
 :type: ${1:type}
-:attendees: ${2:who?}
-:date: ${3:MMDDYY}
+:speaker(s): ${2:who?}
+:attendee(s): ${3:who?}
+:date: ${4:MMDDYY}
 :END:
