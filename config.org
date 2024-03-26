@@ -6,21 +6,21 @@ Inspired by the maintainer of =emacs=, John Wiegley.
 * Startup
 ** use-package
 #+BEGIN_SRC emacs-lisp
-  (eval-and-compile
-    (defsubst emacs-path (path)
-      (expand-file-name path user-emacs-directory))
-    (setq-local package-enable-at-startup nil
-                load-path
-                (append (list (emacs-path "use-package"))
-                        (delete-dups load-path)
-                        (list (emacs-path "lisp")))))
+    (eval-and-compile
+      (defsubst emacs-path (path)
+        (expand-file-name path user-emacs-directory))
+      (setq-local package-enable-at-startup nil
+                  load-path
+                  (append (list (emacs-path "use-package"))
+                          (delete-dups load-path)
+                          (list (emacs-path "lisp")))))
 
-  (require 'use-package)
+    (require 'use-package)
 
-  (setq use-package-verbose init-file-debug
-        use-package-expand-minimally (not init-file-debug)
-        use-package-compute-statistics t
-        debug-on-error init-file-debug)
+    (setq use-package-verbose init-file-debug
+          use-package-expand-minimally (not init-file-debug)
+          use-package-compute-statistics t
+          debug-on-error init-file-debug)
 #+END_SRC
 ** emacs
 Top level.
@@ -125,7 +125,7 @@ Modus theme.
                                    (selection . (semibold italic)))
         modus-themes-org-blocks 'tinted-background
         modus-themes-scale-headings t
-        modus-themes-region '(bg-only accented)
+        modus-themes-region '(bg-only)
         modus-themes-headings
         '((1 . (rainbow overline background 1.4))
           (2 . (rainbow background 1.3))
@@ -260,7 +260,7 @@ Org-mode.
           org-pretty-entities t
           org-return-follows-link t
           org-todo-keywords '((sequence "TODO(t)" "IN-PROGRESS(i)" "|" "DONE(d)")
-                              (sequence "|" "WAITING(w)" "PAUSED(p)" "CANCELLED(c)"))
+                              (sequence "|" "CONSIDER(s)" "WAITING(w)" "CANCELLED(c)"))
           org-agenda-files '("/da/dmp/cb/shumma1/notes/2024")
           ))
   (use-package org-bullets
