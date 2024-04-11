@@ -510,7 +510,7 @@ Autovirtualenv
     :defer t
     :hook ((bash-ts-mode . eglot-ensure)
            (yaml-ts-mode . eglot-ensure)
-           (markdown-mode . eglot-ensure)
+           (markdown-mode-hook . eglot-ensure)
            (rust-ts-mode-hook . eglot-ensure))
     :custom
     (eglot-autoshutdown t)
