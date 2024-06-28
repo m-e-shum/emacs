@@ -111,8 +111,8 @@ Dracula theme.
 #+BEGIN_SRC emacs-lisp
   ;;(load-theme 'dracula t)
 #+END_SRC
-Modus theme. /Note/: we are using ~modus-themes~ 3.0.0. The one that is
-preinstalled with =emacs=.
+If you want to use a more colorful modus theme for org mode, use modus theme 3.0.0.
+That one is preinstalled with emacs.
 #+BEGIN_SRC emacs-lisp
   ;; Configure the Modus Themes' appearance
   (setq modus-themes-mode-line '(modus-themes-tabs-accented borderless)
