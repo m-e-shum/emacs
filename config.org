@@ -1,3 +1,4 @@
+
 #+AUTHOR: Matt Shum
 #+TITLE: dotemacs
 
@@ -244,8 +245,9 @@ Aggressive indent.
 #+END_SRC
 Setting correct mode based on file extension.
 #+BEGIN_SRC emacs-lisp
-  ;;(add-to-list 'auto-mode-alist '(".bashrc" . shell-script-mode))
+  (add-to-list 'auto-mode-alist '(".bashrc" . shell-script-mode))
   (add-to-list 'auto-mode-alist '(".yml" . yaml-ts-mode))
+  (add-to-list 'auto-mode-alist '(".ddl" . sql-mode))
 #+END_SRC
 * ORG
 Org-mode.
