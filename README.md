@@ -1,11 +1,8 @@
 # README
 
-Welcome to my emacs config. 
+Welcome to my emacs config.
 
-## TODO
-1. Figure out how I want my emacs to function.
-   * Try to only put in configurations I understand.
-2. Add descriptions and github links to various packages.
+## Inspiration
 
-
+[Protesilaos Stavrou's emacs](https://protesilaos.com/emacs/dotemacs#h:7b7b5898-09f7-4128-8af0-4041f67cb729).
 
