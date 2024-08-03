@@ -13,7 +13,7 @@
 
 ;; graphical elements
 (menu-bar-mode -1)
-;; below two modes don't show in emacs -nw?
+;; below two modes don't show for emacs -nw (?)
 ;;(scroll-bar-mode -1)
 ;;(tool-bar-mode -1)
 
@@ -28,18 +28,18 @@
 ;; `vc-handled-backends' with regard to startup speed optimisation.
 ;; Here I am storing the default value with the intent of restoring it
 ;; via the `emacs-startup-hook'.
-(defvar prot-emacs--file-name-handler-alist file-name-handler-alist)
-(defvar prot-emacs--vc-handled-backends vc-handled-backends)
+(defvar matte-macs--file-name-handler-alist file-name-handler-alist)
+(defvar matte-macs--vc-handled-backends vc-handled-backends)
 
 (setq file-name-handler-alist nil
       vc-handled-backends nil)
 
 (add-hook 'emacs-startup-hook
-          (lambda ()
-            (setq gc-cons-threshold (* 1000 1000 8)
-                  gc-cons-percentage 0.1
-		  file-name-handler-alist prot-emacs--file-name-handler-alist
-                  vc-handled-backends prot-emacs--vc-handled-backends)))
+	  (lambda ()
+	    (setq gc-cons-threshold (* 1000 1000 8)
+		  gc-cons-percentage 0.1
+		  file-name-handler-alist matte-macs--file-name-handler-alist
+		  vc-handled-backends matte-macs--vc-handled-backends)))
 
 ;; Initialise installed packages at this early stage, by using the
 ;; available cache.  I had tried a setup with this set to nil in the
@@ -48,4 +48,4 @@
 ;; packages to work with, requiring a `package-refresh-contents'.
 (setq package-enable-at-startup t)
 
-
+(add-hook 'after-init-hook (lambda () (set-frame-name "home")))
