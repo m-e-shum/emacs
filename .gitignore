@@ -1,3 +1,5 @@
+*.el
+*~
 combobulate
 .cache
 .lsp-*
