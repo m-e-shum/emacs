@@ -28,8 +28,8 @@
 ;; `vc-handled-backends' with regard to startup speed optimisation.
 ;; Here I am storing the default value with the intent of restoring it
 ;; via the `emacs-startup-hook'.
-(defvar matte-macs--file-name-handler-alist file-name-handler-alist)
-(defvar matte-macs--vc-handled-backends vc-handled-backends)
+(defvar matt-e-macs--file-name-handler-alist file-name-handler-alist)
+(defvar matt-e-macs--vc-handled-backends vc-handled-backends)
 
 (setq file-name-handler-alist nil
       vc-handled-backends nil)
@@ -38,8 +38,8 @@
 	  (lambda ()
 	    (setq gc-cons-threshold (* 1000 1000 8)
 		  gc-cons-percentage 0.1
-		  file-name-handler-alist matte-macs--file-name-handler-alist
-		  vc-handled-backends matte-macs--vc-handled-backends)))
+		  file-name-handler-alist matt-e-macs--file-name-handler-alist
+		  vc-handled-backends matt-e-macs--vc-handled-backends)))
 
 ;; Initialise installed packages at this early stage, by using the
 ;; available cache.  I had tried a setup with this set to nil in the
