@@ -15,24 +15,24 @@ Commands:
 General UI settings:
 
 #+begin_src emacs-lisp :tangle "early-init.el"
-  (setq frame-resize-pixelwise t
-	frame-inhibit-implied-resize t
-	frame-title-format '("%b")
-	ring-bell-function 'ignore
-	use-dialog-box t ; only for mouse events, which I seldom use
-	use-file-dialog nil
-	use-short-answers t
-	inhibit-splash-screen t
-	inhibit-startup-screen t
-	inhibit-x-resources t
-	inhibit-startup-echo-area-message user-login-name ; read the docstring
-	inhibit-startup-buffer-menu t)
+    (setq frame-resize-pixelwise t
+	  frame-inhibit-implied-resize t	
+	  frame-title-format '("%b")
+	  ring-bell-function 'ignore
+	  use-dialog-box t ; only for mouse events, which I seldom use
+	  use-file-dialog nil
+	  use-short-answers t
+	  inhibit-splash-screen t
+	  inhibit-startup-screen t
+	  inhibit-x-resources t
+	  inhibit-startup-echo-area-message user-login-name ; read the docstring
+	  inhibit-startup-buffer-menu t)
 
-  ;; graphical elements
-  (menu-bar-mode -1)
-  ;; below two modes don't show for emacs -nw (?)
-  ;;(scroll-bar-mode -1)
-  ;;(tool-bar-mode -1)
+    ;; graphical elements
+    (menu-bar-mode -1)
+    ;; below two modes don't show for emacs -nw (?)
+    ;;(scroll-bar-mode -1)
+    ;;(tool-bar-mode -1)
 #+end_src
 
 For startup purposes:
@@ -72,36 +72,36 @@ For startup purposes:
   (add-hook 'after-init-hook (lambda () (set-frame-name "home")))
 #+end_src
 * ~init.el~
+** User options
 
-User options
+Set the following custom options in ~matt-e-macs-pre-custom.el~ (
+e.g. ~(setq custom-var custom-choice)~)
 
 #+begin_src emacs-lisp :tangle "init.el"
-    ;; Group 
-    (defgroup matt-e-macs nil
-      "User options for my dotemacs.
-		These produce the expected results only when set in a file called
-		matt-e-macs-pre-custom.el.  This file must be in the same
-		directory as the init.el."
-      :group 'file)
-
+  ;; Group 
+  (defgroup matt-e-macs nil
+    "User options for my dotemacs.
+		    These produce the expected results only when set in a file called
+		    matt-e-macs-pre-custom.el.  This file must be in the same
+		    directory as the init.el."
+    :group 'file)
 #+end_src
 
-=matt-e-macs-load-theme-family= method
+Theme
 
 #+begin_src emacs-lisp :tangle "init.el"
-
   (defcustom matt-e-macs-load-theme-family 'modus
     "Set of themes to load.
-    Valid values are the symbols `ef', `modus', and `standard', which
-    reference the `ef-themes', `modus-themes', and `standard-themes',
-    respectively.
+	Valid values are the symbols `ef', `modus', and `standard', which
+	reference the `ef-themes', `modus-themes', and `standard-themes',
+	respectively.
 
-    A nil value does not load any of the above (use Emacs without a
-    theme).
+	A nil value does not load any of the above (use Emacs without a
+	theme).
 
-    This user option must be set in the `matt-e-macs-pre-custom.el'
-    file.  If that file exists in the Emacs directory, it is loaded
-    before all other modules of my setup."
+	This user option must be set in the `matt-e-macs-pre-custom.el'
+	file.  If that file exists in the Emacs directory, it is loaded
+	before all other modules of my setup."
     :group 'matt-e-macs
     :type '(choice :tag "Set of themes to load" :value modus
 		   (const :tag "The `ef-themes' module" ef)
@@ -110,68 +110,145 @@ User options
 		   (const :tag "Do not load a theme module" nil)))
 
   (setq custom-safe-themes t)
+#+end_src
+
+Minibuffer completion
+
+#+begin_src emacs-lisp :tangle "init.el"
+  (defcustom matt-e-macs-completion-ui 'vertico
+	"Choose minibuffer completion UI between `mct' or `vertico'.
+    If the value is nil, the default completion user interface is
+    used.  On Emacs 30, this is close the experience with `mct'.
+
+    This user option must be set in the `matt-e-macs-pre-custom.el'
+    file.  If that file exists in the Emacs directory, it is loaded
+    before all other modules of my setup."
+	:group 'matt-e-macs
+	:type '(choice :tag "Minibuffer user interface"
+		       (const :tag "Default user interface" nil)
+		       (const :tag "The `mct' module" mct)
+		       (const :tag "The `vertico' module" vertico)))
+
+  (defcustom matt-e-emacs-completion-extras t
+      "When non-nil load extras for minibuffer completion.
+  These include packages such as `consult' and `embark'."
+      :group 'matt-e-macs
+      :type 'boolean)
   #+end_src
 
-Backups, compilation, enable/disable, load path ...
+Treesitter
+
+#+begin_src emacs-lisp :tangle "init.el"
+  (defcustom matt-e-macs-treesitter-extras t
+      "When non-nil load extras for tree-sitter integration
+  These include packages such as `expreg' and generally anything
+  that adds functionality on top of what the major mode provides."
+      :group 'matt-e-macs
+      :type 'boolean)
+#+end_src
+
+Icons
+
+#+begin_src emacs-lisp :tangle "init.el"
+    (defcustom matt-e-macs-load-icons nil
+      "When non-nil, enable iconography in various contexts.
+  This installs and uses the `nerd-icons' package and its variants.
+  NOTE that you still need to invoke `nerd-icons-install-fonts'
+  manually to first get the icon files.
+
+  This user option must be set in the `matt-e-macs-pre-custom.el'
+  file.  If that file exists in the Emacs directory, it is loaded
+  before all other modules of my setup."
+    :group 'matt-e-emacs
+    :type 'boolean)
+#+end_src
+
+** Backups, compilation, enable/disable, load path ...
   
-  #+begin_src emacs-lisp :tangle "init.el"
+#+begin_src emacs-lisp :tangle "init.el"
 
-    ;; Turn off backups
-    (setq make-backup-files nil)
-    (setq backup-inhibited nil) ; Not sure if needed, given `make-backup-files'
-    (setq create-lockfiles nil)
+  ;; Turn off backups
+  (setq make-backup-files nil)
+  (setq backup-inhibited nil) ; Not sure if needed, given `make-backup-files'
+  (setq create-lockfiles nil)
 
-    ;; Make native compilation silent and prune its cache.
-    (when (native-comp-available-p)
-      (setq native-comp-async-report-warnings-errors 'silent) ; Emacs 28 with native compilation
-      (setq native-compile-prune-cache t)) ; Emacs 29
+  ;; Make native compilation silent and prune its cache.
+  (when (native-comp-available-p)
+    (setq native-comp-async-report-warnings-errors 'silent) ; Emacs 28 with native compilation
+    (setq native-compile-prune-cache t)) ; Emacs 29
 
-    ;; Disable the damn thing by making it disposable.
-    (setq custom-file (make-temp-file "emacs-custom-"))
+  ;; Disable the damn thing by making it disposable.
+  (setq custom-file (make-temp-file "emacs-custom-"))
 
-    ;; Enable these
-    (mapc
-     (lambda (command)
-       (put command 'disabled nil))
-     '(list-timers narrow-to-region narrow-to-page upcase-region downcase-region))
+  ;; Enable these
+  (mapc
+   (lambda (command)
+     (put command 'disabled nil))
+   '(list-timers narrow-to-region narrow-to-page upcase-region downcase-region))
 
-    ;; And disable these
-    (mapc
-     (lambda (command)
-       (put command 'disabled t))
-     '(eshell project-eshell overwrite-mode iconify-frame diary))
+  ;; And disable these
+  (mapc
+   (lambda (command)
+     (put command 'disabled t))
+   '(eshell project-eshell overwrite-mode iconify-frame diary))
 
-    ;; Make sure to look for .el in matt-e-macs-lisp/ and matt-e-macs-modules/
-    (mapc
-     (lambda (string)
-       (add-to-list 'load-path (locate-user-emacs-file string)))
-     '("matt-e-macs-lisp" "matt-e-macs-modules"))
+  ;; (prot-lisp is Prot's custom code)
+  ;; Make sure to look for .el in prot-lisp/ and matt-e-macs-modules/
+  (mapc
+   (lambda (string)
+     (add-to-list 'load-path (locate-user-emacs-file string)))
+   '("prot-lisp" "matt-e-macs-modules"))
   #+end_src
 
-Require packages and source pre-custom and post-custom ...
+Packaging
   
   #+begin_src emacs-lisp :tangle "init.el"
-    (load (locate-user-emacs-file "matt-e-macs-pre-custom.el") :no-error :no-message)
-    ;; preferences BEFORE loading any of the modules.
+    (setq package-vc-register-as-project nil) ; Emacs 30
 
-    (require 'matt-e-macs-theme)
-    ;; (require 'matt-e-macs-essentials)
-    ;; (require 'matt-e-macs-modeline)
-    ;; (require 'matt-e-macs-completion)
-    ;; (require 'matt-e-macs-search)
-    ;; (require 'matt-e-macs-dired)
-    ;; (require 'matt-e-macs-window)
-    ;; (require 'matt-e-macs-git)
-    ;; (require 'matt-e-macs-org)
-    ;; (require 'matt-e-macs-langs)
-    ;; (require 'matt-e-macs-email)
-    ;; (require 'matt-e-macs-web)
-    ;; (when matt-e-macs-load-which-key
-    ;;   (require 'matt-e-macs-which-key))
-    ;; (when matt-e-macs-load-icons
-    ;;   (require 'matt-e-macs-icons))
+    (add-hook 'package-menu-mode-hook #'hl-line-mode)
 
-    (load (locate-user-emacs-file "matt-e-macs-post-custom.el") :no-error :no-message)
+    ;; Also read: <https://protesilaos.com/codelog/2022-05-13-emacs-elpa-devel/>
+    (setq package-archives
+	  '(("gnu-elpa" . "https://elpa.gnu.org/packages/")
+	    ("gnu-elpa-devel" . "https://elpa.gnu.org/devel/")
+	    ("nongnu" . "https://elpa.nongnu.org/nongnu/")
+	    ("melpa" . "https://melpa.org/packages/")))
+
+    ;; Highest number gets priority (what is not mentioned has priority 0)
+    (setq package-archive-priorities
+	  '(("gnu-elpa" . 3)
+	    ("melpa" . 2)
+	    ("nongnu" . 1)))
+
+    (setq package-install-upgrade-built-in t)
+
+  #+end_src
+
+** Require packages and source pre-custom and post-custom ...
+  
+#+begin_src emacs-lisp :tangle "init.el"
+  (load (locate-user-emacs-file "matt-e-macs-pre-custom.el") :no-error :no-message)
+  ;; preferences BEFORE loading any of the modules.
+
+  (require 'matt-e-macs-theme)
+  (require 'matt-e-macs-essentials)
+  (require 'matt-e-macs-modeline)
+  (require 'matt-e-macs-completion)
+  (require 'matt-e-macs-treesitter)
+  ;; (require 'matt-e-macs-search)
+;;  (require 'matt-e-macs-dired)
+  (require 'matt-e-macs-window)
+  ;;(require 'matt-e-macs-git)
+  ;; (require 'matt-e-macs-org)
+  ;; (require 'matt-e-macs-langs)
+  ;; (require 'matt-e-macs-email)
+  ;; (require 'matt-e-macs-web)
+  ;; (when matt-e-macs-load-which-key
+  ;;   (require 'matt-e-macs-which-key))
+  ;; (when matt-e-macs-load-icons
+  ;;   (require 'matt-e-macs-icons))
+
+  (load (locate-user-emacs-file "matt-e-macs-post-custom.el") :no-error :no-message)
 
 #+end_src
 
@@ -180,11 +257,18 @@ User setting specifications /before/ modules get loaded.
 
 #+begin_src emacs-lisp :tangle "matt-e-macs-pre-custom.el"
   (setq matt-e-macs-load-theme-family 'modus)
+  (setq matt-e-macs-completion-ui 'vertico)
+  (setq matt-e-macs-completion-extras t)
+  (setq matt-e-macs-treesitter-extras t)
+  (setq matt-e-macs-load-icons t)
 #+end_src
 
 * ~matt-e-macs-post-custom.el~
 * modules
 ** =matt-e-macs-theme=
+
+=matt-e-macs-load-theme-family=
+
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-theme.el" :mkdirp yes
   ;;; Theme setup and related
 
@@ -198,9 +282,792 @@ User setting specifications /before/ modules get loaded.
        ('modus 'matt-e-macs-modus-themes)
        ;;('standard 'matt-e-macs-standard-themes)
        )))
+#+end_src
 
+=puslsar=
+
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-theme.el" :mkdirp yes
+  (use-package pulsar
+    :ensure t
+    :config
+    (setopt pulsar-pulse t
+	    pulsar-delay 0.055
+	    pulsar-iterations 10
+	    pulsar-face 'pulsar-magenta
+	    pulsar-highlight-face 'pulsar-cyan)
+
+    (pulsar-global-mode 1)
+    :hook
+    ;; There are convenience functions/commands which pulse the line using
+    ;; a specific colour: `pulsar-pulse-line-red' is one of them.
+    ((next-error . (pulsar-pulse-line-red pulsar-recenter-top pulsar-reveal-entry))
+     (minibuffer-setup . pulsar-pulse-line-red))
+    :bind
+    ;; pulsar does not define any key bindings.  This is just my personal
+    ;; preference.  Remember to read the manual on the matter.  Evaluate:
+    ;;
+    ;; (info "(elisp) Key Binding Conventions")
+    (("C-x l" . pulsar-pulse-line) ; override `count-lines-page'
+     ("C-x L" . pulsar-highlight-dwim))) ; or use `pulsar-highlight-line'
+#+end_src
+
+=Lin=
+
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-theme.el" :mkdirp yes
+    ;;;; Lin
+  ;; Read the lin manual: <https://protesilaos.com/emacs/lin>.
+  (use-package lin
+    :ensure t
+    :hook (after-init . lin-global-mode) ; applies to all `lin-mode-hooks'
+    :config
+    ;; You can use this to live update the face:
+    ;;
+    ;; (customize-set-variable 'lin-face 'lin-green)
+    ;;
+    ;; Or `setopt' on Emacs 29: (setopt lin-face 'lin-yellow)
+    ;;
+    ;; I still prefer `setq' for consistency.
+    (setq lin-face 'lin-magenta))
+
+  #+end_src
+
+=Spacious Padding=
+  
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-theme.el" :mkdirp yes
+    ;;;; Increase padding of windows/frames
+  ;; Yet another one of my packages:
+  ;; <https://protesilaos.com/codelog/2023-06-03-emacs-spacious-padding/>.
+  (use-package spacious-padding
+    :ensure t
+    :hook (after-init . spacious-padding-mode)
+    :bind ("<f8>" . spacious-padding-mode)
+    :init
+    ;; These are the defaults, but I keep it here for visiibility.
+    (setq spacious-padding-widths
+	  '( :internal-border-width 30
+	     :header-line-width 4
+	     :mode-line-width 6
+	     :tab-width 4
+	     :right-divider-width 30
+	     :scroll-bar-width 8
+	     :left-fringe-width 20
+	     :right-fringe-width 20))
+
+    ;; comment out below and set to nil (see next code block) if you don't like it
+    (setq spacious-padding-subtle-mode-line
+	  `( :mode-line-active ,(if (or (eq matt-e-macs-load-theme-family 'modus)
+					(eq matt-e-macs-load-theme-family 'standard))
+				    'default
+				  'help-key-binding)
+	     :mode-line-inactive window-divider))
+
+    ;; Read the doc string of `spacious-padding-subtle-mode-line' as
+    ;; it is very flexible.
+    ;;(setq spacious-padding-subtle-mode-line nil)
+    )
+#+end_src
+
+Expose =matte-e-macs-theme=
+
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-theme.el" :mkdirp yes
   (provide 'matt-e-macs-theme)
 #+end_src
+** =matt-e-macs-essentials=
+
+Emacs
+
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-essentials.el" :mkdirp yes
+  ;;; Essential configurations
+  (use-package emacs
+    :ensure nil
+    :demand t
+    :config
+  ;;;; General settings and common custom functions (prot-simple.el)
+    (setq blink-matching-paren nil)
+    (setq delete-pair-blink-delay 0.1) ; Emacs28 -- see `prot-simple-delete-pair-dwim'
+    (setq help-window-select t)
+    (setq next-error-recenter '(4)) ; center of the window
+    (setq find-library-include-other-files nil) ; Emacs 29
+    (setq remote-file-name-inhibit-delete-by-moving-to-trash t) ; Emacs 30
+    (setq remote-file-name-inhibit-auto-save t)                 ; Emacs 30
+    (setq tramp-connection-timeout (* 60 10)) ; seconds
+    (setq save-interprogram-paste-before-kill t)
+    (setq mode-require-final-newline 'visit-save)
+    (setq-default truncate-partial-width-windows nil)
+    (setq eval-expression-print-length nil)
+    (setq kill-do-not-save-duplicates t)
+    (setq duplicate-line-final-position -1 ; both are Emacs 29
+	  duplicate-region-final-position -1)
+    (setq scroll-error-top-bottom t)
+    (setq echo-keystrokes-help nil) ; Emacs 30
+    (setq epa-keys-select-method 'minibuffer) ; Emacs 30
+
+    ;; Keys I unbind here are either to avoid accidents or to bind them
+    ;; elsewhere later in the configuration.
+    :bind
+    ( :map global-map
+      ("<insert>" . nil)
+      ("<menu>" . nil)
+      ("C-z" . nil) ; I have a window manager, thanks!
+      ("C-x C-z" . nil) ; same idea as above
+      ("C-x C-c" . nil) ; avoid accidentally exiting Emacs
+      ("C-x C-c C-c" . save-buffers-kill-emacs) ; more cumbersome, less error-prone, way to exit (according to Prot)
+      ("C-x C-r" . restart-emacs) ; override `find-file-read-only'
+      ("C-h h" . nil) ; Never show that "hello" file
+      ("M-`" . nil)
+      ("M-o" . delete-blank-lines) ; alias for C-x C-o
+      ("M-SPC" . cycle-spacing)
+      ("M-z" . zap-up-to-char) ; NOT `zap-to-char'
+      ("M-c" . capitalize-dwim)
+      ("M-l" . downcase-dwim) ; "lower" case
+      ("M-u" . upcase-dwim)
+      ("M-=" . count-words)
+      ("C-x O" . next-multiframe-window)
+      ("C-h K" . describe-keymap) ; overrides `Info-goto-emacs-key-command-node'
+      ("C-h u" . apropos-user-option)
+      ("C-h F" . apropos-function) ; lower case is `describe-function'
+      ("C-h V" . apropos-variable) ; lower case is `describe-variable'
+      ("C-h L" . apropos-library) ; lower case is `view-lossage'
+      ("C-h c" . describe-char) ; overrides `describe-key-briefly'
+
+      :map prog-mode-map
+      ("C-M-d" . up-list) ; confusing name for what looks like "down" to me
+      ("<C-M-backspace>" . backward-kill-sexp)
+
+      ;; Keymap for buffers (Emacs28)
+      :map ctl-x-x-map
+      ("f" . follow-mode)  ; override `font-lock-update'
+      ("r" . rename-uniquely)
+      ("l" . visual-line-mode))
+    )
+#+end_src
+
+Custom basic commands. (Try out Prot's replacement for ~simple.el~.)
+
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-essentials.el" :mkdirp yes
+
+  (use-package prot-simple
+    :ensure nil
+    :demand t
+    :config
+    (setq prot-simple-date-specifier "%F")
+    (setq prot-simple-time-specifier "%R %z")
+
+    (advice-add #'save-buffers-kill-emacs :before #'prot-simple-display-unsaved-buffers-on-exit)
+
+  (with-eval-after-load 'pulsar
+    (add-hook 'prot-simple-file-to-register-jump-hook #'pulsar-recenter-center)
+    (add-hook 'prot-simple-file-to-register-jump-hook #'pulsar-reveal-entry))
+  :bind
+  ( ("ESC ESC" . prot-simple-keyboard-quit-dwim)
+    ("C-g" . prot-simple-keyboard-quit-dwim)
+    ("C-M-SPC" . prot-simple-mark-sexp)   ; will be overriden by `expreg' if tree-sitter is available
+    ;; Commands for lines
+    ("M-k" . prot-simple-kill-line-backward)
+    ("C-S-d" . prot-simple-duplicate-line-or-region)
+    ("C-S-w" . prot-simple-copy-line)
+    ("C-S-y" . prot-simple-yank-replace-line-or-region)
+    ("C-v" . prot-simple-multi-line-below) ; overrides `scroll-up-command'
+    ("<next>" . prot-simple-multi-line-below) ; overrides `scroll-up-command'
+    ("M-v" . prot-simple-multi-line-above) ; overrides `scroll-down-command'
+    ("<prior>" . prot-simple-multi-line-above) ; overrides `scroll-down-command'
+    ("<C-return>" . prot-simple-new-line-below)
+    ("<C-S-return>" . prot-simple-new-line-above)
+    ("C-x x a" . prot-simple-auto-fill-visual-line-mode) ; auto-fill/visual-line toggle
+    ;; Commands for text insertion or manipulation
+    ("C-=" . prot-simple-insert-date)
+    ("C-<" . prot-simple-escape-url-dwim)
+    ;; "C->" prot-simple-insert-line-prefix-dwim
+    ("M-Z" . prot-simple-zap-to-char-backward)
+    ;; Commands for object transposition
+    ("C-S-p" . prot-simple-move-above-dwim)
+    ("C-S-n" . prot-simple-move-below-dwim)
+    ("C-t" . prot-simple-transpose-chars)
+    ("C-x C-t" . prot-simple-transpose-lines)
+    ("C-S-t" . prot-simple-transpose-paragraphs)
+    ("C-x M-t" . prot-simple-transpose-sentences)
+    ("C-M-t" . prot-simple-transpose-sexps)
+    ("M-t" . prot-simple-transpose-words)
+    ;; Commands for paragraphs
+    ("M-Q" . prot-simple-unfill-region-or-paragraph)
+    ;; Commands for windows and pages
+    ("C-x o" . prot-simple-other-window)
+    ("C-x n k" . prot-simple-delete-page-delimiters)
+    ("C-x M-r" . prot-simple-swap-window-buffers)
+    ;; Commands for buffers
+    ("<C-f2>" . prot-simple-rename-file-and-buffer)
+    ("C-x k" . prot-simple-kill-buffer-current)
+    ("C-x K" . kill-buffer) ; leaving this here to contrast with the above
+    ("M-s b" . prot-simple-buffers-major-mode)
+    ("M-s v" . prot-simple-buffers-vc-root)
+    ;; Commands for files
+    ("C-x r ." . prot-simple-file-to-register)))
+  #+end_src
+
+Insert character pairs  
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-essentials.el" :mkdirp yes
+  ;;;; Insert character pairs (prot-pair.el)
+  (use-package prot-pair
+    :ensure nil
+    :bind
+    (("C-'" . prot-pair-insert)
+     ("M-'" . prot-pair-insert)
+     ("M-\\" . prot-pair-delete)))
+  #+end_src
+
+Prot's =which-key=
+  
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-essentials.el" :mkdirp yes
+   ;;;; Prefix keymap (prot-prefix.el)
+  (use-package prot-prefix
+    :ensure nil
+    :bind-keymap
+    ;; F2 overrides that two-column gimmick.  Sorry, but no.
+    (("<insert>" . prot-prefix)
+     ("<f2>" . prot-prefix)
+     ("C-z" . prot-prefix)))
+#+end_src
+
+=recentf=
+
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-essentials.el" :mkdirp yes
+  (use-package recentf
+    :ensure nil
+    :hook (after-init . recentf-mode)
+    :config
+    (setq recentf-max-saved-items 100)
+    (setq recentf-max-menu-items 25) ; Prot doesn't use the `menu-bar-mode', but this is good to know
+    (setq recentf-save-file-modes nil)
+    (setq recentf-keep nil)
+    (setq recentf-auto-cleanup nil)
+    (setq recentf-initialize-file-name-history nil)
+    (setq recentf-filename-handlers nil)
+    (setq recentf-show-file-shortcuts-flag nil))
+
+  #+end_src
+
+Mouse configuration
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-essentials.el" :mkdirp yes
+    ;;;; Mouse and mouse wheel behaviour
+  (use-package mouse
+    :ensure nil
+    :hook (after-init . mouse-wheel-mode)
+    :config
+    ;; Some of these variables are defined in places other than
+    ;; mouse.el, but this is fine.
+    (setq mouse-autoselect-window t) ; complements the auto-selection of my tiling window manager
+
+    ;; In Emacs 27+, use Control + mouse wheel to scale text.
+    (setq mouse-wheel-scroll-amount
+	  '(1
+	    ((shift) . 5)
+	    ((meta) . 0.5)
+	    ((control) . text-scale))
+	  mouse-drag-copy-region nil
+	  make-pointer-invisible t
+	  mouse-wheel-progressive-speed t
+	  mouse-wheel-follow-mouse t)
+
+    ;; Scrolling behaviour
+    (setq-default scroll-preserve-screen-position t
+		  scroll-conservatively 1 ; affects `scroll-step'
+		  scroll-margin 0
+		  next-screen-context-lines 0))
+
+  #+end_src
+
+Revert buffer on save
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-essentials.el" :mkdirp yes
+  ;;;; Auto revert mode
+  (use-package autorevert
+    :ensure nil
+    :hook (after-init . global-auto-revert-mode)
+    :config
+    (setq auto-revert-verbose t))
+#+end_src
+
+Tool tip
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-essentials.el" :mkdirp yes
+    ;;;; Tooltips (tooltip-mode)
+  (use-package tooltip
+    :ensure nil
+    :hook (after-init . tooltip-mode)
+    :config
+    (setq tooltip-delay 0.5
+	  tooltip-short-delay 0.5
+	  x-gtk-use-system-tooltips t
+	  tooltip-frame-parameters
+	  '((name . "tooltip")
+	    (internal-border-width . 10)
+	    (border-width . 0)
+	    (no-special-glyphs . t))))
+  
+#+end_src
+
+Delete selection
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-essentials.el" :mkdirp yes
+  ;;;; Delete selection
+  (use-package delsel
+    :ensure nil
+    :hook (after-init . delete-selection-mode))
+
+#+end_src
+
+Emacs server
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-essentials.el" :mkdirp yes
+  ;;;; Emacs server (allow emacsclient to connect to running session)
+(use-package server
+  :ensure nil
+  :defer 1
+  :config
+  (setq server-client-instructions nil)
+  (unless (server-running-p)
+    (server-start)))
+#+end_src
+
+Go to last change
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-essentials.el" :mkdirp yes
+  (use-package goto-chg
+    :ensure t
+    :bind
+    (("C-(" . goto-last-change)
+     ("C-)" . goto-last-change-reverse)))
+#+end_src
+
+Provide =matte-e-macs-essentials=
+
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-essentials.el" :mkdirp yes
+  (provide 'matt-e-macs-essentials)
+#+end_src
+** =matt-e-macs-modeline=
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-modeline.el" :mkdirp yes
+    ;;; Mode line
+  (use-package prot-modeline
+    :ensure nil
+    :config
+    (setq mode-line-compact nil) ; Emacs 28
+    (setq mode-line-right-align-edge 'right-margin) ; Emacs 30
+    (setq-default mode-line-format
+		  '("%e"
+		    prot-modeline-kbd-macro
+		    prot-modeline-narrow
+		    prot-modeline-buffer-status
+		    prot-modeline-window-dedicated-status
+		    prot-modeline-input-method
+		    "  "
+		    prot-modeline-buffer-identification
+		    "  "
+		    prot-modeline-major-mode
+		    prot-modeline-process
+		    "  "
+		    prot-modeline-vc-branch
+		    "  "
+		    prot-modeline-eglot
+		    "  "
+		    prot-modeline-flymake
+		    "  "
+		    mode-line-format-right-align ; Emacs 30
+		    prot-modeline-notmuch-indicator
+		    "  "
+		    prot-modeline-misc-info))
+
+    (with-eval-after-load 'spacious-padding
+      (defun prot/modeline-spacious-indicators ()
+	"Set box attribute to `'prot-modeline-indicator-button' if spacious-padding is enabled."
+	(if (bound-and-true-p spacious-padding-mode)
+	    (set-face-attribute 'prot-modeline-indicator-button nil :box t)
+	  (set-face-attribute 'prot-modeline-indicator-button nil :box 'unspecified)))
+
+      ;; Run it at startup and then afterwards whenever
+      ;; `spacious-padding-mode' is toggled on/off.
+      (prot/modeline-spacious-indicators)
+
+      (add-hook 'spacious-padding-mode-hook #'prot/modeline-spacious-indicators)))
+#+end_src
+
+Keycast
+
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-modeline.el" :mkdirp yes
+  ;;; Keycast mode
+(use-package keycast
+  :ensure t
+  :after prot-modeline
+  :commands (keycast-mode-line-mode keycast-header-line-mode keycast-tab-bar-mode keycast-log-mode)
+  :init
+  (setq keycast-mode-line-format "%2s%k%c%R")
+  (setq keycast-mode-line-insert-after 'prot-modeline-vc-branch)
+  (setq keycast-mode-line-window-predicate 'mode-line-window-selected-p)
+  (setq keycast-mode-line-remove-tail-elements nil)
+  :config
+  (dolist (input '(self-insert-command org-self-insert-command))
+    (add-to-list 'keycast-substitute-alist `(,input "." "Typing…")))
+
+  (dolist (event '( mouse-event-p mouse-movement-p mwheel-scroll handle-select-window
+                    mouse-set-point mouse-drag-region))
+    (add-to-list 'keycast-substitute-alist `(,event nil))))
+#+end_src
+
+Provide
+
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-modeline.el" :mkdirp yes
+  (provide 'matt-e-macs-modeline)
+#+end_src
+** =matt-e-macs-completion=
+
+Minibuffer settings
+
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-completion.el" :mkdirp yes
+  ;;; General minibuffer settings
+  (use-package minibuffer
+    :ensure nil
+    :config
+  ;;;; Completion styles
+    (setq completion-styles '(basic substring initials flex orderless)) ; also see `completion-category-overrides'
+
+    ;; Reset all the per-category defaults so that (i) we use the
+    ;; standard `completion-styles' and (ii) can specify our own styles
+    ;; in the `completion-category-overrides' without having to
+    ;; explicitly override everything.
+    (setq completion-category-defaults nil)
+
+    ;; A non-exhaustve list of known completion categories:
+    ;;
+    ;; - `bookmark'
+    ;; - `buffer'
+    ;; - `charset'
+    ;; - `coding-system'
+    ;; - `color'
+    ;; - `command' (e.g. `M-x')
+    ;; - `customize-group'
+    ;; - `environment-variable'
+    ;; - `expression'
+    ;; - `face'
+    ;; - `file'
+    ;; - `function' (the `describe-function' command bound to `C-h f')
+    ;; - `info-menu'
+    ;; - `imenu'
+    ;; - `input-method'
+    ;; - `kill-ring'
+    ;; - `library'
+    ;; - `minor-mode'
+    ;; - `multi-category'
+    ;; - `package'
+    ;; - `project-file'
+    ;; - `symbol' (the `describe-symbol' command bound to `C-h o')
+    ;; - `theme'
+    ;; - `unicode-name' (the `insert-char' command bound to `C-x 8 RET')
+    ;; - `variable' (the `describe-variable' command bound to `C-h v')
+    ;; - `consult-grep'
+    ;; - `consult-isearch'
+    ;; - `consult-kmacro'
+    ;; - `consult-location'
+    ;; - `embark-keybinding'
+    ;;
+    (setq completion-category-overrides
+	  ;; NOTE 2021-10-25: I am adding `basic' because it works better as a
+	  ;; default for some contexts.  Read:
+	  ;; <https://debbugs.gnu.org/cgi/bugreport.cgi?bug=50387>.
+	  ;;
+	  ;; `partial-completion' is a killer app for files, because it
+	  ;; can expand ~/.l/s/fo to ~/.local/share/fonts.
+	  ;;
+	  ;; If `basic' cannot match my current input, Emacs tries the
+	  ;; next completion style in the given order.  In other words,
+	  ;; `orderless' kicks in as soon as I input a space or one of its
+	  ;; style dispatcher characters.
+	  '((file (styles . (basic partial-completion orderless)))
+	    (bookmark (styles . (basic substring)))
+	    (library (styles . (basic substring)))
+	    (embark-keybinding (styles . (basic substring)))
+	    (imenu (styles . (basic substring orderless)))
+	    (consult-location (styles . (basic substring orderless)))
+	    (kill-ring (styles . (emacs22 orderless)))
+	    (eglot (styles . (emacs22 substring orderless))))))
+
+  #+end_src
+
+Orderless
+  
+  #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-completion.el" :mkdirp yes
+	;;; Orderless completion style (and prot-orderless.el)
+    (use-package orderless
+      :ensure t
+      :demand t
+      :after minibuffer
+      :config
+      ;; Remember to check my `completion-styles' and the
+      ;; `completion-category-overrides'.
+      (setq orderless-matching-styles '(orderless-prefixes orderless-regexp))
+
+      ;; SPC should never complete: use it for `orderless' groups.
+      ;; The `?' is a regexp construct.
+      :bind ( :map minibuffer-local-completion-map
+	      ("SPC" . nil)
+	      ("?" . nil)))
+
+    (use-package prot-orderless
+      :ensure nil
+      :config
+      (setq orderless-style-dispatchers
+	    '(prot-orderless-literal
+	      prot-orderless-file-ext
+	      prot-orderless-beg-or-end)))
+#+end_src
+
+Minibuffer depth
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-completion.el" :mkdirp yes
+  (use-package mb-depth
+    :ensure nil
+    :hook (after-init . minibuffer-depth-indicate-mode)
+    :config
+    (setq read-minibuffer-restore-windows nil) ; Emacs 28
+    (setq enable-recursive-minibuffers t))
+
+  #+end_src
+
+Minibuffer default values
+  
+  #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-completion.el" :mkdirp yes
+    (use-package minibuf-eldef
+  :ensure nil
+  :hook (after-init . minibuffer-electric-default-mode)
+  :config
+  (setq minibuffer-default-prompt-format " [%s]")) ; Emacs 29
+  #+end_src
+
+  Common interactions
+  #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-completion.el" :mkdirp yes
+    (use-package rfn-eshadow
+      :ensure nil
+      :hook (minibuffer-setup . cursor-intangible-mode)
+      :config
+    ;; Not everything here comes from rfn-eshadow.el, but this is fine.
+
+      (setq resize-mini-windows t)
+      (setq read-answer-short t) ; also check `use-short-answers' for Emacs28
+      (setq echo-keystrokes 0.25)
+      (setq kill-ring-max 60) ; Keep it small
+
+    ;; Do not allow the cursor to move inside the minibuffer prompt.  I
+    ;; got this from the documentation of Daniel Mendler's Vertico
+    ;; package: <https://github.com/minad/vertico>.
+      (setq minibuffer-prompt-properties
+	    '(read-only t cursor-intangible t face minibuffer-prompt))
+
+    ;; MCT has a variant of this built-in.
+      (unless (eq matt-e-macs-completion-ui 'mct)
+	;; Add prompt indicator to `completing-read-multiple'.  We display
+	;; [`completing-read-multiple': <separator>], e.g.,
+	;; [`completing-read-multiple': ,] if the separator is a comma.  This
+	;; is adapted from the README of the `vertico' package by Daniel
+	;; Mendler.  I made some small tweaks to propertize the segments of
+	;; the prompt.
+	(defun crm-indicator (args)
+	(cons (format "[`completing-read-multiple': %s]  %s"
+		      (propertize
+		       (replace-regexp-in-string
+			"\\`\\[.*?]\\*\\|\\[.*?]\\*\\'" ""
+			crm-separator)
+		       'face 'error)
+		      (car args))
+	      (cdr args)))
+
+      (advice-add #'completing-read-multiple :filter-args #'crm-indicator))
+
+    (file-name-shadow-mode 1))  
+#+end_src
+
+  Ignore letter casing
+    
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-completion.el" :mkdirp yes
+  (setq completion-ignore-case t)
+  (setq read-buffer-completion-ignore-case t)
+  (setq-default case-fold-search t)   ; For general regexp
+  (setq read-file-name-completion-ignore-case t)
+
+  #+end_src
+
+  Generic Minibuffer
+  
+  #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-completion.el" :mkdirp yes
+    (use-package minibuffer
+  :ensure nil
+  :demand t
+  :config
+  (setq completions-format 'one-column)
+  (setq completion-show-help nil)
+  (setq completion-auto-help 'always)
+  (setq completion-auto-select nil)
+  (setq completions-detailed t)
+  (setq completion-show-inline-help nil)
+  (setq completions-max-height 6)
+  (setq completions-header-format (propertize "%s candidates:\n" 'face 'bold-italic))
+  (setq completions-highlight-face 'completions-highlight)
+  (setq minibuffer-completion-auto-choose t)
+  (setq minibuffer-visible-completions t) ; Emacs 30
+  (setq completions-sort 'historical)
+
+  (unless matt-e-macs-completion-ui
+    (matt-e-macs-keybind minibuffer-local-completion-map
+      "<up>" #'minibuffer-previous-line-completion
+      "<down>" #'minibuffer-next-line-completion)
+
+    (add-hook 'completion-list-mode-hook #'prot-common-truncate-lines-silently)))
+#+end_src
+
+Savehist
+
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-completion.el" :mkdirp yes
+    ;;;; `savehist' (minibuffer and related histories)
+  (use-package savehist
+    :ensure nil
+    :hook (after-init . savehist-mode)
+    :config
+    (setq savehist-file (locate-user-emacs-file "savehist"))
+    (setq history-length 100)
+    (setq history-delete-duplicates t)
+    (setq savehist-save-minibuffer-history t)
+    (add-to-list 'savehist-additional-variables 'kill-ring))
+#+end_src
+
+Dabbrev
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-completion.el" :mkdirp yes
+    (use-package dabbrev
+      :ensure nil
+    :commands (dabbrev-expand dabbrev-completion)
+    :config
+  ;;;; `dabbrev' (dynamic word completion (dynamic abbreviations))
+    (setq dabbrev-abbrev-char-regexp "\\sw\\|\\s_")
+    (setq dabbrev-abbrev-skip-leading-regexp "[$*/=~']")
+    (setq dabbrev-backward-only nil)
+    (setq dabbrev-case-distinction 'case-replace)
+    (setq dabbrev-case-fold-search nil)
+    (setq dabbrev-case-replace 'case-replace)
+    (setq dabbrev-check-other-buffers t)
+    (setq dabbrev-eliminate-newlines t)
+    (setq dabbrev-upcase-means-case-search t)
+    (setq dabbrev-ignored-buffer-modes
+	  '(archive-mode image-mode docview-mode pdf-view-mode)))
+
+  #+end_src
+
+Corfu
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-completion.el" :mkdirp yes
+	;;; Corfu (in-buffer completion popup)
+    (use-package corfu
+      :ensure t
+      :hook (after-init . global-corfu-mode)
+      ;; I also have (setq tab-always-indent 'complete) for TAB to complete
+      ;; when it does not need to perform an indentation change.
+      :bind (:map corfu-map ("<tab>" . corfu-complete))
+      :config
+      (setq corfu-preview-current nil)
+      (setq corfu-min-width 20)
+
+      (setq corfu-popupinfo-delay '(1.25 . 0.5))
+      (corfu-popupinfo-mode 1) ; shows documentation after `corfu-popupinfo-delay'
+
+      ;; Sort by input history (no need to modify `corfu-sort-function').
+      (with-eval-after-load 'savehist
+	(corfu-history-mode 1)
+	(add-to-list 'savehist-additional-variables 'corfu-history)))
+
+    #+end_src
+
+Consult
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-completion.el" :mkdirp yes
+
+  ;;; Enhanced minibuffer commands (consult.el)
+  (when matt-e-macs-completion-extras
+    (use-package consult
+      :ensure t
+      :hook (completion-list-mode . consult-preview-at-point-mode)
+      :bind
+      ( :map global-map
+	("M-g M-g" . consult-goto-line)
+	("M-K" . consult-keep-lines) ; M-S-k is similar to M-S-5 (M-%)
+	("M-F" . consult-focus-lines) ; same principle
+	("M-s M-b" . consult-buffer)
+	("M-s M-f" . consult-find)
+	("M-s M-g" . consult-grep)
+	("M-s M-h" . consult-history)
+	("M-s M-i" . consult-imenu)
+	("M-s M-l" . consult-line)
+	("M-s M-m" . consult-mark)
+	("M-s M-y" . consult-yank-pop)
+	("M-s M-s" . consult-outline)
+	:map consult-narrow-map
+	("?" . consult-narrow-help))
+      :config
+      (setq consult-line-numbers-widen t)
+      ;; (setq completion-in-region-function #'consult-completion-in-region)
+      (setq consult-async-min-input 3)
+      (setq consult-async-input-debounce 0.5)
+      (setq consult-async-input-throttle 0.8)
+      (setq consult-narrow-key nil)
+      (setq consult-find-args
+	    (concat "find . -not ( "
+		    "-path */.git* -prune "
+		    "-or -path */.cache* -prune )"))
+      (setq consult-preview-key 'any)
+      (setq consult-project-function nil) ; always work from the current directory
+
+      (add-to-list 'consult-mode-histories '(vc-git-log-edit-mode . log-edit-comment-ring))
+
+      (require 'consult-imenu) ; the `imenu' extension is in its own file
+      (with-eval-after-load 'pulsar
+	;; see my `pulsar' package: <https://protesilaos.com/emacs/pulsar>
+	(setq consult-after-jump-hook nil) ; reset it to avoid conflicts with my function
+	(dolist (fn '(pulsar-recenter-top pulsar-reveal-entry))
+	  (add-hook 'consult-after-jump-hook fn)))))
+
+  #+end_src
+Marginalia
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-completion.el" :mkdirp yes
+    ;;; Detailed completion annotations (marginalia.el)
+  (use-package marginalia
+    :ensure t
+    :defer 1
+    :config
+    (setq marginalia-max-relative-age 0) ; absolute time
+    (marginalia-mode 1))
+
+  ;;;; Custom completion annotations
+  (use-package prot-marginalia
+    :ensure nil
+    :after marginalia
+    :config
+    (setq marginalia-annotator-registry
+	  '((bookmark prot-marginalia-bookmark)
+	    (buffer prot-marginalia-buffer)
+	    (command marginalia-annotate-command)
+	    (function prot-marginalia-symbol)
+	    (symbol prot-marginalia-symbol)
+	    (variable prot-marginalia-symbol)
+	    (face marginalia-annotate-face)
+	    (imenu marginalia-annotate-imenu)
+	    (package prot-marginalia-package)
+	    (unicode-name marginalia-annotate-char))))
+
+  #+end_src
+
+Minibuffer interface
+  
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-completion.el" :mkdirp yes
+   ;;; The minibuffer user interface (mct, vertico, or none)
+  (when matt-e-macs-completion-ui
+    (require
+     (pcase matt-e-macs-completion-ui
+       ('mct 'matt-e-macs-mct)
+       ('vertico 'matt-e-macs-vertico))))
+#+end_src
+
+Provide
+  
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-completion.el" :mkdirp yes
+  (provide 'matt-e-macs-completion)
+#+end_src
+
 ** =matt-e-macs-modus-themes=
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-modus-themes.el" :mkdirp yes
   ;; The themes are highly customisable.  Read the manual:
@@ -212,7 +1079,7 @@ User setting specifications /before/ modules get loaded.
 	   ("C-<f5>" . modus-themes-select))
     :config
     (setq modus-themes-custom-auto-reload nil
-	  modus-themes-to-toggle '(modus-vivendi modus-vivendi-tritanopia)
+	  modus-themes-to-toggle '(modus-vivendi modus-vivendi-tinted)
 	  ;; modus-themes-to-toggle '(modus-operandi-tinted modus-vivendi-tinted)
 	  ;; modus-themes-to-toggle '(modus-operandi-deuteranopia modus-vivendi-deuteranopia)
 	  ;; modus-themes-to-toggle '(modus-operandi-tritanopia modus-vivendi-tritanopia)
@@ -239,4 +1106,640 @@ User setting specifications /before/ modules get loaded.
 
   (provide 'matt-e-macs-modus-themes)
 
+#+end_src
+** =matt-e-macs-vertico=
+
+Vertico
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-vertico.el" :mkdirp yes
+  ;;; Vertical completion layout (vertico)
+  (use-package vertico
+    :ensure t
+    :hook (after-init . vertico-mode)
+    :config
+    (setq vertico-scroll-margin 0)
+    (setq vertico-count 5)
+    (setq vertico-resize t)
+    (setq vertico-cycle t)
+
+    (with-eval-after-load 'rfn-eshadow
+      ;; This works with `file-name-shadow-mode' enabled.  When you are in
+      ;; a sub-directory and use, say, `find-file' to go to your home '~/'
+      ;; or root '/' directory, Vertico will clear the old path to keep
+      ;; only your current input.
+      (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy)))
+
+  ;;; Custom tweaks for vertico (prot-vertico.el)
+  (use-package prot-vertico
+    :ensure nil
+    :demand t
+    :after vertico
+    :bind
+    ( :map vertico-map
+      ("<left>" . backward-char)
+      ("<right>" . forward-char)
+      ("TAB" . prot-vertico-private-complete)
+      ("DEL" . vertico-directory-delete-char)
+      ("M-DEL" . vertico-directory-delete-word)
+      ("M-," . vertico-quick-insert)
+      ("M-." . vertico-quick-exit)
+      :map vertico-multiform-map
+      ("C-n" . prot-vertico-private-next)
+      ("<down>" . prot-vertico-private-next)
+      ("C-p" . prot-vertico-private-previous)
+      ("<up>" . prot-vertico-private-previous)
+      ("C-l" . vertico-multiform-vertical))
+    :config
+    (setq vertico-multiform-categories
+	  `(;; Maximal
+	    (embark-keybinding ,@prot-vertico-multiform-maximal)
+	    (multi-category ,@prot-vertico-multiform-maximal)
+	    (consult-location ,@prot-vertico-multiform-maximal)
+	    (imenu ,@prot-vertico-multiform-maximal)
+	    (unicode-name ,@prot-vertico-multiform-maximal)
+	    ;; Minimal
+	    (file ,@prot-vertico-multiform-minimal
+		  (vertico-preselect . prompt)
+		  (vertico-sort-function . prot-vertico-sort-directories-first))
+	    (t ,@prot-vertico-multiform-minimal)))
+
+    (vertico-multiform-mode 1))
+
+  (provide 'matt-e-macs-vertico)
+#+end_src
+
+** =matt-e-macs-treesitter=
+
+Treesiter
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-treesitter.el" : mkdirp yes
+  ;; Fix path no matter what
+  (use-package exec-path-from-shell
+    :ensure t
+    :config
+    (when (memq window-system '(mac ns x))
+      (exec-path-from-shell-initialize)))
+
+  (use-package treesit-auto
+    :ensure t
+    :custom
+    (treesit-auto-install 'prompt)
+    :config
+    (treesit-auto-add-to-auto-mode-alist 'all) ;; auto add ts-mode to major mode
+    (global-treesit-auto-mode))
+
+  ;; When tree-sitter enabled
+  (when matt-e-macs-treesitter-extras
+    ;;; eglot
+    (use-package eglot
+      :ensure t
+      :defer t
+      :bind (:map eglot-mode-map
+		  ("C-c C-d" . eldoc)
+		  ("C-c C-e" . eglot-rename)
+		  ;; ("C-c C-o" . python-sort-imports) ;; ruff uses below
+		  ("C-c C-f" . eglot-format-buffer))
+      :hook ((python-ts-mode . eglot-ensure)
+	     (python-ts-mode . (lambda () (set-fill-column 88))))
+      :config
+      (setq-default eglot-workspace-configuration
+		    '((:pylsp . (:plugins (:ruff (:enabled t :formatEnabled t :lineLength 88 :format ["I"])))))))
+
+    )
+
+
+
+  (provide 'matt-e-macs-treesitter)
+#+end_src
+** =matt-e-macs-window=
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-window.el" :mkdirp yes
+    ;;; General window and buffer configurations
+    (use-package uniquify
+      :ensure nil
+      :config
+		  ;;;; `uniquify' (unique names for buffers)
+      (setq uniquify-buffer-name-style 'forward)
+      (setq uniquify-strip-common-suffix t)
+      (setq uniquify-after-kill-buffer-p t))
+
+		  ;;;; Line highlight
+    (use-package hl-line
+      :ensure nil
+      :commands (hl-line-mode)
+      :config
+      (setq hl-line-sticky-flag nil)
+      (setq hl-line-overlay-priority -50)) ; emacs28
+
+		;;;; Negative space highlight
+    (use-package whitespace
+      :ensure nil
+      :bind
+      (("<f6>" . whitespace-mode)
+       ("C-c z" . delete-trailing-whitespace))
+      :config
+      ;; NOTE 2023-08-14: This is experimental.  I am not sure I like it.
+      (setq whitespace-style
+	    '(face
+	      tabs
+	      spaces
+	      tab-mark
+	      space-mark
+	      trailing
+	      missing-newline-at-eof
+	      space-after-tab::tab
+	      space-after-tab::space
+	      space-before-tab::tab
+	      space-before-tab::space)))
+
+	      ;;; Line numbers on the side of the window
+    (use-package display-line-numbers
+      :ensure nil
+      :bind
+      ("<f7>" . display-line-numbers-mode)
+      :config
+      (setq-default display-line-numbers-type t)
+      ;; Those two variables were introduced in Emacs 27.1
+      (setq display-line-numbers-major-tick 0)
+      (setq display-line-numbers-minor-tick 0)
+      ;; Use absolute numbers in narrowed buffers
+      (setq-default display-line-numbers-widen t))
+
+	    ;;;; `window', `display-buffer-alist', and related
+    (use-package prot-window
+      :ensure nil
+      :demand t
+      :config
+      ;; NOTE 2023-03-17: Remember that I am using development versions of
+      ;; Emacs.  Some of my `display-buffer-alist' contents are for Emacs
+      ;; 29+.
+      (setq display-buffer-alist
+	    `(;; no window
+	      ("\\`\\*Async Shell Command\\*\\'"
+	       (display-buffer-no-window))
+	      ("\\`\\*\\(Warnings\\|Compile-Log\\|Org Links\\)\\*\\'"
+	       (display-buffer-no-window)
+	       (allow-no-window . t))
+	      ;; bottom side window
+	      ("\\*Org \\(Select\\|Note\\)\\*" ; the `org-capture' key selection and `org-add-log-note'
+	       (display-buffer-in-side-window)
+	       (dedicated . t)
+	       (side . bottom)
+	       (slot . 0)
+	       (window-parameters . ((mode-line-format . none))))
+	      ;; bottom buffer (NOT side window)
+	      ((or . ((derived-mode . flymake-diagnostics-buffer-mode)
+		      (derived-mode . flymake-project-diagnostics-mode)
+		      (derived-mode . messages-buffer-mode)
+		      (derived-mode . backtrace-mode)))
+	       (display-buffer-reuse-mode-window display-buffer-at-bottom)
+	       (window-height . 0.3)
+	       (dedicated . t)
+	       (preserve-size . (t . t)))
+	      ("\\*Embark Actions\\*"
+	       (display-buffer-reuse-mode-window display-buffer-below-selected)
+	       (window-height . fit-window-to-buffer)
+	       (window-parameters . ((no-other-window . t)
+				     (mode-line-format . none))))
+	      ("\\*\\(Output\\|Register Preview\\).*"
+	       (display-buffer-reuse-mode-window display-buffer-at-bottom))
+	      ;; below current window
+	      ("\\(\\*Capture\\*\\|CAPTURE-.*\\)"
+	       (display-buffer-reuse-mode-window display-buffer-below-selected))
+	      ("\\*\\vc-\\(incoming\\|outgoing\\|git : \\).*"
+	       (display-buffer-reuse-mode-window display-buffer-below-selected)
+	       (window-height . 0.1)
+	       (dedicated . t)
+	       (preserve-size . (t . t)))
+	      ((derived-mode . reb-mode) ; M-x re-builder
+	       (display-buffer-reuse-mode-window display-buffer-below-selected)
+	       (window-height . 4) ; note this is literal lines, not relative
+	       (dedicated . t)
+	       (preserve-size . (t . t)))
+	      ((or . ((derived-mode . occur-mode)
+		      (derived-mode . grep-mode)
+		      (derived-mode . Buffer-menu-mode)
+		      (derived-mode . log-view-mode)
+		      (derived-mode . help-mode) ; See the hooks for `visual-line-mode'
+		      "\\*\\(|Buffer List\\|Occur\\|vc-change-log\\|eldoc.*\\).*"
+		      prot-window-shell-or-term-p
+		      ;; ,world-clock-buffer-name
+		      ))
+	       (prot-window-display-buffer-below-or-pop)
+	       (body-function . prot-window-select-fit-size))
+	      ("\\*\\(Calendar\\|Bookmark Annotation\\|ert\\).*"
+	       (display-buffer-reuse-mode-window display-buffer-below-selected)
+	       (dedicated . t)
+	       (window-height . fit-window-to-buffer))
+	      ;; NOTE 2022-09-10: The following is for `ispell-word', though
+	      ;; it only works because I override `ispell-display-buffer'
+	      ;; with `prot-spell-ispell-display-buffer' and change the
+	      ;; value of `ispell-choices-buffer'.
+	      ("\\*ispell-top-choices\\*.*"
+	       (display-buffer-reuse-mode-window display-buffer-below-selected)
+	       (window-height . fit-window-to-buffer))
+	      ;; same window
+
+	      ;; NOTE 2023-02-17: `man' does not fully obey the
+	      ;; `display-buffer-alist'.  It works for new frames and for
+	      ;; `display-buffer-below-selected', but otherwise is
+	      ;; unpredictable.  See `Man-notify-method'.
+	      ((or . ((derived-mode . Man-mode)
+		      (derived-mode . woman-mode)
+		      "\\*\\(Man\\|woman\\).*"))
+	       (display-buffer-same-window)))))
+
+    (use-package prot-window
+      :ensure nil
+      :demand t
+      :config
+      (setq window-combination-resize t)
+      (setq even-window-sizes 'height-only)
+      (setq window-sides-vertical nil)
+      (setq switch-to-buffer-in-dedicated-window 'pop)
+      (setq split-height-threshold 80)
+      (setq split-width-threshold 125)
+      (setq window-min-height 3)
+      (setq window-min-width 30))
+
+    (use-package prot-window
+      :ensure nil
+      :demand t
+      :bind
+      ( :map global-map
+	;; NOTE 2022-09-17: Also see `prot-simple-swap-window-buffers'.
+	("C-x <down>" . next-buffer)
+	("C-x <up>" . previous-buffer)
+	("C-x C-n" . next-buffer)     ; override `set-goal-column'
+	("C-x C-p" . previous-buffer) ; override `mark-page'
+	("C-x !" . delete-other-windows-vertically)
+	("C-x _" . balance-windows)      ; underscore
+	("C-x -" . fit-window-to-buffer) ; hyphen
+	("C-x +" . balance-windows-area)
+	("C-x }" . enlarge-window)
+	("C-x {" . shrink-window)
+	("C-x >" . enlarge-window-horizontally) ; override `scroll-right'
+	("C-x <" . shrink-window-horizontally) ; override `scroll-left'
+	:map resize-window-repeat-map
+	(">" . enlarge-window-horizontally)
+	("<" . shrink-window-horizontally)))
+
+	    ;;; Frame-isolated buffers
+    ;; Another package of mine.  Read the manual:
+    ;; <https://protesilaos.com/emacs/beframe>.
+    (use-package beframe
+      :ensure t
+      :hook (after-init . beframe-mode)
+      :config
+      (setq beframe-functions-in-frames '(project-prompt-project-dir))
+
+      ;; I use this instead of :bind because I am binding a keymap and the
+      ;; way `use-package' does it is by wrapping a lambda around it that
+      ;; then breaks `describe-key' for those keys.
+      (prot-emacs-keybind global-map
+			  ;; Override the `set-fill-column' that I have no use for.
+			  "C-x f" #'other-frame-prefix
+			  ;; Bind Beframe commands to a prefix key. Notice the -map as I am
+			  ;; binding keymap here, not a command.
+			  "C-c b" #'beframe-prefix-map
+			  ;; Replace the generic `buffer-menu'.  With a prefix argument, this
+			  ;; commands prompts for a frame.  Call the `buffer-menu' via M-x if
+			  ;; you absolutely need the global list of buffers.
+			  "C-x C-b" #'beframe-buffer-menu
+			  ;; Not specific to
+  Beframe, but since it renames frames (by means
+			  ;; of `beframe-mode') it is appropriate to have this here:
+			  "C-x B" #'select-frame-by-name))
+
+	  ;;; Directional window motions (windmove)
+    (use-package windmove
+      :ensure nil
+      :bind
+      ;; Those override some commands that are already available with
+      ;; C-M-u, C-M-f, C-M-b.
+      (("C-M-<up>" . windmove-up)
+       ("C-M-<right>" . windmove-right)
+       ("C-M-<down>" . windmove-down)
+       ("C-M-<left>" . windmove-left)
+       ("C-M-S-<up>" . windmove-swap-states-up)
+       ("C-M-S-<right>" . windmove-swap-states-right) ; conflicts with `org-increase-number-at-point'
+       ("C-M-S-<down>" . windmove-swap-states-down)
+       ("C-M-S-<left>" . windmove-swap-states-left))
+      :config
+      (setq windmove-create-window nil)) ; Emacs 27.1
+
+	;;; Header line context of symbol/heading (breadcrumb.el)
+    (use-package breadcrumb
+      :ensure t
+      :functions (prot/breadcrumb-local-mode)
+      :hook ((text-mode prog-mode) . prot/breadcrumb-local-mode)
+      :config
+      (setq breadcrumb-project-max-length 0.5)
+      (setq breadcrumb-project-crumb-separator "/")
+      (setq breadcrumb-imenu-max-length 1.0)
+      (setq breadcrumb-imenu-crumb-separator " > ")
+
+      (defun prot/breadcrumb-local-mode ()
+	"Enable `breadcrumb-local-mode' if the buffer is visiting a file."
+	(when buffer-file-name
+	  (breadcrumb-local-mode 1))))
+
+    (provide 'matt-e-macs-window)
+  
+#+end_src
+** =matt-e-macs-dired=
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-dired.el" :mkdirp yes
+  (use-package dired
+    :ensure nil
+    :commands (dired)
+    :config
+    (setq dired-recursive-copies 'always)
+    (setq dired-recursive-deletes 'always)
+    (setq delete-by-moving-to-trash t))
+
+  (use-package dired
+	:ensure nil
+	:commands (dired)
+	:config
+	(setq dired-listing-switches
+	      "-AGFhlv --group-directories-first --time-style=long-iso"))
+
+  (use-package dired
+    :ensure nil
+    :commands (dired)
+    :config
+    (setq dired-dwim-target t))
+
+  (use-package dired
+    :ensure nil
+    :commands (dired)
+    :config
+    (setq dired-guess-shell-alist-user ; those are the suggestions for ! and & in Dired
+	  '(("\\.\\(png\\|jpe?g\\|tiff\\)" "feh" "xdg-open")
+	    ("\\.\\(mp[34]\\|m4a\\|ogg\\|flac\\|webm\\|mkv\\)" "mpv" "xdg-open")
+	    (".*" "xdg-open"))))
+
+  (use-package dired
+    :ensure nil
+    :commands (dired)
+    :config
+    (setq dired-auto-revert-buffer #'dired-directory-changed-p) ; also see `dired-do-revert-buffer'
+    (setq dired-make-directory-clickable t) ; Emacs 29.1
+    (setq dired-free-space nil) ; Emacs 29.1
+    (setq dired-mouse-drag-files t) ; Emacs 29.1
+
+    (add-hook 'dired-mode-hook #'dired-hide-details-mode)
+    (add-hook 'dired-mode-hook #'hl-line-mode)
+
+    ;; In Emacs 29 there is a binding for `repeat-mode' which lets you
+    ;; repeat C-x C-j just by following it up with j.  For me, this is a
+    ;; problem as j calls `dired-goto-file', which I often use.
+    (define-key dired-jump-map (kbd "j") nil))
+
+  (use-package dired-aux
+    :ensure nil
+    :after dired
+    :bind
+    ( :map dired-mode-map
+      ("C-+" . dired-create-empty-file)
+      ("M-s f" . nil)
+      ("C-<return>" . dired-do-open) ; Emacs 30
+      ("C-x v v" . dired-vc-next-action)) ; Emacs 28
+    :config
+    (setq dired-isearch-filenames 'dwim)
+    (setq dired-create-destination-dirs 'ask) ; Emacs 27
+    (setq dired-vc-rename-file t)             ; Emacs 27
+    (setq dired-do-revert-buffer (lambda (dir) (not (file-remote-p dir)))) ; Emacs 28
+    (setq dired-create-destination-dirs-on-trailing-dirsep t)) ; Emacs 29
+
+  (use-package dired-x
+    :ensure nil
+    :after dired
+    :bind
+    ( :map dired-mode-map
+      ("I" . dired-info))
+    :config
+    (setq dired-clean-up-buffers-too t)
+    (setq dired-clean-confirm-killing-deleted-buffers t)
+    (setq dired-x-hands-off-my-keys t)    ; easier to show the keys I use
+    (setq dired-bind-man nil)
+    (setq dired-bind-info nil))
+
+  (use-package prot-dired
+    :ensure nil
+    :hook (dired-mode . prot-dired-setup-imenu)
+    :bind
+    ( :map dired-mode-map
+      ("i" . prot-dired-insert-subdir) ; override `dired-maybe-insert-subdir'
+      ("/" . prot-dired-limit-regexp)
+      ("C-c C-l" . prot-dired-limit-regexp)
+      ("M-n" . prot-dired-subdirectory-next)
+      ("C-c C-n" . prot-dired-subdirectory-next)
+      ("C-c C-p" . prot-dired-subdirectory-previous)
+      ("M-s G" . prot-dired-grep-marked-files) ; M-s g is `prot-search-grep'
+      ("M-p" . prot-dired-subdirectory-previous)))
+
+  (use-package dired-subtree
+    :ensure t
+    :after dired
+    :bind
+    ( :map dired-mode-map
+      ("<tab>" . dired-subtree-toggle)
+      ("TAB" . dired-subtree-toggle)
+      ("<backtab>" . dired-subtree-remove)
+      ("S-TAB" . dired-subtree-remove))
+    :config
+    (setq dired-subtree-use-backgrounds nil))
+
+  ;;; dired-like mode for the trash (trashed.el)
+  (use-package trashed
+    :ensure t
+    :commands (trashed)
+    :config
+    (setq trashed-action-confirmer 'y-or-n-p)
+    (setq trashed-use-header-line t)
+    (setq trashed-sort-key '("Date deleted" . t))
+    (setq trashed-date-format "%Y-%m-%d %H:%M:%S"))
+
+  (provide 'matt-e-macs-dired)
+
+#+end_src
+** =matt-e-macs-git=
+
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-git.el" :mkdirp yes
+  ;;;; `ediff'`
+    (use-package ediff
+      :ensure nil
+      :commands (ediff-buffers ediff-files ediff-buffers3 ediff-files3)
+      :init
+      (setq ediff-split-window-function 'split-window-horizontally)
+      (setq ediff-window-setup-function 'ediff-setup-windows-plain)
+      :config
+      (setq ediff-keep-variants nil)
+      (setq ediff-make-buffers-readonly-at-startup nil)
+      (setq ediff-merge-revisions-with-ancestor t)
+      (setq ediff-show-clashes-only t))
+
+	    ;;;; `project'
+    (use-package project
+      :ensure nil
+      :bind
+      (("C-x p ." . project-dired)
+       ("C-x p C-g" . keyboard-quit)
+       ("C-x p <return>" . project-dired)
+       ("C-x p <delete>" . project-forget-project))
+      :config
+      (setopt project-switch-commands
+	      '((project-find-file "Find file")
+		(project-find-regexp "Find regexp")
+		(project-find-dir "Find directory")
+		(project-dired "Root dired")
+		(project-vc-dir "VC-Dir")
+		(project-shell "Shell")
+		(keyboard-quit "Quit")))
+      (setq project-vc-extra-root-markers '(".project")) ; Emacs 29
+      (setq project-key-prompt-style t) ; Emacs 30
+
+      (advice-add #'project-switch-project :after #'prot-common-clear-minibuffer-message))
+
+    (use-package prot-project
+      :ensure nil
+      ;; Also check the command `prot-project-in-tab'.  I do not use it
+      ;; because I prefer to manage my buffers in frames, with my
+      ;; `beframe' package.
+      :bind
+      ( :map project-prefix-map
+	("p" . prot-project-switch)))
+
+    (use-package diff-mode
+      :ensure nil
+      :defer t
+      :config
+      (setq diff-default-read-only t)
+      (setq diff-advance-after-apply-hunk t)
+      (setq diff-update-on-the-fly t)
+      ;; The following are from Emacs 27.1
+      (setq diff-refine nil) ; I do it on demand, with my `agitate' package (more below)
+      (setq diff-font-lock-prettify t) ; I think nil is better for patches, but let me try this for a while
+      (setq diff-font-lock-syntax 'hunk-also))
+#+end_src
+
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-git.el" :mkdirp yes
+
+  (use-package vc
+  :ensure nil
+  :bind
+  (;; NOTE: I override lots of the defaults
+   :map global-map
+   ("C-x v B" . vc-annotate) ; Blame mnemonic
+   ("C-x v e" . vc-ediff)
+   ("C-x v k" . vc-delete-file) ; 'k' for kill==>delete is more common
+   ("C-x v G" . vc-log-search)  ; git log --grep
+   ("C-x v t" . vc-create-tag)
+   ("C-x v d" . vc-diff)
+   ("C-x v ." . vc-dir-root) ; `vc-dir-root' is from Emacs 28
+   ("C-x v <return>" . vc-dir-root)
+   :map vc-dir-mode-map
+   ("t" . vc-create-tag)
+   ("O" . vc-log-outgoing)
+   ("o" . vc-dir-find-file-other-window)
+   ("d" . vc-diff)         ; parallel to D: `vc-root-diff'
+   ("k" . vc-dir-delete-file)
+   ("G" . vc-revert)
+   :map vc-git-stash-shared-map
+   ("a" . vc-git-stash-apply-at-point)
+   ("c" . vc-git-stash) ; "create" named stash
+   ("k" . vc-git-stash-delete-at-point) ; symmetry with `vc-dir-delete-file'
+   ("p" . vc-git-stash-pop-at-point)
+   ("s" . vc-git-stash-snapshot)
+   :map vc-annotate-mode-map
+   ("M-q" . vc-annotate-toggle-annotation-visibility)
+   ("C-c C-c" . vc-annotate-goto-line)
+   ("<return>" . vc-annotate-find-revision-at-line)
+   :map log-edit-mode-map
+   ("M-s" . nil) ; I use M-s for my search commands
+   ("M-r" . nil) ; I use `consult-history'
+   :map log-view-mode-map
+   ("<tab>" . log-view-toggle-entry-display)
+   ("<return>" . log-view-find-revision)
+   ("s" . vc-log-search)
+   ("o" . vc-log-outgoing)
+   ("f" . vc-log-incoming)
+   ("F" . vc-update)
+   ("P" . vc-push))
+  :init
+  (setq vc-follow-symlinks t)
+  :config
+  ;; Those offer various types of functionality, such as blaming,
+  ;; viewing logs, showing a dedicated buffer with changes to affected
+  ;; files.
+  (require 'vc-annotate)
+  (require 'vc-dir)
+  (require 'vc-git)
+  (require 'add-log)
+  (require 'log-view)
+
+  ;; I only use Git.  If I ever need another, I will include it here.
+  ;; This may have an effect on performance, as Emacs will not try to
+  ;; check for a bunch of backends.
+  (setq vc-handled-backends '(Git))
+
+  ;; This one is for editing commit messages.
+  (require 'log-edit)
+  (setq log-edit-confirm 'changed)
+  (setq log-edit-keep-buffer nil)
+  (setq log-edit-require-final-newline t)
+  (setq log-edit-setup-add-author nil)
+  ;; I can see the files from the Diff with C-c C-d
+  (remove-hook 'log-edit-hook #'log-edit-show-files)
+
+  (setq vc-find-revision-no-save t)
+  (setq vc-annotate-display-mode 'scale) ; scale to oldest
+  ;; I use a different account for git commits
+  (setq add-log-mailing-address "info@protesilaos.com")
+  (setq add-log-keep-changes-together t)
+  (setq vc-git-diff-switches '("--patch-with-stat" "--histogram"))
+  (setq vc-git-log-switches '("--stat"))
+  (setq vc-git-print-log-follow t)
+  (setq vc-git-revision-complete-only-branches nil) ; Emacs 28
+  (setq vc-git-root-log-format
+        `("%d %h %ai %an: %s"
+          ;; The first shy group matches the characters drawn by --graph.
+          ;; We use numbered groups because `log-view-message-re' wants the
+          ;; revision number to be group 1.
+          ,(concat "^\\(?:[*/\\|]+\\)\\(?:[*/\\| ]+\\)?"
+                   "\\(?2: ([^)]+) \\)?\\(?1:[0-9a-z]+\\) "
+                   "\\(?4:[0-9]\\{4\\}-[0-9-]\\{4\\}[0-9\s+:-]\\{16\\}\\) "
+                   "\\(?3:.*?\\):")
+          ((1 'log-view-message)
+           (2 'change-log-list nil lax)
+           (3 'change-log-name)
+           (4 'change-log-date))))
+
+  ;; These two are from Emacs 29
+  (setq vc-git-log-edit-summary-target-len 50)
+  (setq vc-git-log-edit-summary-max-len 70))
+#+end_src
+
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-git.el" :mkdirp yes
+	;;; Interactive and powerful git front-end (Magit)
+    (use-package magit
+      :ensure t
+      :bind ("C-c g" . magit-status)
+      :init
+      (setq magit-define-global-key-bindings nil)
+      (setq magit-section-visibility-indicator '("⮧"))
+      :config
+      (setq git-commit-summary-max-length 50)
+      ;; NOTE 2023-01-24: I used to also include `overlong-summary-line'
+      ;; in this list, but I realised I do not need it.  My summaries are
+      ;; always in check.  When I exceed the limit, it is for a good
+      ;; reason.
+      (setq git-commit-style-convention-checks '(non-empty-second-line))
+
+      (setq magit-diff-refine-hunk t)
+
+      ;;   (setq magit-repository-directories
+      ;; 	'(("~/Git/Projects" . 1)))
+
+      )
+
+    (provide 'matt-e-macs-git)
 #+end_src

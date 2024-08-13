@@ -1,5 +1,5 @@
 (setq frame-resize-pixelwise t
-      frame-inhibit-implied-resize t
+      frame-inhibit-implied-resize t	
       frame-title-format '("%b")
       ring-bell-function 'ignore
       use-dialog-box t ; only for mouse events, which I seldom use
