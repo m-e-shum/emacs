@@ -266,10 +266,9 @@ User setting specifications /before/ modules get loaded.
 #+end_src
 
 * ~matt-e-macs-post-custom.el~
-* modules
+* ~matt-e-macs-modules/~
 ** =matt-e-macs-theme=
-
-=matt-e-macs-load-theme-family=
+*** =matt-e-macs-load-theme-family=
 
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-theme.el" :mkdirp yes
   ;;; Theme setup and related
@@ -286,7 +285,7 @@ User setting specifications /before/ modules get loaded.
        )))
 #+end_src
 
-=puslsar=
+*** =puslsar=
 
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-theme.el" :mkdirp yes
   (use-package pulsar
@@ -313,7 +312,7 @@ User setting specifications /before/ modules get loaded.
      ("C-x L" . pulsar-highlight-dwim))) ; or use `pulsar-highlight-line'
 #+end_src
 
-=Lin=
+*** =Lin=
 
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-theme.el" :mkdirp yes
     ;;;; Lin
@@ -333,7 +332,7 @@ User setting specifications /before/ modules get loaded.
 
   #+end_src
 
-=Spacious Padding=
+*** =Spacious Padding=
   
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-theme.el" :mkdirp yes
     ;;;; Increase padding of windows/frames
@@ -369,14 +368,13 @@ User setting specifications /before/ modules get loaded.
     )
 #+end_src
 
-Expose =matte-e-macs-theme=
+*** Provide =matte-e-macs-theme=
 
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-theme.el" :mkdirp yes
   (provide 'matt-e-macs-theme)
 #+end_src
 ** =matt-e-macs-essentials=
-
-Emacs
+*** Emacs
 
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-essentials.el" :mkdirp yes
   ;;; Essential configurations
@@ -444,6 +442,8 @@ Emacs
     )
 #+end_src
 
+*** prot-simple
+
 Custom basic commands. (Try out Prot's replacement for ~simple.el~.)
 
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-essentials.el" :mkdirp yes
@@ -506,6 +506,8 @@ Custom basic commands. (Try out Prot's replacement for ~simple.el~.)
     ("C-x r ." . prot-simple-file-to-register)))
   #+end_src
 
+*** prot-pair
+  
 Insert character pairs  
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-essentials.el" :mkdirp yes
   ;;;; Insert character pairs (prot-pair.el)
@@ -517,7 +519,7 @@ Insert character pairs
      ("M-\\" . prot-pair-delete)))
   #+end_src
 
-Prot's =which-key=
+*** Prot's =which-key=
   
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-essentials.el" :mkdirp yes
    ;;;; Prefix keymap (prot-prefix.el)
@@ -530,7 +532,7 @@ Prot's =which-key=
      ("C-z" . prot-prefix)))
 #+end_src
 
-=recentf=
+*** =recentf=
 
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-essentials.el" :mkdirp yes
   (use-package recentf
@@ -548,7 +550,10 @@ Prot's =which-key=
 
   #+end_src
 
+*** mouse
+
 Mouse configuration
+
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-essentials.el" :mkdirp yes
     ;;;; Mouse and mouse wheel behaviour
   (use-package mouse
@@ -578,6 +583,8 @@ Mouse configuration
 
   #+end_src
 
+*** autorevert
+
 Revert buffer on save
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-essentials.el" :mkdirp yes
   ;;;; Auto revert mode
@@ -587,6 +594,8 @@ Revert buffer on save
     :config
     (setq auto-revert-verbose t))
 #+end_src
+
+*** tooltip
 
 Tool tip
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-essentials.el" :mkdirp yes
@@ -606,6 +615,8 @@ Tool tip
   
 #+end_src
 
+*** delsel
+
 Delete selection
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-essentials.el" :mkdirp yes
   ;;;; Delete selection
@@ -614,6 +625,8 @@ Delete selection
     :hook (after-init . delete-selection-mode))
 
 #+end_src
+
+*** server
 
 Emacs server
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-essentials.el" :mkdirp yes
@@ -627,6 +640,8 @@ Emacs server
     (server-start)))
 #+end_src
 
+*** goto-chg
+
 Go to last change
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-essentials.el" :mkdirp yes
   (use-package goto-chg
@@ -636,12 +651,14 @@ Go to last change
      ("C-)" . goto-last-change-reverse)))
 #+end_src
 
-Provide =matte-e-macs-essentials=
+*** Provide =matte-e-macs-essentials=
 
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-essentials.el" :mkdirp yes
   (provide 'matt-e-macs-essentials)
 #+end_src
+
 ** =matt-e-macs-modeline=
+*** prot-modeline
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-modeline.el" :mkdirp yes
     ;;; Mode line
   (use-package prot-modeline
@@ -686,9 +703,7 @@ Provide =matte-e-macs-essentials=
 
       (add-hook 'spacious-padding-mode-hook #'prot/modeline-spacious-indicators)))
 #+end_src
-
-Keycast
-
+*** keycast
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-modeline.el" :mkdirp yes
   ;;; Keycast mode
 (use-package keycast
@@ -708,15 +723,13 @@ Keycast
                     mouse-set-point mouse-drag-region))
     (add-to-list 'keycast-substitute-alist `(,event nil))))
 #+end_src
-
-Provide
+*** Provide
 
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-modeline.el" :mkdirp yes
   (provide 'matt-e-macs-modeline)
 #+end_src
 ** =matt-e-macs-completion=
-
-Minibuffer settings
+*** Minibuffer settings
 
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-completion.el" :mkdirp yes
   ;;; General minibuffer settings
@@ -788,9 +801,9 @@ Minibuffer settings
 
   #+end_src
 
-Orderless
+*** Orderless
   
-  #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-completion.el" :mkdirp yes
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-completion.el" :mkdirp yes
 	;;; Orderless completion style (and prot-orderless.el)
     (use-package orderless
       :ensure t
@@ -816,6 +829,8 @@ Orderless
 	      prot-orderless-beg-or-end)))
 #+end_src
 
+*** mb-depth
+
 Minibuffer depth
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-completion.el" :mkdirp yes
   (use-package mb-depth
@@ -825,61 +840,62 @@ Minibuffer depth
     (setq read-minibuffer-restore-windows nil) ; Emacs 28
     (setq enable-recursive-minibuffers t))
 
-  #+end_src
+#+end_src
 
 Minibuffer default values
   
-  #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-completion.el" :mkdirp yes
-    (use-package minibuf-eldef
-  :ensure nil
-  :hook (after-init . minibuffer-electric-default-mode)
-  :config
-  (setq minibuffer-default-prompt-format " [%s]")) ; Emacs 29
-  #+end_src
-
-  Common interactions
-  #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-completion.el" :mkdirp yes
-    (use-package rfn-eshadow
-      :ensure nil
-      :hook (minibuffer-setup . cursor-intangible-mode)
-      :config
-    ;; Not everything here comes from rfn-eshadow.el, but this is fine.
-
-      (setq resize-mini-windows t)
-      (setq read-answer-short t) ; also check `use-short-answers' for Emacs28
-      (setq echo-keystrokes 0.25)
-      (setq kill-ring-max 60) ; Keep it small
-
-    ;; Do not allow the cursor to move inside the minibuffer prompt.  I
-    ;; got this from the documentation of Daniel Mendler's Vertico
-    ;; package: <https://github.com/minad/vertico>.
-      (setq minibuffer-prompt-properties
-	    '(read-only t cursor-intangible t face minibuffer-prompt))
-
-    ;; MCT has a variant of this built-in.
-      (unless (eq matt-e-macs-completion-ui 'mct)
-	;; Add prompt indicator to `completing-read-multiple'.  We display
-	;; [`completing-read-multiple': <separator>], e.g.,
-	;; [`completing-read-multiple': ,] if the separator is a comma.  This
-	;; is adapted from the README of the `vertico' package by Daniel
-	;; Mendler.  I made some small tweaks to propertize the segments of
-	;; the prompt.
-	(defun crm-indicator (args)
-	(cons (format "[`completing-read-multiple': %s]  %s"
-		      (propertize
-		       (replace-regexp-in-string
-			"\\`\\[.*?]\\*\\|\\[.*?]\\*\\'" ""
-			crm-separator)
-		       'face 'error)
-		      (car args))
-	      (cdr args)))
-
-      (advice-add #'completing-read-multiple :filter-args #'crm-indicator))
-
-    (file-name-shadow-mode 1))  
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-completion.el" :mkdirp yes
+  (use-package minibuf-eldef
+    :ensure nil
+    :hook (after-init . minibuffer-electric-default-mode)
+    :config
+    (setq minibuffer-default-prompt-format " [%s]")) ; Emacs 29
 #+end_src
 
-  Ignore letter casing
+*** Common interactions
+
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-completion.el" :mkdirp yes
+  (use-package rfn-eshadow
+    :ensure nil
+    :hook (minibuffer-setup . cursor-intangible-mode)
+    :config
+    ;; Not everything here comes from rfn-eshadow.el, but this is fine.
+
+    (setq resize-mini-windows t)
+    (setq read-answer-short t) ; also check `use-short-answers' for Emacs28
+    (setq echo-keystrokes 0.25)
+    (setq kill-ring-max 60) ; Keep it small
+
+  ;; Do not allow the cursor to move inside the minibuffer prompt.  I
+  ;; got this from the documentation of Daniel Mendler's Vertico
+  ;; package: <https://github.com/minad/vertico>.
+    (setq minibuffer-prompt-properties
+	  '(read-only t cursor-intangible t face minibuffer-prompt))
+
+  ;; MCT has a variant of this built-in.
+    (unless (eq matt-e-macs-completion-ui 'mct)
+      ;; Add prompt indicator to `completing-read-multiple'.  We display
+      ;; [`completing-read-multiple': <separator>], e.g.,
+      ;; [`completing-read-multiple': ,] if the separator is a comma.  This
+      ;; is adapted from the README of the `vertico' package by Daniel
+      ;; Mendler.  I made some small tweaks to propertize the segments of
+      ;; the prompt.
+      (defun crm-indicator (args)
+      (cons (format "[`completing-read-multiple': %s]  %s"
+		    (propertize
+		     (replace-regexp-in-string
+		      "\\`\\[.*?]\\*\\|\\[.*?]\\*\\'" ""
+		      crm-separator)
+		     'face 'error)
+		    (car args))
+	    (cdr args)))
+
+    (advice-add #'completing-read-multiple :filter-args #'crm-indicator))
+
+  (file-name-shadow-mode 1))  
+#+end_src
+
+*** Ignore letter casing
     
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-completion.el" :mkdirp yes
   (setq completion-ignore-case t)
@@ -887,37 +903,36 @@ Minibuffer default values
   (setq-default case-fold-search t)   ; For general regexp
   (setq read-file-name-completion-ignore-case t)
 
-  #+end_src
-
-  Generic Minibuffer
-  
-  #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-completion.el" :mkdirp yes
-    (use-package minibuffer
-  :ensure nil
-  :demand t
-  :config
-  (setq completions-format 'one-column)
-  (setq completion-show-help nil)
-  (setq completion-auto-help 'always)
-  (setq completion-auto-select nil)
-  (setq completions-detailed t)
-  (setq completion-show-inline-help nil)
-  (setq completions-max-height 6)
-  (setq completions-header-format (propertize "%s candidates:\n" 'face 'bold-italic))
-  (setq completions-highlight-face 'completions-highlight)
-  (setq minibuffer-completion-auto-choose t)
-  (setq minibuffer-visible-completions t) ; Emacs 30
-  (setq completions-sort 'historical)
-
-  (unless matt-e-macs-completion-ui
-    (matt-e-macs-keybind minibuffer-local-completion-map
-      "<up>" #'minibuffer-previous-line-completion
-      "<down>" #'minibuffer-next-line-completion)
-
-    (add-hook 'completion-list-mode-hook #'prot-common-truncate-lines-silently)))
 #+end_src
 
-Savehist
+*** Generic Minibuffer
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-completion.el" :mkdirp yes
+  (use-package minibuffer
+    :ensure nil
+    :demand t
+    :config
+    (setq completions-format 'one-column)
+    (setq completion-show-help nil)
+    (setq completion-auto-help 'always)
+    (setq completion-auto-select nil)
+    (setq completions-detailed t)
+    (setq completion-show-inline-help nil)
+    (setq completions-max-height 6)
+    (setq completions-header-format (propertize "%s candidates:\n" 'face 'bold-italic))
+    (setq completions-highlight-face 'completions-highlight)
+    (setq minibuffer-completion-auto-choose t)
+    (setq minibuffer-visible-completions t) ; Emacs 30
+    (setq completions-sort 'historical)
+
+    (unless matt-e-macs-completion-ui
+      (matt-e-macs-keybind minibuffer-local-completion-map
+			   "<up>" #'minibuffer-previous-line-completion
+			   "<down>" #'minibuffer-next-line-completion)
+
+      (add-hook 'completion-list-mode-hook #'prot-common-truncate-lines-silently)))
+#+end_src
+
+*** Savehist
 
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-completion.el" :mkdirp yes
     ;;;; `savehist' (minibuffer and related histories)
@@ -932,28 +947,28 @@ Savehist
     (add-to-list 'savehist-additional-variables 'kill-ring))
 #+end_src
 
-Dabbrev
+*** Dabbrev
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-completion.el" :mkdirp yes
     (use-package dabbrev
       :ensure nil
-    :commands (dabbrev-expand dabbrev-completion)
-    :config
+      :commands (dabbrev-expand dabbrev-completion)
+      :config
   ;;;; `dabbrev' (dynamic word completion (dynamic abbreviations))
-    (setq dabbrev-abbrev-char-regexp "\\sw\\|\\s_")
-    (setq dabbrev-abbrev-skip-leading-regexp "[$*/=~']")
-    (setq dabbrev-backward-only nil)
-    (setq dabbrev-case-distinction 'case-replace)
-    (setq dabbrev-case-fold-search nil)
-    (setq dabbrev-case-replace 'case-replace)
-    (setq dabbrev-check-other-buffers t)
-    (setq dabbrev-eliminate-newlines t)
-    (setq dabbrev-upcase-means-case-search t)
-    (setq dabbrev-ignored-buffer-modes
-	  '(archive-mode image-mode docview-mode pdf-view-mode)))
+      (setq dabbrev-abbrev-char-regexp "\\sw\\|\\s_")
+      (setq dabbrev-abbrev-skip-leading-regexp "[$*/=~']")
+      (setq dabbrev-backward-only nil)
+      (setq dabbrev-case-distinction 'case-replace)
+      (setq dabbrev-case-fold-search nil)
+      (setq dabbrev-case-replace 'case-replace)
+      (setq dabbrev-check-other-buffers t)
+      (setq dabbrev-eliminate-newlines t)
+      (setq dabbrev-upcase-means-case-search t)
+      (setq dabbrev-ignored-buffer-modes
+	    '(archive-mode image-mode docview-mode pdf-view-mode)))
+#+end_src
 
-  #+end_src
+*** Corfu
 
-Corfu
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-completion.el" :mkdirp yes
 	;;; Corfu (in-buffer completion popup)
     (use-package corfu
@@ -974,9 +989,9 @@ Corfu
 	(corfu-history-mode 1)
 	(add-to-list 'savehist-additional-variables 'corfu-history)))
 
-    #+end_src
+#+end_src
 
-Consult
+*** Consult
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-completion.el" :mkdirp yes
 
   ;;; Enhanced minibuffer commands (consult.el)
@@ -1024,7 +1039,7 @@ Consult
 	  (add-hook 'consult-after-jump-hook fn)))))
 
   #+end_src
-Marginalia
+*** Marginalia
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-completion.el" :mkdirp yes
     ;;; Detailed completion annotations (marginalia.el)
   (use-package marginalia
@@ -1053,7 +1068,7 @@ Marginalia
 
   #+end_src
 
-Minibuffer interface
+*** Minibuffer interface
   
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-completion.el" :mkdirp yes
    ;;; The minibuffer user interface (mct, vertico, or none)
@@ -1064,13 +1079,14 @@ Minibuffer interface
        ('vertico 'matt-e-macs-vertico))))
 #+end_src
 
-Provide
+*** Provide
   
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-completion.el" :mkdirp yes
   (provide 'matt-e-macs-completion)
 #+end_src
 
 ** =matt-e-macs-modus-themes=
+*** modus
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-modus-themes.el" :mkdirp yes
   ;; The themes are highly customisable.  Read the manual:
   ;; <https://protesilaos.com/emacs/modus-themes>.
@@ -1105,13 +1121,14 @@ Provide
     ;;   (modus-themes-load-theme (car modus-themes-to-toggle))
     ;;  )
     )
-
+#+end_src
+*** Provide
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-modus-themes.el" :mkdirp yes
   (provide 'matt-e-macs-modus-themes)
 
 #+end_src
 ** =matt-e-macs-vertico=
-
-Vertico
+*** Vertico
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-vertico.el" :mkdirp yes
   ;;; Vertical completion layout (vertico)
   (use-package vertico
@@ -1129,6 +1146,7 @@ Vertico
       ;; or root '/' directory, Vertico will clear the old path to keep
       ;; only your current input.
       (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy)))
+
 
   ;;; Custom tweaks for vertico (prot-vertico.el)
   (use-package prot-vertico
@@ -1165,13 +1183,13 @@ Vertico
 	    (t ,@prot-vertico-multiform-minimal)))
 
     (vertico-multiform-mode 1))
-
+#+end_src
+*** Provide
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-vertico.el" :mkdirp yes
   (provide 'matt-e-macs-vertico)
 #+end_src
-
 ** =matt-e-macs-treesitter=
-
-Treesiter
+*** Treesiter
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-treesitter.el" : mkdirp yes
   ;; Fix path no matter what
   (use-package exec-path-from-shell
@@ -1208,51 +1226,55 @@ Treesiter
     )
 #+end_src
 
-
+*** prog-mode-hook line numbers
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-treesitter.el" : mkdirp yes
   (add-hook 'prog-mode-hook #'display-line-numbers-mode) ;; only add numbers in prog-mode
 
+#+end_src
+*** provide
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-treesitter.el" : mkdirp yes
   (provide 'matt-e-macs-treesitter)
 #+end_src
 ** =matt-e-macs-window=
+*** uniquify
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-window.el" :mkdirp yes
-    ;;; General window and buffer configurations
-    (use-package uniquify
+  ;;; General window and buffer configurations
+  (use-package uniquify
       :ensure nil
       :config
-		  ;;;; `uniquify' (unique names for buffers)
+      ;;;; `uniquify` (unique names for buffers)
       (setq uniquify-buffer-name-style 'forward)
       (setq uniquify-strip-common-suffix t)
       (setq uniquify-after-kill-buffer-p t))
 
-		  ;;;; Line highlight
-    (use-package hl-line
-      :ensure nil
-      :commands (hl-line-mode)
-      :config
-      (setq hl-line-sticky-flag nil)
-      (setq hl-line-overlay-priority -50)) ; emacs28
+    ;;;; Line highlight
+  (use-package hl-line
+    :ensure nil
+    :commands (hl-line-mode)
+    :config
+    (setq hl-line-sticky-flag nil)
+    (setq hl-line-overlay-priority -50)) ; emacs28
 
-		;;;; Negative space highlight
-    (use-package whitespace
-      :ensure nil
-      :bind
-      (("<f6>" . whitespace-mode)
-       ("C-c z" . delete-trailing-whitespace))
-      :config
-      ;; NOTE 2023-08-14: This is experimental.  I am not sure I like it.
-      (setq whitespace-style
-	    '(face
-	      tabs
-	      spaces
-	      tab-mark
-	      space-mark
-	      trailing
-	      missing-newline-at-eof
-	      space-after-tab::tab
-	      space-after-tab::space
-	      space-before-tab::tab
-	      space-before-tab::space)))
+    ;;;; Negative space highlight
+  (use-package whitespace
+    :ensure nil
+    :bind
+    (("<f6>" . whitespace-mode)
+     ("C-c z" . delete-trailing-whitespace))
+    :config
+    ;; NOTE 2023-08-14: This is experimental.  I am not sure I like it.
+    (setq whitespace-style
+	  '(face
+	    tabs
+	    spaces
+	    tab-mark
+	    space-mark
+	    trailing
+	    missing-newline-at-eof
+	    space-after-tab::tab
+	    space-after-tab::space
+	    space-before-tab::tab
+	    space-before-tab::space)))
 
 	      ;;; Line numbers on the side of the window
     (use-package display-line-numbers
@@ -1266,9 +1288,11 @@ Treesiter
       (setq display-line-numbers-minor-tick 0)
       ;; Use absolute numbers in narrowed buffers
       (setq-default display-line-numbers-widen t))
-
+#+end_src
+*** prot-window
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-window.el" :mkdirp yes
 	    ;;;; `window', `display-buffer-alist', and related
-    (use-package prot-window
+  (use-package prot-window
       :ensure nil
       :demand t
       :config
@@ -1385,7 +1409,9 @@ Treesiter
 	:map resize-window-repeat-map
 	(">" . enlarge-window-horizontally)
 	("<" . shrink-window-horizontally)))
-
+#+end_src
+*** beframe
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-window.el" :mkdirp yes
 	    ;;; Frame-isolated buffers
     ;; Another package of mine.  Read the manual:
     ;; <https://protesilaos.com/emacs/beframe>.
@@ -1412,7 +1438,9 @@ Treesiter
   Beframe, but since it renames frames (by means
 			  ;; of `beframe-mode') it is appropriate to have this here:
 			  "C-x B" #'select-frame-by-name))
-
+#+end_src
+*** windmove
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-window.el" :mkdirp yes
 	  ;;; Directional window motions (windmove)
     (use-package windmove
       :ensure nil
@@ -1445,11 +1473,13 @@ Treesiter
 	"Enable `breadcrumb-local-mode' if the buffer is visiting a file."
 	(when buffer-file-name
 	  (breadcrumb-local-mode 1))))
-
+#+end_src
+*** provide
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-window.el" :mkdirp yes
     (provide 'matt-e-macs-window)
-  
 #+end_src
 ** =matt-e-macs-dired=
+*** dired
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-dired.el" :mkdirp yes
   (use-package dired
     :ensure nil
@@ -1555,7 +1585,9 @@ Treesiter
       ("S-TAB" . dired-subtree-remove))
     :config
     (setq dired-subtree-use-backgrounds nil))
-
+#+end_src
+*** trashed
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-dired.el" :mkdirp yes
   ;;; dired-like mode for the trash (trashed.el)
   (use-package trashed
     :ensure t
@@ -1565,11 +1597,13 @@ Treesiter
     (setq trashed-use-header-line t)
     (setq trashed-sort-key '("Date deleted" . t))
     (setq trashed-date-format "%Y-%m-%d %H:%M:%S"))
-
+#+end_src
+*** provide
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-dired.el" :mkdirp yes
   (provide 'matt-e-macs-dired)
 #+end_src
 ** =matt-e-macs-git=
-
+*** ediff
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-git.el" :mkdirp yes
   ;;;; `ediff'`
   (use-package ediff
@@ -1583,7 +1617,9 @@ Treesiter
     (setq ediff-make-buffers-readonly-at-startup nil)
     (setq ediff-merge-revisions-with-ancestor t)
     (setq ediff-show-clashes-only t))
-
+#+end_src
+*** project
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-git.el" :mkdirp yes
   	    ;;;; `project'
   (use-package project
     :ensure nil
@@ -1615,7 +1651,7 @@ Treesiter
     ( :map project-prefix-map
       ("p" . prot-project-switch)))
 #+end_src
-
+*** diff-mode
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-git.el" :mkdirp yes
 
   (use-package diff-mode
@@ -1630,7 +1666,7 @@ Treesiter
     (setq diff-font-lock-prettify t) ; I think nil is better for patches, but let me try this for a while
     (setq diff-font-lock-syntax 'hunk-also))
 #+end_src
-
+*** vc
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-git.el" :mkdirp yes
   (use-package vc
     :ensure nil
@@ -1726,34 +1762,36 @@ Treesiter
     (setq vc-git-log-edit-summary-target-len 50)
     (setq vc-git-log-edit-summary-max-len 70))
 #+end_src
-
+*** magit
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-git.el" :mkdirp yes
-	;;; Interactive and powerful git front-end (Magit)
-    (use-package magit
-      :ensure t
-      :bind ("C-c g" . magit-status)
-      :init
-      (setq magit-define-global-key-bindings nil)
-      (setq magit-section-visibility-indicator '("⮧"))
-      :config
-      (setq git-commit-summary-max-length 50)
-      ;; NOTE 2023-01-24: I used to also include `overlong-summary-line'
-      ;; in this list, but I realised I do not need it.  My summaries are
-      ;; always in check.  When I exceed the limit, it is for a good
-      ;; reason.
-      (setq git-commit-style-convention-checks '(non-empty-second-line))
+      ;;; Interactive and powerful git front-end (Magit)
+  (use-package magit
+    :ensure t
+    :bind ("C-c g" . magit-status)
+    :init
+    (setq magit-define-global-key-bindings nil)
+    (setq magit-section-visibility-indicator '("⮧"))
+    :config
+    (setq git-commit-summary-max-length 50)
+    ;; NOTE 2023-01-24: I used to also include `overlong-summary-line'
+    ;; in this list, but I realised I do not need it.  My summaries are
+    ;; always in check.  When I exceed the limit, it is for a good
+    ;; reason.
+    (setq git-commit-style-convention-checks '(non-empty-second-line))
 
-      (setq magit-diff-refine-hunk t)
+    (setq magit-diff-refine-hunk t)
 
-      ;;   (setq magit-repository-directories
-      ;; 	'(("~/Git/Projects" . 1)))
+    ;;   (setq magit-repository-directories
+    ;; 	'(("~/Git/Projects" . 1)))
 
-      )
-
-    (provide 'matt-e-macs-git)
+    )
+#+end_src
+*** provide
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-git.el" :mkdirp yes
+  (provide 'matt-e-macs-git)
 #+end_src
 ** =matt-e-macs-org=
-
+*** appt
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-org.el" :mkdirp yes
   ;;; Appt (appointment reminders which also integrate with Org agenda)
   (use-package appt
@@ -1777,7 +1815,7 @@ Treesiter
       ;; Create reminders for tasks with a due date when this file is read.
       (org-agenda-to-appt)))
 #+end_src
-
+*** org
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-org.el" :mkdirp yes
 
       ;;; Org-mode (personal information manager)
@@ -1819,7 +1857,10 @@ Treesiter
     :config
     ;; My custom extras, which I use for the agenda and a few other Org features.
     (require 'prot-org)
-
+    ;;;
+    (setq org-agenda-files '("~/notes/2024"
+			     "/da/dmp/cb/shumma1/notes/2024"))
+    (setq org-startup-folded 'content)
     ;;;; general settings
     (setq org-ellipsis "⮧")
     (setq org-adapt-indentation nil)      ; No, non, nein, όχι!
@@ -1831,14 +1872,14 @@ Treesiter
     (setq org-hide-leading-stars nil)
     (setq org-cycle-separator-lines 0)
     (setq org-structure-template-alist
-  	'(("s" . "src")
-  	  ("e" . "src emacs-lisp")
-  	  ("E" . "src emacs-lisp :results value code :lexical t")
-  	  ("t" . "src emacs-lisp :tangle FILENAME")
-  	  ("T" . "src emacs-lisp :tangle FILENAME :mkdirp yes")
-  	  ("x" . "example")
-  	  ("X" . "export")
-  	  ("q" . "quote")))
+	'(("s" . "src")
+	  ("e" . "src emacs-lisp")
+	  ("E" . "src emacs-lisp :results value code :lexical t")
+	  ("t" . "src emacs-lisp :tangle FILENAME")
+	  ("T" . "src emacs-lisp :tangle FILENAME :mkdirp yes")
+	  ("x" . "example")
+	  ("X" . "export")
+	  ("q" . "quote")))
     (setq org-catch-invisible-edits 'show)
     (setq org-return-follows-link nil)
     (setq org-loop-over-headlines-in-active-region 'start-level)
@@ -1858,8 +1899,8 @@ Treesiter
     ;; See my `pulsar' package, defined elsewhere in this setup.
     (with-eval-after-load 'pulsar
       (dolist (hook '(org-agenda-after-show-hook org-follow-link-hook))
-        (add-hook hook #'pulsar-recenter-center)
-        (add-hook hook #'pulsar-reveal-entry))))
+	(add-hook hook #'pulsar-recenter-center)
+	(add-hook hook #'pulsar-reveal-entry))))
 #+end_src
 
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-org.el" :mkdirp yes
@@ -1867,9 +1908,6 @@ Treesiter
   (use-package org
     :ensure nil
     :config
-    (setq org-agenda-files '("~/notes/2024"
-			   "/da/dmp/cb/shumma1/notes/2024"))
-    (setq org-startup-folded "content")
     (setq org-refile-targets
 	  '((org-agenda-files . (:maxlevel . 2))
 	    (nil . (:maxlevel . 2))))
@@ -1907,8 +1945,6 @@ Treesiter
     (setq org-tags-column 0))
 #+end_src
 
-
-
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-org.el" :mkdirp yes
   ;;;; log
   (use-package org
@@ -1922,7 +1958,6 @@ Treesiter
 #+end_src
 
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-org.el" :mkdirp yes
-
   (info "(org) Search Options")
 
   (use-package org
@@ -1933,15 +1968,6 @@ Treesiter
     (setq org-link-context-for-files t)
     (setq org-link-keep-stored-after-insertion nil)
     (setq org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id))
-#+end_src
-
-#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-org.el" :mkdirp yes
-
-  (use-package ob-python
-    :after org
-    :config
-    ;; Settings here
-    )
 #+end_src
 
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-org.el" :mkdirp yes
@@ -1975,9 +2001,17 @@ Treesiter
     (setq org-html-head-include-default-style nil)
     (setq org-html-head-include-scripts nil))
 #+end_src
+*** ob-python
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-org.el" :mkdirp yes
 
-=Agenda=
+  (use-package ob-python
+    :after org
+    :config
+    ;; Settings here
+    )
+#+end_src
 
+*** org-agenda
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-org.el" :mkdirp yes
     ;;;; agenda
   (use-package org-agenda
@@ -2183,11 +2217,10 @@ Treesiter
     )
 
   #+end_src
-  
+*** provide
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-org.el" :mkdirp yes
   (provide 'matt-e-macs-org)
 #+end_src
-
 ** =matt-e-macs-lang=
 
 Code linting, spelling, etc.

@@ -105,37 +105,39 @@ before all other modules of my setup."
 ;; Also read: <https://protesilaos.com/codelog/2022-05-13-emacs-elpa-devel/>
 (setq package-archives
       '(("gnu-elpa" . "https://elpa.gnu.org/packages/")
-	("gnu-elpa-devel" . "https://elpa.gnu.org/devel/")
-	("nongnu" . "https://elpa.nongnu.org/nongnu/")
-	("melpa" . "https://melpa.org/packages/")))
+    	("gnu-elpa-devel" . "https://elpa.gnu.org/devel/")
+    	("nongnu" . "https://elpa.nongnu.org/nongnu/")
+    	("melpa" . "https://melpa.org/packages/")))
 
 ;; Highest number gets priority (what is not mentioned has priority 0)
 (setq package-archive-priorities
       '(("gnu-elpa" . 3)
-	("melpa" . 2)
-	("nongnu" . 1)))
+    	("melpa" . 2)
+    	("nongnu" . 1)))
 
 (setq package-install-upgrade-built-in t)
 
+(require 'use-package)
+
 (load (locate-user-emacs-file "matt-e-macs-pre-custom.el") :no-error :no-message)
-  ;; preferences BEFORE loading any of the modules.
+;; preferences BEFORE loading any of the modules.
 
-  (require 'matt-e-macs-theme)
-  (require 'matt-e-macs-essentials)
-  (require 'matt-e-macs-modeline)
-  (require 'matt-e-macs-completion)
-  (require 'matt-e-macs-treesitter)
-  ;; (require 'matt-e-macs-search)
-;;  (require 'matt-e-macs-dired)
-  (require 'matt-e-macs-window)
-  (require 'matt-e-macs-git)
-  ;; (require 'matt-e-macs-org)
-  ;; (require 'matt-e-macs-langs)
-  ;; (require 'matt-e-macs-email)
-  ;; (require 'matt-e-macs-web)
-  ;; (when matt-e-macs-load-which-key
-  ;;   (require 'matt-e-macs-which-key))
-  ;; (when matt-e-macs-load-icons
-  ;;   (require 'matt-e-macs-icons))
+(require 'matt-e-macs-theme)
+(require 'matt-e-macs-essentials)
+(require 'matt-e-macs-modeline)
+(require 'matt-e-macs-completion)
+(require 'matt-e-macs-treesitter)
+;; (require 'matt-e-macs-search)
+(require 'matt-e-macs-dired)
+(require 'matt-e-macs-window)
+(require 'matt-e-macs-git)
+(require 'matt-e-macs-org)
+(require 'matt-e-macs-lang)
+;; (require 'matt-e-macs-email)
+;; (require 'matt-e-macs-web)
+;; (when matt-e-macs-load-which-key
+;;   (require 'matt-e-macs-which-key))
+;; (when matt-e-macs-load-icons
+;;   (require 'matt-e-macs-icons))
 
-  (load (locate-user-emacs-file "matt-e-macs-post-custom.el") :no-error :no-message)
+(load (locate-user-emacs-file "matt-e-macs-post-custom.el") :no-error :no-message)
