@@ -35,11 +35,11 @@
       vc-handled-backends nil)
 
 (add-hook 'emacs-startup-hook
-	  (lambda ()
-	    (setq gc-cons-threshold (* 1000 1000 8)
-		  gc-cons-percentage 0.1
-		  file-name-handler-alist matt-e-macs--file-name-handler-alist
-		  vc-handled-backends matt-e-macs--vc-handled-backends)))
+          (lambda ()
+            (setq gc-cons-threshold (* 1000 1000 8)
+                  gc-cons-percentage 0.1
+                  file-name-handler-alist matt-e-macs--file-name-handler-alist
+                  vc-handled-backends matt-e-macs--vc-handled-backends)))
 
 ;; Initialise installed packages at this early stage, by using the
 ;; available cache.  I had tried a setup with this set to nil in the

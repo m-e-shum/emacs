@@ -8,16 +8,16 @@
 
 (defcustom matt-e-macs-load-theme-family 'modus
   "Set of themes to load.
-      Valid values are the symbols `ef', `modus', and `standard', which
-      reference the `ef-themes', `modus-themes', and `standard-themes',
-      respectively.
+  Valid values are the symbols `ef', `modus', and `standard', which
+  reference the `ef-themes', `modus-themes', and `standard-themes',
+  respectively.
 
-      A nil value does not load any of the above (use Emacs without a
-      theme).
+  A nil value does not load any of the above (use Emacs without a
+  theme).
 
-      This user option must be set in the `matt-e-macs-pre-custom.el'
-      file.  If that file exists in the Emacs directory, it is loaded
-      before all other modules of my setup."
+  This user option must be set in the `matt-e-macs-pre-custom.el'
+  file.  If that file exists in the Emacs directory, it is loaded
+  before all other modules of my setup."
   :group 'matt-e-macs
   :type '(choice :tag "Set of themes to load" :value modus
 		 (const :tag "The `ef-themes' module" ef)
@@ -28,15 +28,15 @@
 (setq custom-safe-themes t)
 
 (defcustom matt-e-macs-completion-ui 'vertico
-      "Choose minibuffer completion UI between `mct' or `vertico'.
+  "Choose minibuffer completion UI between `mct' or `vertico'.
   If the value is nil, the default completion user interface is
   used.  On Emacs 30, this is close the experience with `mct'.
 
   This user option must be set in the `matt-e-macs-pre-custom.el'
   file.  If that file exists in the Emacs directory, it is loaded
   before all other modules of my setup."
-      :group 'matt-e-macs
-      :type '(choice :tag "Minibuffer user interface"
+  :group 'matt-e-macs
+  :type '(choice :tag "Minibuffer user interface"
 		     (const :tag "Default user interface" nil)
 		     (const :tag "The `mct' module" mct)
 		     (const :tag "The `vertico' module" vertico)))
@@ -105,19 +105,17 @@ before all other modules of my setup."
 ;; Also read: <https://protesilaos.com/codelog/2022-05-13-emacs-elpa-devel/>
 (setq package-archives
       '(("gnu-elpa" . "https://elpa.gnu.org/packages/")
-    	("gnu-elpa-devel" . "https://elpa.gnu.org/devel/")
-    	("nongnu" . "https://elpa.nongnu.org/nongnu/")
-    	("melpa" . "https://melpa.org/packages/")))
+        ("gnu-elpa-devel" . "https://elpa.gnu.org/devel/")
+        ("nongnu" . "https://elpa.nongnu.org/nongnu/")
+        ("melpa" . "https://melpa.org/packages/")))
 
 ;; Highest number gets priority (what is not mentioned has priority 0)
-(setq package-archive-priorities
-      '(("gnu-elpa" . 3)
-    	("melpa" . 2)
-    	("nongnu" . 1)))
+    (setq package-archive-priorities
+          '(("gnu-elpa" . 3)
+            ("melpa" . 2)
+            ("nongnu" . 1)))
 
 (setq package-install-upgrade-built-in t)
-
-(require 'use-package)
 
 (load (locate-user-emacs-file "matt-e-macs-pre-custom.el") :no-error :no-message)
 ;; preferences BEFORE loading any of the modules.
@@ -129,15 +127,16 @@ before all other modules of my setup."
 (require 'matt-e-macs-treesitter)
 ;; (require 'matt-e-macs-search)
 (require 'matt-e-macs-dired)
-(require 'matt-e-macs-window)
+;;(require 'matt-e-macs-window)
 (require 'matt-e-macs-git)
-(require 'matt-e-macs-org)
+(require 'matt-e-macs-my-org)
+;;  (require 'matt-e-macs-org)
 (require 'matt-e-macs-lang)
 ;; (require 'matt-e-macs-email)
 ;; (require 'matt-e-macs-web)
 ;; (when matt-e-macs-load-which-key
 ;;   (require 'matt-e-macs-which-key))
-;; (when matt-e-macs-load-icons
-;;   (require 'matt-e-macs-icons))
+(when matt-e-macs-load-icons
+  (require 'matt-e-macs-icons))
 
 (load (locate-user-emacs-file "matt-e-macs-post-custom.el") :no-error :no-message)

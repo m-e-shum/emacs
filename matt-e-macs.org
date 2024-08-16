@@ -11,9 +11,7 @@ Commands:
   separate code blocks with the same code block headers
 
 * ~early-init.el~
-
-General UI settings:
-
+** General UI settings:
 #+begin_src emacs-lisp :tangle "early-init.el"
   (setq frame-resize-pixelwise t
         frame-inhibit-implied-resize t	
@@ -35,15 +33,14 @@ General UI settings:
   ;;(tool-bar-mode -1)
 #+end_src
 
-For startup purposes:
-
+** For startup purposes:
 #+begin_src emacs-lisp :tangle "early-init.el"
   ;; Temporarily increase the garbage collection threshold.  These
   ;; changes help shave off about half a second of startup time.  The
   ;; `most-positive-fixnum' is DANGEROUS AS A PERMANENT VALUE.  See the
   ;; `emacs-startup-hook' a few lines below for what I actually use.
   (setq gc-cons-threshold most-positive-fixnum
-	gc-cons-percentage 0.5)
+        gc-cons-percentage 0.5)
 
   ;; Same idea as above for the `file-name-handler-alist' and the
   ;; `vc-handled-backends' with regard to startup speed optimisation.
@@ -53,14 +50,14 @@ For startup purposes:
   (defvar matt-e-macs--vc-handled-backends vc-handled-backends)
 
   (setq file-name-handler-alist nil
-	vc-handled-backends nil)
+        vc-handled-backends nil)
 
   (add-hook 'emacs-startup-hook
-	    (lambda ()
-	      (setq gc-cons-threshold (* 1000 1000 8)
-		    gc-cons-percentage 0.1
-		    file-name-handler-alist matt-e-macs--file-name-handler-alist
-		    vc-handled-backends matt-e-macs--vc-handled-backends)))
+            (lambda ()
+              (setq gc-cons-threshold (* 1000 1000 8)
+                    gc-cons-percentage 0.1
+                    file-name-handler-alist matt-e-macs--file-name-handler-alist
+                    vc-handled-backends matt-e-macs--vc-handled-backends)))
 
   ;; Initialise installed packages at this early stage, by using the
   ;; available cache.  I had tried a setup with this set to nil in the
@@ -73,10 +70,9 @@ For startup purposes:
 #+end_src
 * ~init.el~
 ** User options
-
 Set the following custom options in ~matt-e-macs-pre-custom.el~ (
 e.g. ~(setq custom-var custom-choice)~)
-
+*** matt-e-macs group
 #+begin_src emacs-lisp :tangle "init.el"
   ;; Group 
   (defgroup matt-e-macs nil
@@ -87,8 +83,7 @@ e.g. ~(setq custom-var custom-choice)~)
     :group 'file)
 #+end_src
 
-Theme
-
+*** Theme
 #+begin_src emacs-lisp :tangle "init.el"
   (defcustom matt-e-macs-load-theme-family 'modus
     "Set of themes to load.
@@ -112,8 +107,7 @@ Theme
   (setq custom-safe-themes t)
 #+end_src
 
-Minibuffer completion
-
+*** Minibuffer completion
 #+begin_src emacs-lisp :tangle "init.el"
   (defcustom matt-e-macs-completion-ui 'vertico
 	"Choose minibuffer completion UI between `mct' or `vertico'.
@@ -136,8 +130,7 @@ Minibuffer completion
       :type 'boolean)
   #+end_src
 
-Treesitter
-
+*** Treesitter
 #+begin_src emacs-lisp :tangle "init.el"
   (defcustom matt-e-macs-treesitter-extras t
       "When non-nil load extras for tree-sitter integration
@@ -147,8 +140,7 @@ Treesitter
       :type 'boolean)
 #+end_src
 
-Icons
-
+*** Icons
 #+begin_src emacs-lisp :tangle "init.el"
     (defcustom matt-e-macs-load-icons nil
       "When non-nil, enable iconography in various contexts.
@@ -164,7 +156,7 @@ Icons
 #+end_src
 
 ** Backups, compilation, enable/disable, load path ...
-  
+*** Backups
 #+begin_src emacs-lisp :tangle "init.el"
 
   ;; Turn off backups
@@ -200,8 +192,7 @@ Icons
    '("prot-lisp" "matt-e-macs-modules"))
   #+end_src
 
-Packaging
-  
+*** Packaging  
   #+begin_src emacs-lisp :tangle "init.el"
     (setq package-vc-register-as-project nil) ; Emacs 30
 
@@ -209,25 +200,21 @@ Packaging
 
     ;; Also read: <https://protesilaos.com/codelog/2022-05-13-emacs-elpa-devel/>
     (setq package-archives
-    	  '(("gnu-elpa" . "https://elpa.gnu.org/packages/")
-    	    ("gnu-elpa-devel" . "https://elpa.gnu.org/devel/")
-    	    ("nongnu" . "https://elpa.nongnu.org/nongnu/")
-    	    ("melpa" . "https://melpa.org/packages/")))
+          '(("gnu-elpa" . "https://elpa.gnu.org/packages/")
+            ("gnu-elpa-devel" . "https://elpa.gnu.org/devel/")
+            ("nongnu" . "https://elpa.nongnu.org/nongnu/")
+            ("melpa" . "https://melpa.org/packages/")))
 
     ;; Highest number gets priority (what is not mentioned has priority 0)
-    (setq package-archive-priorities
-    	  '(("gnu-elpa" . 3)
-    	    ("melpa" . 2)
-    	    ("nongnu" . 1)))
-
+        (setq package-archive-priorities
+              '(("gnu-elpa" . 3)
+                ("melpa" . 2)
+                ("nongnu" . 1)))
+    
     (setq package-install-upgrade-built-in t)
 
-    (require 'use-package)
-
   #+end_src
-
 ** Require packages and source pre-custom and post-custom ...
-  
 #+begin_src emacs-lisp :tangle "init.el"
   (load (locate-user-emacs-file "matt-e-macs-pre-custom.el") :no-error :no-message)
   ;; preferences BEFORE loading any of the modules.
@@ -239,24 +226,23 @@ Packaging
   (require 'matt-e-macs-treesitter)
   ;; (require 'matt-e-macs-search)
   (require 'matt-e-macs-dired)
-  (require 'matt-e-macs-window)
+  ;;(require 'matt-e-macs-window)
   (require 'matt-e-macs-git)
-  (require 'matt-e-macs-org)
+  (require 'matt-e-macs-my-org)
+  ;;  (require 'matt-e-macs-org)
   (require 'matt-e-macs-lang)
   ;; (require 'matt-e-macs-email)
   ;; (require 'matt-e-macs-web)
   ;; (when matt-e-macs-load-which-key
   ;;   (require 'matt-e-macs-which-key))
-  ;; (when matt-e-macs-load-icons
-  ;;   (require 'matt-e-macs-icons))
+  (when matt-e-macs-load-icons
+    (require 'matt-e-macs-icons))
 
   (load (locate-user-emacs-file "matt-e-macs-post-custom.el") :no-error :no-message)
 
 #+end_src
-
 * ~matt-e-macs-pre-custom.el~
 User setting specifications /before/ modules get loaded.
-
 #+begin_src emacs-lisp :tangle "matt-e-macs-pre-custom.el"
   (setq matt-e-macs-load-theme-family 'modus)
   (setq matt-e-macs-completion-ui 'vertico)
@@ -264,7 +250,6 @@ User setting specifications /before/ modules get loaded.
   (setq matt-e-macs-treesitter-extras t)
   (setq matt-e-macs-load-icons t)
 #+end_src
-
 * ~matt-e-macs-post-custom.el~
 * ~matt-e-macs-modules/~
 ** =matt-e-macs-theme=
@@ -1205,25 +1190,6 @@ Minibuffer default values
     :config
     (treesit-auto-add-to-auto-mode-alist 'all) ;; auto add ts-mode to major mode
     (global-treesit-auto-mode))
-
-  ;; When tree-sitter enabled
-  (when matt-e-macs-treesitter-extras
-    ;;; eglot
-    (use-package eglot
-      :ensure t
-      :defer t
-      :bind (:map eglot-mode-map
-		  ("C-c C-d" . eldoc)
-		  ("C-c C-e" . eglot-rename)
-		  ;; ("C-c C-o" . python-sort-imports) ;; ruff uses below
-		  ("C-c C-f" . eglot-format-buffer))
-      :hook ((python-ts-mode . eglot-ensure)
-	     (python-ts-mode . (lambda () (set-fill-column 88))))
-      :config
-      (setq-default eglot-workspace-configuration
-		    '((:pylsp . (:plugins (:ruff (:enabled t :formatEnabled t :lineLength 88 :format ["I"])))))))
-
-    )
 #+end_src
 
 *** prog-mode-hook line numbers
@@ -1291,124 +1257,124 @@ Minibuffer default values
 #+end_src
 *** prot-window
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-window.el" :mkdirp yes
-	    ;;;; `window', `display-buffer-alist', and related
+  ;;;; `window', `display-buffer-alist', and related
   (use-package prot-window
-      :ensure nil
-      :demand t
-      :config
-      ;; NOTE 2023-03-17: Remember that I am using development versions of
-      ;; Emacs.  Some of my `display-buffer-alist' contents are for Emacs
-      ;; 29+.
-      (setq display-buffer-alist
-	    `(;; no window
-	      ("\\`\\*Async Shell Command\\*\\'"
-	       (display-buffer-no-window))
-	      ("\\`\\*\\(Warnings\\|Compile-Log\\|Org Links\\)\\*\\'"
-	       (display-buffer-no-window)
-	       (allow-no-window . t))
-	      ;; bottom side window
-	      ("\\*Org \\(Select\\|Note\\)\\*" ; the `org-capture' key selection and `org-add-log-note'
-	       (display-buffer-in-side-window)
-	       (dedicated . t)
-	       (side . bottom)
-	       (slot . 0)
-	       (window-parameters . ((mode-line-format . none))))
-	      ;; bottom buffer (NOT side window)
-	      ((or . ((derived-mode . flymake-diagnostics-buffer-mode)
-		      (derived-mode . flymake-project-diagnostics-mode)
-		      (derived-mode . messages-buffer-mode)
-		      (derived-mode . backtrace-mode)))
-	       (display-buffer-reuse-mode-window display-buffer-at-bottom)
-	       (window-height . 0.3)
-	       (dedicated . t)
-	       (preserve-size . (t . t)))
-	      ("\\*Embark Actions\\*"
-	       (display-buffer-reuse-mode-window display-buffer-below-selected)
-	       (window-height . fit-window-to-buffer)
-	       (window-parameters . ((no-other-window . t)
-				     (mode-line-format . none))))
-	      ("\\*\\(Output\\|Register Preview\\).*"
-	       (display-buffer-reuse-mode-window display-buffer-at-bottom))
-	      ;; below current window
-	      ("\\(\\*Capture\\*\\|CAPTURE-.*\\)"
-	       (display-buffer-reuse-mode-window display-buffer-below-selected))
-	      ("\\*\\vc-\\(incoming\\|outgoing\\|git : \\).*"
-	       (display-buffer-reuse-mode-window display-buffer-below-selected)
-	       (window-height . 0.1)
-	       (dedicated . t)
-	       (preserve-size . (t . t)))
-	      ((derived-mode . reb-mode) ; M-x re-builder
-	       (display-buffer-reuse-mode-window display-buffer-below-selected)
-	       (window-height . 4) ; note this is literal lines, not relative
-	       (dedicated . t)
-	       (preserve-size . (t . t)))
-	      ((or . ((derived-mode . occur-mode)
-		      (derived-mode . grep-mode)
-		      (derived-mode . Buffer-menu-mode)
-		      (derived-mode . log-view-mode)
-		      (derived-mode . help-mode) ; See the hooks for `visual-line-mode'
-		      "\\*\\(|Buffer List\\|Occur\\|vc-change-log\\|eldoc.*\\).*"
-		      prot-window-shell-or-term-p
-		      ;; ,world-clock-buffer-name
-		      ))
-	       (prot-window-display-buffer-below-or-pop)
-	       (body-function . prot-window-select-fit-size))
-	      ("\\*\\(Calendar\\|Bookmark Annotation\\|ert\\).*"
-	       (display-buffer-reuse-mode-window display-buffer-below-selected)
-	       (dedicated . t)
-	       (window-height . fit-window-to-buffer))
-	      ;; NOTE 2022-09-10: The following is for `ispell-word', though
-	      ;; it only works because I override `ispell-display-buffer'
-	      ;; with `prot-spell-ispell-display-buffer' and change the
-	      ;; value of `ispell-choices-buffer'.
-	      ("\\*ispell-top-choices\\*.*"
-	       (display-buffer-reuse-mode-window display-buffer-below-selected)
-	       (window-height . fit-window-to-buffer))
-	      ;; same window
+    :ensure nil
+    :demand t
+    :config
+    ;; NOTE 2023-03-17: Remember that I am using development versions of
+    ;; Emacs.  Some of my `display-buffer-alist' contents are for Emacs
+    ;; 29+.
+    (setq display-buffer-alist
+	  `(;; no window
+	    ("\\`\\*Async Shell Command\\*\\'"
+	     (display-buffer-no-window))
+	    ("\\`\\*\\(Warnings\\|Compile-Log\\|Org Links\\)\\*\\'"
+	     (display-buffer-no-window)
+	     (allow-no-window . t))
+	    ;; bottom side window
+	    ("\\*Org \\(Select\\|Note\\)\\*" ; the `org-capture' key selection and `org-add-log-note'
+	     (display-buffer-in-side-window)
+	     (dedicated . t)
+	     (side . bottom)
+	     (slot . 0)
+		 (window-parameters . ((mode-line-format . none))))
+	    ;; bottom buffer (NOT side window)
+	    ((or . ((derived-mode . flymake-diagnostics-buffer-mode)
+		    (derived-mode . flymake-project-diagnostics-mode)
+		    (derived-mode . messages-buffer-mode)
+		    (derived-mode . backtrace-mode)))
+	     (display-buffer-reuse-mode-window display-buffer-at-bottom)
+	     (window-height . 0.3)
+	     (dedicated . t)
+	     (preserve-size . (t . t)))
+		("\\*Embark Actions\\*"
+		 (display-buffer-reuse-mode-window display-buffer-below-selected)
+		 (window-height . fit-window-to-buffer)
+		 (window-parameters . ((no-other-window . t)
+				       (mode-line-format . none))))
+		("\\*\\(Output\\|Register Preview\\).*"
+		 (display-buffer-reuse-mode-window display-buffer-at-bottom))
+		;; below current window
+		("\\(\\*Capture\\*\\|CAPTURE-.*\\)"
+		 (display-buffer-reuse-mode-window display-buffer-below-selected))
+		("\\*\\vc-\\(incoming\\|outgoing\\|git : \\).*"
+		 (display-buffer-reuse-mode-window display-buffer-below-selected)
+		 (window-height . 0.1)
+		 (dedicated . t)
+		 (preserve-size . (t . t)))
+		((derived-mode . reb-mode) ; M-x re-builder
+		 (display-buffer-reuse-mode-window display-buffer-below-selected)
+		 (window-height . 4) ; note this is literal lines, not relative
+		 (dedicated . t)
+		 (preserve-size . (t . t)))
+		((or . ((derived-mode . occur-mode)
+			(derived-mode . grep-mode)
+			(derived-mode . Buffer-menu-mode)
+			(derived-mode . log-view-mode)
+			(derived-mode . help-mode) ; See the hooks for `visual-line-mode'
+			"\\*\\(|Buffer List\\|Occur\\|vc-change-log\\|eldoc.*\\).*"
+			prot-window-shell-or-term-p
+			;; ,world-clock-buffer-name
+			))
+		 (prot-window-display-buffer-below-or-pop)
+		 (body-function . prot-window-select-fit-size))
+		("\\*\\(Calendar\\|Bookmark Annotation\\|ert\\).*"
+		 (display-buffer-reuse-mode-window display-buffer-below-selected)
+		 (dedicated . t)
+		 (window-height . fit-window-to-buffer))
+		;; NOTE 2022-09-10: The following is for `ispell-word', though
+		;; it only works because I override `ispell-display-buffer'
+		;; with `prot-spell-ispell-display-buffer' and change the
+		;; value of `ispell-choices-buffer'.
+		("\\*ispell-top-choices\\*.*"
+		 (display-buffer-reuse-mode-window display-buffer-below-selected)
+		 (window-height . fit-window-to-buffer))
+		;; same window
 
-	      ;; NOTE 2023-02-17: `man' does not fully obey the
-	      ;; `display-buffer-alist'.  It works for new frames and for
-	      ;; `display-buffer-below-selected', but otherwise is
-	      ;; unpredictable.  See `Man-notify-method'.
-	      ((or . ((derived-mode . Man-mode)
-		      (derived-mode . woman-mode)
-		      "\\*\\(Man\\|woman\\).*"))
-	       (display-buffer-same-window)))))
+		;; NOTE 2023-02-17: `man' does not fully obey the
+		;; `display-buffer-alist'.  It works for new frames and for
+		;; `display-buffer-below-selected', but otherwise is
+		;; unpredictable.  See `Man-notify-method'.
+		((or . ((derived-mode . Man-mode)
+			(derived-mode . woman-mode)
+			"\\*\\(Man\\|woman\\).*"))
+		 (display-buffer-same-window)))))
 
-    (use-package prot-window
-      :ensure nil
-      :demand t
-      :config
-      (setq window-combination-resize t)
-      (setq even-window-sizes 'height-only)
-      (setq window-sides-vertical nil)
-      (setq switch-to-buffer-in-dedicated-window 'pop)
-      (setq split-height-threshold 80)
-      (setq split-width-threshold 125)
-      (setq window-min-height 3)
-      (setq window-min-width 30))
+  (use-package prot-window
+    :ensure nil
+    :demand t
+    :config
+    (setq window-combination-resize t)
+	(setq even-window-sizes 'height-only)
+	(setq window-sides-vertical nil)
+	(setq switch-to-buffer-in-dedicated-window 'pop)
+	(setq split-height-threshold 80)
+	(setq split-width-threshold 125)
+	(setq window-min-height 3)
+	(setq window-min-width 30))
 
-    (use-package prot-window
-      :ensure nil
-      :demand t
-      :bind
-      ( :map global-map
-	;; NOTE 2022-09-17: Also see `prot-simple-swap-window-buffers'.
-	("C-x <down>" . next-buffer)
-	("C-x <up>" . previous-buffer)
-	("C-x C-n" . next-buffer)     ; override `set-goal-column'
-	("C-x C-p" . previous-buffer) ; override `mark-page'
-	("C-x !" . delete-other-windows-vertically)
-	("C-x _" . balance-windows)      ; underscore
-	("C-x -" . fit-window-to-buffer) ; hyphen
-	("C-x +" . balance-windows-area)
-	("C-x }" . enlarge-window)
-	("C-x {" . shrink-window)
-	("C-x >" . enlarge-window-horizontally) ; override `scroll-right'
-	("C-x <" . shrink-window-horizontally) ; override `scroll-left'
-	:map resize-window-repeat-map
-	(">" . enlarge-window-horizontally)
-	("<" . shrink-window-horizontally)))
+  (use-package prot-window
+    :ensure nil
+    :demand t
+    :bind
+    ( :map global-map
+	  ;; NOTE 2022-09-17: Also see `prot-simple-swap-window-buffers'.
+      ("C-x <down>" . next-buffer)
+      ("C-x <up>" . previous-buffer)
+      ("C-x C-n" . next-buffer)     ; override `set-goal-column'
+      ("C-x C-p" . previous-buffer) ; override `mark-page'
+      ("C-x !" . delete-other-windows-vertically)
+      ("C-x _" . balance-windows)      ; underscore
+      ("C-x -" . fit-window-to-buffer) ; hyphen
+      ("C-x +" . balance-windows-area)
+      ("C-x }" . enlarge-window)
+      ("C-x {" . shrink-window)
+      ("C-x >" . enlarge-window-horizontally) ; override `scroll-right'
+      ("C-x <" . shrink-window-horizontally) ; override `scroll-left'
+      :map resize-window-repeat-map
+	  (">" . enlarge-window-horizontally)
+	  ("<" . shrink-window-horizontally)))
 #+end_src
 *** beframe
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-window.el" :mkdirp yes
@@ -1441,38 +1407,38 @@ Minibuffer default values
 #+end_src
 *** windmove
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-window.el" :mkdirp yes
-	  ;;; Directional window motions (windmove)
-    (use-package windmove
-      :ensure nil
-      :bind
-      ;; Those override some commands that are already available with
-      ;; C-M-u, C-M-f, C-M-b.
-      (("C-M-<up>" . windmove-up)
-       ("C-M-<right>" . windmove-right)
-       ("C-M-<down>" . windmove-down)
-       ("C-M-<left>" . windmove-left)
-       ("C-M-S-<up>" . windmove-swap-states-up)
-       ("C-M-S-<right>" . windmove-swap-states-right) ; conflicts with `org-increase-number-at-point'
-       ("C-M-S-<down>" . windmove-swap-states-down)
-       ("C-M-S-<left>" . windmove-swap-states-left))
-      :config
-      (setq windmove-create-window nil)) ; Emacs 27.1
+	;;; Directional window motions (windmove)
+  (use-package windmove
+    :ensure nil
+    :bind
+    ;; Those override some commands that are already available with
+    ;; C-M-u, C-M-f, C-M-b.
+    (("C-M-<up>" . windmove-up)
+     ("C-M-<right>" . windmove-right)
+     ("C-M-<down>" . windmove-down)
+     ("C-M-<left>" . windmove-left)
+     ("C-M-S-<up>" . windmove-swap-states-up)
+     ("C-M-S-<right>" . windmove-swap-states-right) ; conflicts with `org-increase-number-at-point'
+     ("C-M-S-<down>" . windmove-swap-states-down)
+     ("C-M-S-<left>" . windmove-swap-states-left))
+    :config
+    (setq windmove-create-window nil)) ; Emacs 27.1
 
-	;;; Header line context of symbol/heading (breadcrumb.el)
-    (use-package breadcrumb
-      :ensure t
-      :functions (prot/breadcrumb-local-mode)
-      :hook ((text-mode prog-mode) . prot/breadcrumb-local-mode)
-      :config
-      (setq breadcrumb-project-max-length 0.5)
-      (setq breadcrumb-project-crumb-separator "/")
-      (setq breadcrumb-imenu-max-length 1.0)
-      (setq breadcrumb-imenu-crumb-separator " > ")
+      ;;; Header line context of symbol/heading (breadcrumb.el)
+  (use-package breadcrumb
+    :ensure t
+    :functions (prot/breadcrumb-local-mode)
+    :hook ((text-mode prog-mode) . prot/breadcrumb-local-mode)
+    :config
+    (setq breadcrumb-project-max-length 0.5)
+    (setq breadcrumb-project-crumb-separator "/")
+    (setq breadcrumb-imenu-max-length 1.0)
+    (setq breadcrumb-imenu-crumb-separator " > ")
 
-      (defun prot/breadcrumb-local-mode ()
-	"Enable `breadcrumb-local-mode' if the buffer is visiting a file."
-	(when buffer-file-name
-	  (breadcrumb-local-mode 1))))
+    (defun prot/breadcrumb-local-mode ()
+      "Enable `breadcrumb-local-mode' if the buffer is visiting a file."
+      (when buffer-file-name
+	(breadcrumb-local-mode 1))))
 #+end_src
 *** provide
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-window.el" :mkdirp yes
@@ -1535,7 +1501,7 @@ Minibuffer default values
     ( :map dired-mode-map
       ("C-+" . dired-create-empty-file)
       ("M-s f" . nil)
-      ("C-<return>" . dired-do-open) ; Emacs 30
+      ("RET" . dired-do-open) ; Emacs 30
       ("C-x v v" . dired-vc-next-action)) ; Emacs 28
     :config
     (setq dired-isearch-filenames 'dwim)
@@ -1766,8 +1732,8 @@ Minibuffer default values
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-git.el" :mkdirp yes
       ;;; Interactive and powerful git front-end (Magit)
   (use-package magit
-    :ensure t
-    :bind ("C-c g" . magit-status)
+    :demand t
+    :bind ("C-x g" . magit-status)
     :init
     (setq magit-define-global-key-bindings nil)
     (setq magit-section-visibility-indicator '("⮧"))
@@ -1790,9 +1756,9 @@ Minibuffer default values
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-git.el" :mkdirp yes
   (provide 'matt-e-macs-git)
 #+end_src
-** =matt-e-macs-org=
+** ALPHA =matt-e-macs-org=
 *** appt
-#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-org.el" :mkdirp yes
+#+begin_src emacs-lisp :tangle "alpha/matt-e-macs-org.el" :mkdirp yes
   ;;; Appt (appointment reminders which also integrate with Org agenda)
   (use-package appt
     :ensure nil
@@ -1816,94 +1782,96 @@ Minibuffer default values
       (org-agenda-to-appt)))
 #+end_src
 *** org
-#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-org.el" :mkdirp yes
+#+begin_src emacs-lisp :tangle "alpha/matt-e-macs-org.el" :mkdirp yes
+    ;;; Org-mode (personal information manager)
+    (use-package org
+      :ensure nil
+      :mode (("\\.org$" . org-mode))
+      :init
+      ;; (setq org-directory (expand-file-name "~/notes/2024/"))
+      (setq org-imenu-depth 7)
 
-      ;;; Org-mode (personal information manager)
-  (use-package org
-    :ensure nil
-    :init
-    ;; (setq org-directory (expand-file-name "~/notes/2024/"))
-    (setq org-imenu-depth 7)
+      (setq org-agenda-files '("~/notes/2024"))
+  ;;			     "/da/dmp/cb/shumma1/notes/2024"))
 
-    (add-to-list 'safe-local-variable-values '(org-hide-leading-stars . t))
-    (add-to-list 'safe-local-variable-values '(org-hide-macro-markers . t))
-    :bind
-    ( :map global-map
-      ("C-c l" . org-store-link)
-      ("C-c o" . org-open-at-point-global)
-      :map org-mode-map
-      ;; I don't like that Org binds one zillion keys, so if I want one
-      ;; for something more important, I disable it from here.
-      ("C-'" . nil)
-      ("C-," . nil)
-      ("M-;" . nil)
-      ("<C-return>" . nil)
-      ("<C-S-return>" . nil)
-      ("C-M-S-<right>" . nil)
-      ("C-M-S-<left>" . nil)
-      ("C-c ;" . nil)
-      ("C-c M-l" . org-insert-last-stored-link)
-      ("C-c C-M-l" . org-toggle-link-display)
-      ("M-." . org-edit-special) ; alias for C-c ' (mnenomic is global M-. that goes to source)
-      :map org-src-mode-map
-      ("M-," . org-edit-src-exit) ; see M-. above
-      :map narrow-map
-      ("b" . org-narrow-to-block)
-      ("e" . org-narrow-to-element)
-      ("s" . org-narrow-to-subtree)
-      :map ctl-x-x-map
-      ("i" . prot-org-id-headlines)
-      ("h" . prot-org-ox-html))
-    :config
-    ;; My custom extras, which I use for the agenda and a few other Org features.
-    (require 'prot-org)
-    ;;;
-    (setq org-agenda-files '("~/notes/2024"
-			     "/da/dmp/cb/shumma1/notes/2024"))
-    (setq org-startup-folded 'content)
-    ;;;; general settings
-    (setq org-ellipsis "⮧")
-    (setq org-adapt-indentation nil)      ; No, non, nein, όχι!
-    (setq org-special-ctrl-a/e nil)
-    (setq org-special-ctrl-k nil)
-    (setq org-M-RET-may-split-line '((default . nil)))
-    (setq org-hide-emphasis-markers nil)
-    (setq org-hide-macro-markers nil)
-    (setq org-hide-leading-stars nil)
-    (setq org-cycle-separator-lines 0)
-    (setq org-structure-template-alist
-	'(("s" . "src")
-	  ("e" . "src emacs-lisp")
-	  ("E" . "src emacs-lisp :results value code :lexical t")
-	  ("t" . "src emacs-lisp :tangle FILENAME")
-	  ("T" . "src emacs-lisp :tangle FILENAME :mkdirp yes")
-	  ("x" . "example")
-	  ("X" . "export")
-	  ("q" . "quote")))
-    (setq org-catch-invisible-edits 'show)
-    (setq org-return-follows-link nil)
-    (setq org-loop-over-headlines-in-active-region 'start-level)
-    (setq org-modules '(ol-info ol-eww))
-    (setq org-use-sub-superscripts '{})
-    (setq org-insert-heading-respect-content t)
-    (setq org-read-date-prefer-future 'time)
-    (setq org-highlight-latex-and-related nil) ; other options affect elisp regexp in src blocks
-    (setq org-fontify-quote-and-verse-blocks t)
-    (setq org-fontify-whole-block-delimiter-line t)
-    (setq org-track-ordered-property-with-tag t)
-    (setq org-highest-priority ?A)
-    (setq org-lowest-priority ?C)
-    (setq org-default-priority ?A)
-    (setq org-priority-faces nil)
+      (setq org-startup-folded t)
 
-    ;; See my `pulsar' package, defined elsewhere in this setup.
-    (with-eval-after-load 'pulsar
-      (dolist (hook '(org-agenda-after-show-hook org-follow-link-hook))
-	(add-hook hook #'pulsar-recenter-center)
-	(add-hook hook #'pulsar-reveal-entry))))
+      (add-to-list 'safe-local-variable-values '(org-hide-leading-stars . t))
+      (add-to-list 'safe-local-variable-values '(org-hide-macro-markers . t))
+      :bind
+      ( :map global-map
+	("C-c l" . org-store-link)
+	("C-c o" . org-open-at-point-global)
+	:map org-mode-map
+	;; I don't like that Org binds one zillion keys, so if I want one
+	;; for something more important, I disable it from here.
+	("C-'" . nil)
+	("C-," . nil)
+	("M-;" . nil)
+	("<C-return>" . nil)
+	("<C-S-return>" . nil)
+	("C-M-S-<right>" . nil)
+	("C-M-S-<left>" . nil)
+	("C-c ;" . nil)
+	("C-c M-l" . org-insert-last-stored-link)
+	("C-c C-M-l" . org-toggle-link-display)
+	("M-." . org-edit-special) ; alias for C-c ' (mnenomic is global M-. that goes to source)
+	:map org-src-mode-map
+	("M-," . org-edit-src-exit) ; see M-. above
+	:map narrow-map
+	("b" . org-narrow-to-block)
+	("e" . org-narrow-to-element)
+	("s" . org-narrow-to-subtree)
+	:map ctl-x-x-map
+	("i" . prot-org-id-headlines)
+	("h" . prot-org-ox-html))
+      :config
+      ;; My custom extras, which I use for the agenda and a few other Org features.
+      (require 'prot-org)
+      ;;;
+      ;;;; general settings
+      (setq org-ellipsis "⮧")
+      (setq org-adapt-indentation nil)      ; No, non, nein, όχι!
+      (setq org-special-ctrl-a/e nil)
+      (setq org-special-ctrl-k nil)
+      (setq org-M-RET-may-split-line '((default . nil)))
+      (setq org-hide-emphasis-markers nil)
+      (setq org-hide-macro-markers nil)
+      (setq org-hide-leading-stars nil)
+      (setq org-cycle-separator-lines 0)
+      (setq org-structure-template-alist
+	  '(("s" . "src")
+	    ("e" . "src emacs-lisp")
+	    ("E" . "src emacs-lisp :results value code :lexical t")
+	    ("t" . "src emacs-lisp :tangle FILENAME")
+	    ("T" . "src emacs-lisp :tangle FILENAME :mkdirp yes")
+	    ("x" . "example")
+	    ("X" . "export")
+	    ("q" . "quote")))
+      (setq org-catch-invisible-edits 'show)
+      (setq org-return-follows-link nil)
+      (setq org-loop-over-headlines-in-active-region 'start-level)
+      (setq org-modules '(ol-info ol-eww))
+      (setq org-use-sub-superscripts '{})
+      (setq org-insert-heading-respect-content t)
+      (setq org-read-date-prefer-future 'time)
+      (setq org-highlight-latex-and-related nil) ; other options affect elisp regexp in src blocks
+      (setq org-fontify-quote-and-verse-blocks t)
+      (setq org-fontify-whole-block-delimiter-line t)
+      (setq org-track-ordered-property-with-tag t)
+      (setq org-highest-priority ?A)
+      (setq org-lowest-priority ?C)
+      (setq org-default-priority ?A)
+      (setq org-priority-faces nil)
+
+      ;; See my `pulsar' package, defined elsewhere in this setup.
+      (with-eval-after-load 'pulsar
+	(dolist (hook '(org-agenda-after-show-hook org-follow-link-hook))
+	  (add-hook hook #'pulsar-recenter-center)
+	  (add-hook hook #'pulsar-reveal-entry))))
 #+end_src
 
-#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-org.el" :mkdirp yes
+#+begin_src emacs-lisp :tangle "alpha/matt-e-macs-org.el" :mkdirp yes
   ;;;; refile, todo
   (use-package org
     :ensure nil
@@ -1934,7 +1902,7 @@ Minibuffer default values
     (setq org-enforce-todo-checkbox-dependencies t))
 #+end_src
 
-#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-org.el" :mkdirp yes
+#+begin_src emacs-lisp :tangle "alpha/matt-e-macs-org.el" :mkdirp yes
 
   ;;;; tags
   (use-package org
@@ -1945,7 +1913,7 @@ Minibuffer default values
     (setq org-tags-column 0))
 #+end_src
 
-#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-org.el" :mkdirp yes
+#+begin_src emacs-lisp :tangle "alpha/matt-e-macs-org.el" :mkdirp yes
   ;;;; log
   (use-package org
     :ensure nil
@@ -1957,7 +1925,7 @@ Minibuffer default values
     (setq org-log-reschedule 'time))
 #+end_src
 
-#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-org.el" :mkdirp yes
+#+begin_src emacs-lisp :tangle "alpha/matt-e-macs-org.el" :mkdirp yes
   (info "(org) Search Options")
 
   (use-package org
@@ -1970,7 +1938,7 @@ Minibuffer default values
     (setq org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id))
 #+end_src
 
-#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-org.el" :mkdirp yes
+#+begin_src emacs-lisp :tangle "alpha/matt-e-macs-org.el" :mkdirp yes
 
   (use-package org
     :ensure nil
@@ -1984,7 +1952,7 @@ Minibuffer default values
     (setq org-edit-src-content-indentation 0))
 #+end_src
 
-#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-org.el" :mkdirp yes
+#+begin_src emacs-lisp :tangle "alpha/matt-e-macs-org.el" :mkdirp yes
 
     ;;;; export
   (use-package org
@@ -2002,7 +1970,7 @@ Minibuffer default values
     (setq org-html-head-include-scripts nil))
 #+end_src
 *** ob-python
-#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-org.el" :mkdirp yes
+#+begin_src emacs-lisp :tangle "alpha/matt-e-macs-org.el" :mkdirp yes
 
   (use-package ob-python
     :after org
@@ -2012,7 +1980,7 @@ Minibuffer default values
 #+end_src
 
 *** org-agenda
-#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-org.el" :mkdirp yes
+#+begin_src emacs-lisp :tangle "alpha/matt-e-macs-org.el" :mkdirp yes
     ;;;; agenda
   (use-package org-agenda
     :ensure nil
@@ -2218,17 +2186,266 @@ Minibuffer default values
 
   #+end_src
 *** provide
-#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-org.el" :mkdirp yes
+#+begin_src emacs-lisp :tangle "alpha/matt-e-macs-org.el" :mkdirp yes
   (provide 'matt-e-macs-org)
 #+end_src
-** =matt-e-macs-lang=
+** =matt-e-macs-my-org=
+*** org
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-my-org.el" :mkdirp yes
+  (use-package org
+    :ensure t
+    :mode (("\\.org$" . org-mode))
+    :config
+    (setq org-startup-indented t ;; auto aligns text with header
+	  org-startup-folded t ;; startup folded
+	  org-ellipsis " 󰅀 " ;; folding symbol
+	  org-directory (expand-file-name "~/notes/2024/")
+	  org-agenda-files `(,org-directory)
+	  org-hide-emphasis-markers nil
+	  org-pretty-entities t
+	  org-return-follows-link t
+	  org-todo-keywords '((sequence "TODO(t)" "IN-PROGRESS(i)" "|" "DONE(d)")
+			      (sequence "|" "CONSIDER(s)" "WAITING(w)" "CANCELLED(c)"))
+	  ))
 
-Code linting, spelling, etc.
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((emacs-lisp . t)
+     (shell . t)
+     (python . t)))
+
+  (use-package org-bullets
+    :ensure t
+    :hook (org-mode . org-bullets-mode))
+#+end_src
+*** yasnippet
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-my-org.el" :mkdirp yes
+  ;; Broken below
+  ;; (use-package yasnippet
+  ;;   :ensure nil
+  ;;   :mode ("~/.emacs.d/snippets/" . snippet-mode)
+  ;;   :hook (prog-mode . yas-minor-mode-on) ;; turn on when programming mode detected
+  ;;   :config
+  ;;   (setq yas-snippet-dirs '("~/.emacs.d/snippets/"))
+  ;;   (yas-recompile-all)
+  ;;   (yas-reload-all)
+  ;;   (yas-global-mode 1))
+
+#+end_src
+*** provide
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-my-org.el" :mkdirp yes
+  (provide 'matt-e-macs-my-org)
+#+end_src
+
+** =matt-e-macs-lang=
+*** Aggressive Indent
 
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-lang.el" :mkdirp yes
   (use-package aggressive-indent
     :diminish
     :hook (emacs-lisp-mode . aggressive-indent-mode))
 
+#+end_src
+
+*** tab
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-lang.el" :mkdirp yes
+  (use-package emacs
+    :ensure nil
+    :demand t
+    :config
+    (setq tab-always-indent 'complete)
+    (setq tab-first-completion 'word-or-paren-or-punct) ; Emacs 27
+    (setq-default tab-width 4
+		  indent-tabs-mode nil))
+  #+end_src
+
+*** electric
+  
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-lang.el" :mkdirp yes
+  (use-package electric
+    :ensure nil
+    :hook
+    (prog-mode . electric-indent-local-mode)
+    :config
+    ;; I don't like auto indents in Org and related.  They are okay for
+    ;; programming.
+    (electric-pair-mode -1)
+    (electric-quote-mode -1)
+    (electric-indent-mode -1))
+
+#+end_src
+
+*** paren
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-lang.el" :mkdirp yes
+  ;;;; Parentheses (show-paren-mode)
+  (use-package paren
+    :ensure nil
+    :hook (prog-mode . show-paren-local-mode)
+    :config
+    (setq show-paren-style 'parenthesis)
+    (setq show-paren-when-point-in-periphery nil)
+    (setq show-paren-when-point-inside-paren nil)
+    (setq show-paren-context-when-offscreen 'overlay)) ; Emacs 29
+#+end_src
+
+*** eldoc
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-lang.el" :mkdirp yes
+    ;;;; Eldoc (Emacs live documentation feedback)
+  (use-package eldoc
+    :ensure nil
+    :hook (prog-mode . eldoc-mode)
+    :config
+    (setq eldoc-message-function #'message)) ; don't use mode line for M-x eval-expression, etc.
+#+end_src
+
+*** eglot
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-lang.el" :mkdirp yes
+  ;; When tree-sitter enabled
+  (when matt-e-macs-treesitter-extras
+    ;;; eglot
+    (use-package eglot
+      :ensure t
+      :defer t
+      :bind (:map eglot-mode-map
+		  ("C-c C-d" . eldoc)
+		  ("C-c C-e" . eglot-rename)
+		  ("C-c C-f" . eglot-format-buffer))
+      :hook ((python-ts-mode . eglot-ensure)
+	     (python-ts-mode . (lambda () (set-fill-column 88))))
+      :config
+      (setq eglot-sync-connect nil)
+      (setq-default eglot-workspace-configuration
+		    '((:pylsp . (:plugins (:ruff (:enabled t :formatEnabled t :lineLength 88 :format ["I"])))))))
+
+    )
+#+end_src
+
+*** markdown-mode
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-lang.el" :mkdirp yes
+    ;;; Markdown (markdown-mode)
+  (use-package markdown-mode
+    :ensure t
+    :defer t
+    :config
+    (setq markdown-fontify-code-blocks-natively t))
+#+end_src
+
+*** spelling
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-lang.el" :mkdirp yes
+    ;;; Flyspell and prot-spell.el (spell check)
+  (use-package flyspell
+    :ensure nil
+    :bind
+    ( :map flyspell-mode-map
+      ("C-;" . nil)
+      :map flyspell-mouse-map
+      ("<mouse-3>" . flyspell-correct-word)
+      :map ctl-x-x-map
+      ("s" . flyspell-mode)) ; C-x x s
+    :config
+    (setq flyspell-issue-message-flag nil)
+    (setq flyspell-issue-welcome-flag nil)
+    (setq ispell-program-name "aspell")
+    (setq ispell-dictionary "en_GB"))
+
+  (use-package prot-spell
+    :ensure nil
+    :bind
+    (("M-$" . prot-spell-spell-dwim)
+     ("C-M-$" . prot-spell-change-dictionary))
+    :config
+    (setq prot-spell-dictionaries
+	  '(("EN English" . "en")))
+
+    ;; Also check prot-spell.el for what I am doing with
+    ;; `prot-spell-ispell-display-buffer'.  Then refer to the
+    ;; `display-buffer-alist' for the relevant entry.
+    (setq ispell-choices-buffer "*ispell-top-choices*"))
+#+end_src
+
+*** flymake
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-lang.el" :mkdirp yes
+    ;;; Flymake
+  (use-package flymake
+    :ensure nil
+    :preface
+    (defvar prot/flymake-mode-projects-path
+      (file-name-as-directory (expand-file-name "Projects" "~/Git/"))
+      "Path to my Git projects.")
+
+    (defun prot/flymake-mode-lexical-binding ()
+      (when lexical-binding
+	(flymake-mode 1)))
+
+    (defun prot/flymake-mode-in-my-projects ()
+      (when-let ((file (buffer-file-name))
+		 ((string-prefix-p prot/flymake-mode-projects-path
+				   (expand-file-name file)))
+		 ((not (file-directory-p file)))
+		 ((file-regular-p file)))
+	(add-hook 'find-file-hook #'prot/flymake-mode-lexical-binding nil t)))
+
+    (add-hook 'emacs-lisp-mode-hook #'prot/flymake-mode-in-my-projects)
+    :bind
+    ( :map ctl-x-x-map
+      ("m" . flymake-mode) ; C-x x m
+      :map flymake-mode-map
+      ("C-c ! s" . flymake-start)
+      ("C-c ! d" . flymake-show-buffer-diagnostics) ; Emacs28
+      ("C-c ! D" . flymake-show-project-diagnostics) ; Emacs28
+      ("C-c ! n" . flymake-goto-next-error)
+      ("C-c ! p" . flymake-goto-prev-error))
+    :config
+    (setq flymake-fringe-indicator-position 'left-fringe)
+    (setq flymake-suppress-zero-counters t)
+    (setq flymake-no-changes-timeout nil)
+    (setq flymake-start-on-flymake-mode t)
+    (setq flymake-start-on-save-buffer t)
+    (setq flymake-proc-compilation-prevents-syntax-check t)
+    (setq flymake-wrap-around nil)
+    (setq flymake-mode-line-format
+	  '("" flymake-mode-line-exception flymake-mode-line-counters))
+    ;; NOTE 2023-07-03: `prot-modeline.el' actually defines the counters
+    ;; itself and ignores this.
+    (setq flymake-mode-line-counter-format
+	  '("" flymake-mode-line-error-counter
+	    flymake-mode-line-warning-counter
+	    flymake-mode-line-note-counter ""))
+    (setq flymake-show-diagnostics-at-end-of-line nil)) ; Emacs 30
+
+  ;;; Elisp packaging requirements
+  (use-package package-lint-flymake
+    :ensure t
+    :after flymake
+    :config
+    (add-hook 'flymake-diagnostic-functions #'package-lint-flymake))
+  
+#+end_src
+
+*** Provide
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-lang.el" :mkdirp yes
   (provide 'matt-e-macs-lang)
+#+end_src
+** =matt-e-macs-icons=
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-icons.el" :mkdirp yes
+    ;;; Icons
+  (use-package nerd-icons
+    :ensure t)
+
+  (use-package nerd-icons-completion
+    :ensure t
+    :hook (marginalia-mode . nerd-icons-completion-marginalia-setup))
+
+  (use-package nerd-icons-corfu
+    :ensure t
+    :after corfu
+    :config
+    (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
+
+  (use-package nerd-icons-dired
+    :ensure t
+    :hook
+    (dired-mode . nerd-icons-dired-mode))
+
+  (provide 'matt-e-macs-icons)
 #+end_src
