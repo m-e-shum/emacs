@@ -2395,8 +2395,7 @@ Minibuffer default values
 
     ;; (add-hook 'emacs-lisp-mode-hook #'prot/flymake-mode-in-my-projects)
     :bind
-    ( :map ctl-x-x-ma
-      p
+    ( :map ctl-x-x-map
       ("m" . flymake-mode) ; C-x x m
       :map flymake-mode-map
       ("C-c ! s" . flymake-start)
