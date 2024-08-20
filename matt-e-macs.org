@@ -2349,7 +2349,13 @@ Minibuffer default values
     :config
     (setq markdown-fontify-code-blocks-natively t))
 #+end_src
-
+*** makefile-gmake-mode
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-lang.el" :mkdirp yes
+    (use-package make-mode
+      :ensure t
+      :mode ("Makefile\..*" . makefile-gmake-mode)
+      )
+#+end_src
 *** spelling
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-lang.el" :mkdirp yes
     ;;; Flyspell and prot-spell.el (spell check)
