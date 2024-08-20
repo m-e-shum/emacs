@@ -1736,7 +1736,7 @@ Minibuffer default values
     :bind ("C-x g" . magit-status)
     :init
     (setq magit-define-global-key-bindings nil)
-    (setq magit-section-visibility-indicator '("⮧"))
+    (setq magit-section-visibility-indicator '(" 󰅀"))
     :config
     (setq git-commit-summary-max-length 50)
     ;; NOTE 2023-01-24: I used to also include `overlong-summary-line'
@@ -2192,44 +2192,51 @@ Minibuffer default values
 ** =matt-e-macs-my-org=
 *** org
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-my-org.el" :mkdirp yes
-  (use-package org
-    :ensure t
-    :mode (("\\.org$" . org-mode))
-    :config
-    (setq org-startup-indented t ;; auto aligns text with header
-	  org-startup-folded t ;; startup folded
-	  org-ellipsis " 󰅀 " ;; folding symbol
-	  org-directory (expand-file-name "~/notes/2024/")
-	  org-agenda-files `(,org-directory)
-	  org-hide-emphasis-markers nil
-	  org-pretty-entities t
-	  org-return-follows-link t
-	  org-todo-keywords '((sequence "TODO(t)" "IN-PROGRESS(i)" "|" "DONE(d)")
-			      (sequence "|" "CONSIDER(s)" "WAITING(w)" "CANCELLED(c)"))
-	  ))
+    (use-package org
+      :ensure t
+      :mode (("\\.org$" . org-mode))
+      :preface
+      (defun my-directories-exist-p (directories)
+        "Return a list of directories that exist from the given list DIRECTORIES."
+        (delq nil (mapcar (lambda (dir)
+                            (when (file-directory-p dir)
+                              dir))
+                          directories)))
+      :config
+      (setq org-startup-indented t ;; auto aligns text with header
+            org-startup-folded t ;; startup folded
+            org-ellipsis " 󰅀 " ;; folding symbol
+            org-directory (expand-file-name (my-directories-exist-p '("/da/dmp/cb/shumma1/notes/2024/"
+                                                                      "~/notes/2024")))
+            org-agenda-files `(,org-directory)
+            org-hide-emphasis-markers nil
+            org-pretty-entities t
+            org-return-follows-link t
+            org-todo-keywords '((sequence "TODO(t)" "IN-PROGRESS(i)" "|" "DONE(d)")
+                                (sequence "|" "CONSIDER(s)" "WAITING(w)" "CANCELLED(c)"))
+            ))
 
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((emacs-lisp . t)
-     (shell . t)
-     (python . t)))
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     '((emacs-lisp . t)
+       (shell . t)
+       (python . t)))
 
-  (use-package org-bullets
-    :ensure t
-    :hook (org-mode . org-bullets-mode))
+    (use-package org-bullets
+      :ensure t
+      :hook (org-mode . org-bullets-mode))
 #+end_src
 *** yasnippet
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-my-org.el" :mkdirp yes
-  ;; Broken below
-  ;; (use-package yasnippet
-  ;;   :ensure nil
-  ;;   :mode ("~/.emacs.d/snippets/" . snippet-mode)
-  ;;   :hook (prog-mode . yas-minor-mode-on) ;; turn on when programming mode detected
-  ;;   :config
-  ;;   (setq yas-snippet-dirs '("~/.emacs.d/snippets/"))
-  ;;   (yas-recompile-all)
-  ;;   (yas-reload-all)
-  ;;   (yas-global-mode 1))
+  (use-package yasnippet
+     :ensure nil
+     :mode ("~/.emacs.d/snippets/" . snippet-mode)
+     :hook (prog-mode . yas-minor-mode-on) ;; turn on when programming mode detected
+     :config
+     (setq yas-snippet-dirs '("~/.emacs.d/snippets/"))
+     (yas-recompile-all)
+     (yas-reload-all)
+     (yas-global-mode 1))
 
 #+end_src
 *** provide
@@ -2368,26 +2375,28 @@ Minibuffer default values
     ;;; Flymake
   (use-package flymake
     :ensure nil
-    :preface
-    (defvar prot/flymake-mode-projects-path
-      (file-name-as-directory (expand-file-name "Projects" "~/Git/"))
-      "Path to my Git projects.")
+    ;; No need for below
+    ;; :preface
+    ;; (defvar prot/flymake-mode-projects-path
+    ;;   (file-name-as-directory (expand-file-name "Projects" "~/Git/"))
+    ;;   "Path to my Git projects.")
 
-    (defun prot/flymake-mode-lexical-binding ()
-      (when lexical-binding
-	(flymake-mode 1)))
+    ;; (defun prot/flymake-mode-lexical-binding ()
+    ;;   (when lexical-binding
+    ;;     (flymake-mode 1)))
 
-    (defun prot/flymake-mode-in-my-projects ()
-      (when-let ((file (buffer-file-name))
-		 ((string-prefix-p prot/flymake-mode-projects-path
-				   (expand-file-name file)))
-		 ((not (file-directory-p file)))
-		 ((file-regular-p file)))
-	(add-hook 'find-file-hook #'prot/flymake-mode-lexical-binding nil t)))
+    ;; (defun prot/flymake-mode-in-my-projects ()
+    ;;   (when-let ((file (buffer-file-name))
+    ;;      ((string-prefix-p prot/flymake-mode-projects-path
+    ;;                (expand-file-name file)))
+    ;;      ((not (file-directory-p file)))
+    ;;      ((file-regular-p file)))
+    ;; (add-hook 'find-file-hook #'prot/flymake-mode-lexical-binding nil t)))
 
-    (add-hook 'emacs-lisp-mode-hook #'prot/flymake-mode-in-my-projects)
+    ;; (add-hook 'emacs-lisp-mode-hook #'prot/flymake-mode-in-my-projects)
     :bind
-    ( :map ctl-x-x-map
+    ( :map ctl-x-x-ma
+      p
       ("m" . flymake-mode) ; C-x x m
       :map flymake-mode-map
       ("C-c ! s" . flymake-start)
@@ -2404,13 +2413,13 @@ Minibuffer default values
     (setq flymake-proc-compilation-prevents-syntax-check t)
     (setq flymake-wrap-around nil)
     (setq flymake-mode-line-format
-	  '("" flymake-mode-line-exception flymake-mode-line-counters))
+      '("" flymake-mode-line-exception flymake-mode-line-counters))
     ;; NOTE 2023-07-03: `prot-modeline.el' actually defines the counters
     ;; itself and ignores this.
     (setq flymake-mode-line-counter-format
-	  '("" flymake-mode-line-error-counter
-	    flymake-mode-line-warning-counter
-	    flymake-mode-line-note-counter ""))
+      '("" flymake-mode-line-error-counter
+        flymake-mode-line-warning-counter
+        flymake-mode-line-note-counter ""))
     (setq flymake-show-diagnostics-at-end-of-line nil)) ; Emacs 30
 
   ;;; Elisp packaging requirements
@@ -2419,9 +2428,23 @@ Minibuffer default values
     :after flymake
     :config
     (add-hook 'flymake-diagnostic-functions #'package-lint-flymake))
-  
+
 #+end_src
 
+*** crux
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-lang.el" :mkdirp yes
+  (use-package crux
+    :bind
+    (("C-a" . crux-move-beginning-of-line)))
+    #+end_src
+*** undo-fu-session
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-lang.el" :mkdirp yes
+  (use-package undo-fu-session
+    :ensure t
+    :demand t
+    :config
+    (global-undo-fu-session-mode))
+#+end_src
 *** Provide
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-lang.el" :mkdirp yes
   (provide 'matt-e-macs-lang)
