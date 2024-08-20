@@ -540,31 +540,42 @@ Insert character pairs
 Mouse configuration
 
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-essentials.el" :mkdirp yes
-    ;;;; Mouse and mouse wheel behaviour
-  (use-package mouse
-    :ensure nil
-    :hook (after-init . mouse-wheel-mode)
-    :config
-    ;; Some of these variables are defined in places other than
-    ;; mouse.el, but this is fine.
-    (setq mouse-autoselect-window t) ; complements the auto-selection of my tiling window manager
+  ;;;; Mouse and mouse wheel behaviour
+  (unless window-system
+    (require 'mouse)
+    (xterm-mouse-mode t)
+     (global-set-key [mouse-4] (lambda()
+                                 (interactive)
+                                 (scroll-down 1)))
+     (global-set-key [mouse-5] (lambda()
+                                 (interactive)
+                                 (scroll-up 1)))
+     (setq mouse-sel-mode t))
 
-    ;; In Emacs 27+, use Control + mouse wheel to scale text.
-    (setq mouse-wheel-scroll-amount
-	  '(1
-	    ((shift) . 5)
-	    ((meta) . 0.5)
-	    ((control) . text-scale))
-	  mouse-drag-copy-region nil
-	  make-pointer-invisible t
-	  mouse-wheel-progressive-speed t
-	  mouse-wheel-follow-mouse t)
+  ;; (use-package mouse
+  ;;   :ensure nil
+  ;;   :hook (after-init . mouse-wheel-mode)
+  ;;   :config
+  ;;   ;; Some of these variables are defined in places other than
+  ;;   ;; mouse.el, but this is fine.
+  ;;   (setq mouse-autoselect-window t) ; complements the auto-selection of my tiling window manager
 
-    ;; Scrolling behaviour
-    (setq-default scroll-preserve-screen-position t
-		  scroll-conservatively 1 ; affects `scroll-step'
-		  scroll-margin 0
-		  next-screen-context-lines 0))
+  ;;   ;; In Emacs 27+, use Control + mouse wheel to scale text.
+  ;;   (setq mouse-wheel-scroll-amount
+  ;;         '(1
+  ;;       ((shift) . 5)
+  ;;       ((meta) . 0.5)
+  ;;       ((control) . text-scale))
+  ;;     mouse-drag-copy-region nil
+  ;;     make-pointer-invisible t
+  ;;     mouse-wheel-progressive-speed t
+  ;;     mouse-wheel-follow-mouse t)
+
+  ;;   ;; Scrolling behaviour
+  ;;   (setq-default scroll-preserve-screen-position t
+  ;;                 scroll-conservatively 1 ; affects `scroll-step'
+  ;;                 scroll-margin 0
+  ;;                 next-screen-context-lines 0))
 
   #+end_src
 
