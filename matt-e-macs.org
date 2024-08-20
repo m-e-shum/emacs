@@ -2192,39 +2192,39 @@ Minibuffer default values
 ** =matt-e-macs-my-org=
 *** org
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-my-org.el" :mkdirp yes
-    (use-package org
-      :ensure t
-      :mode (("\\.org$" . org-mode))
-      :preface
-      (defun my-directories-exist-p (directories)
-        "Return a list of directories that exist from the given list DIRECTORIES."
-        (delq nil (mapcar (lambda (dir)
-                            (when (file-directory-p dir)
-                              dir))
-                          directories)))
-      :config
-      (setq org-startup-indented t ;; auto aligns text with header
-            org-startup-folded t ;; startup folded
-            org-ellipsis " 󰅀 " ;; folding symbol
-            org-directory (expand-file-name (my-directories-exist-p '("/da/dmp/cb/shumma1/notes/2024/"
-                                                                      "~/notes/2024")))
-            org-agenda-files `(,org-directory)
-            org-hide-emphasis-markers nil
-            org-pretty-entities t
-            org-return-follows-link t
-            org-todo-keywords '((sequence "TODO(t)" "IN-PROGRESS(i)" "|" "DONE(d)")
-                                (sequence "|" "CONSIDER(s)" "WAITING(w)" "CANCELLED(c)"))
-            ))
+  (use-package org
+    :ensure t
+    :mode (("\\.org$" . org-mode))
+    :preface
+    (defun my-directories-exist-p (directories)
+      "Return a list of directories that exist from the given list DIRECTORIES."
+      (delq nil (mapcar (lambda (dir)
+                          (when (file-directory-p dir)
+                            dir))
+                        directories)))
+    :config
+    (setq org-startup-indented t ;; auto aligns text with header
+          org-startup-folded t ;; startup folded
+          org-ellipsis " 󰅀 " ;; folding symbol
+          org-directory (my-directories-exist-p '("/da/dmp/cb/shumma1/notes/2024"
+                                                  "/Users/shumma1/notes/2024"))
+          org-agenda-files `(,org-directory)
+          org-hide-emphasis-markers nil
+          org-pretty-entities t
+          org-return-follows-link t
+          org-todo-keywords '((sequence "TODO(t)" "IN-PROGRESS(i)" "|" "DONE(d)")
+                              (sequence "|" "CONSIDER(s)" "WAITING(w)" "CANCELLED(c)"))
+          ))
 
-    (org-babel-do-load-languages
-     'org-babel-load-languages
-     '((emacs-lisp . t)
-       (shell . t)
-       (python . t)))
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((emacs-lisp . t)
+     (shell . t)
+     (python . t)))
 
-    (use-package org-bullets
-      :ensure t
-      :hook (org-mode . org-bullets-mode))
+  (use-package org-bullets
+    :ensure t
+    :hook (org-mode . org-bullets-mode))
 #+end_src
 *** yasnippet
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-my-org.el" :mkdirp yes
