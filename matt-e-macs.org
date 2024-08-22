@@ -2333,7 +2333,7 @@ Minibuffer default values
     :ensure t
     :config
     (setq sqlformat-command 'pgformatter
-          sqlformat-args '("-s4" "-g" "-f1")) ;; tab 4 spaces, no grouping, lowercase; see pgFormatter
+          sqlformat-args '("-s4" "-g" "-f1" "-u1" "-U1")) ;; tab 4 spaces, no grouping, lowercase; see pgFormatter
     :hook (sql-mode . sqlformat-on-save-mode)
     :bind (:map sql-mode-map ("C-c C-f" . sqlformat)))
 
