@@ -2317,7 +2317,27 @@ Minibuffer default values
     :config
     (setq eldoc-message-function #'message)) ; don't use mode line for M-x eval-expression, etc.
 #+end_src
+*** sql
+#+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-lang.el" :mkdirp yes
+  (use-package sql-mode
+    :ensure nil
+    :mode 
+    ("\\.sql\\'" . sql-mode)
+    ("\\.ddl\\'" . sql-mode))
 
+  (use-package sql-indent
+    :ensure t
+    :hook (sql-mode . sqlind-minor-mode))
+
+  (use-package sqlformat
+    :ensure t
+    :config
+    (setq sqlformat-command 'pgformatter
+          sqlformat-args '("-s4" "-g" "-f1")) ;; tab 4 spaces, no grouping, lowercase; see pgFormatter
+    :hook (sql-mode . sqlformat-on-save-mode)
+    :bind (:map sql-mode-map ("C-c C-f" . sqlformat)))
+
+#+end_src
 *** eglot
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-lang.el" :mkdirp yes
   ;; When tree-sitter enabled
