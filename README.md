@@ -11,7 +11,7 @@ more proficient at `emacs`, I will be styling my config after his configuration.
 
 Steps:
 1. `git clone` repo
-2. Open `matt-e-macs.org` and "tangle" the code blocks (`C-c v t`)
+2. Open `matt-e-macs.org` and "tangle" the code blocks (`C-c C-v C-t`)
    * This will populate `matt-e-macs-modules/`
 3. Close and open emacs
 
