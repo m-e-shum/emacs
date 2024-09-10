@@ -254,7 +254,6 @@ User setting specifications /before/ modules get loaded.
 * ~matt-e-macs-modules/~
 ** =matt-e-macs-theme=
 *** =matt-e-macs-load-theme-family=
-
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-theme.el" :mkdirp yes
   ;;; Theme setup and related
 
@@ -269,7 +268,6 @@ User setting specifications /before/ modules get loaded.
        ;;('standard 'matt-e-macs-standard-themes)
        )))
 #+end_src
-
 *** =puslsar=
 
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-theme.el" :mkdirp yes
@@ -1093,7 +1091,7 @@ Minibuffer default values
 	   ("C-<f5>" . modus-themes-select))
     :config
     (setq modus-themes-custom-auto-reload nil
-	  modus-themes-to-toggle '(modus-vivendi modus-vivendi-tinted)
+	  modus-themes-to-toggle '(modus-vivendi-tinted modus-vivendi)
 	  ;; modus-themes-to-toggle '(modus-operandi-tinted modus-vivendi-tinted)
 	  ;; modus-themes-to-toggle '(modus-operandi-deuteranopia modus-vivendi-deuteranopia)
 	  ;; modus-themes-to-toggle '(modus-operandi-tritanopia modus-vivendi-tritanopia)
