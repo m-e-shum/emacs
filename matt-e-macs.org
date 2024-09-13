@@ -661,35 +661,35 @@ Go to last change
     (setq mode-line-compact nil) ; Emacs 28
     (setq mode-line-right-align-edge 'right-margin) ; Emacs 30
     (setq-default mode-line-format
-		  '("%e"
-		    prot-modeline-kbd-macro
-		    prot-modeline-narrow
-		    prot-modeline-buffer-status
-		    prot-modeline-window-dedicated-status
-		    prot-modeline-input-method
-		    "  "
-		    prot-modeline-buffer-identification
-		    "  "
-		    prot-modeline-major-mode
-		    prot-modeline-process
-		    "  "
-		    prot-modeline-vc-branch
-		    "  "
-		    prot-modeline-eglot
-		    "  "
-		    prot-modeline-flymake
-		    "  "
-		    mode-line-format-right-align ; Emacs 30
-		    prot-modeline-notmuch-indicator
-		    "  "
-		    prot-modeline-misc-info))
+          '("%e"
+            prot-modeline-kbd-macro
+            prot-modeline-narrow
+            prot-modeline-buffer-status
+            prot-modeline-window-dedicated-status
+            prot-modeline-input-method
+            "  "
+            prot-modeline-buffer-identification
+            "  "
+            prot-modeline-major-mode
+            prot-modeline-process
+            "  "
+            prot-modeline-vc-branch
+            "  "
+            prot-modeline-eglot
+            "  "
+            prot-modeline-flymake
+            "  "
+            mode-line-format-right-align ; Emacs 30
+            prot-modeline-notmuch-indicator
+            "  "
+            prot-modeline-misc-info))
 
     (with-eval-after-load 'spacious-padding
       (defun prot/modeline-spacious-indicators ()
-	"Set box attribute to `'prot-modeline-indicator-button' if spacious-padding is enabled."
-	(if (bound-and-true-p spacious-padding-mode)
-	    (set-face-attribute 'prot-modeline-indicator-button nil :box t)
-	  (set-face-attribute 'prot-modeline-indicator-button nil :box 'unspecified)))
+        "Set box attribute to `'prot-modeline-indicator-button' if spacious-padding is enabled."
+        (if (bound-and-true-p spacious-padding-mode)
+            (set-face-attribute 'prot-modeline-indicator-button nil :box t)
+          (set-face-attribute 'prot-modeline-indicator-button nil :box 'unspecified)))
 
       ;; Run it at startup and then afterwards whenever
       ;; `spacious-padding-mode' is toggled on/off.
@@ -2374,19 +2374,22 @@ Minibuffer default values
 
 *** markdown-mode
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-lang.el" :mkdirp yes
-    ;;; Markdown (markdown-mode)
+  ;;; Markdown (markdown-mode)
   (use-package markdown-mode
     :ensure t
     :defer t
     :config
     (setq markdown-fontify-code-blocks-natively t))
+
+  (add-hook 'markdown-mode-hook 'auto-fill-mode)
+  (add-hook 'markdown-mode-hook (lambda () (set-fill-column 80)))
 #+end_src
 *** makefile-gmake-mode
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-lang.el" :mkdirp yes
-    (use-package make-mode
-      :ensure t
-      :mode ("Makefile\..*" . makefile-gmake-mode)
-      )
+  (use-package make-mode
+    :ensure t
+    :mode ("Makefile\..*" . makefile-gmake-mode)
+    )
 #+end_src
 *** spelling
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-lang.el" :mkdirp yes
