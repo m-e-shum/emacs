@@ -117,6 +117,28 @@ before all other modules of my setup."
 
 (setq package-install-upgrade-built-in t)
 
+(defmacro prot-emacs-keybind (keymap &rest definitions)
+  "Expand key binding DEFINITIONS for the given KEYMAP.
+DEFINITIONS is a sequence of string and command pairs."
+  (declare (indent 1))
+  (unless (zerop (% (length definitions) 2))
+    (error "Uneven number of key+command pairs"))
+  (let ((keys (seq-filter #'stringp definitions))
+        ;; We do accept nil as a definition: it unsets the given key.
+        (commands (seq-remove #'stringp definitions)))
+    `(when-let (((keymapp ,keymap))
+                (map ,keymap))
+       ,@(mapcar
+          (lambda (pair)
+            (let* ((key (car pair))
+                   (command (cdr pair)))
+              (unless (and (null key) (null command))
+                `(define-key map (kbd ,key) ,command))))
+          (cl-mapcar #'cons keys commands)))))
+
+(prot-emacs-keybind global-map
+                    "M-TAB" #'indent-relative)
+
 (load (locate-user-emacs-file "matt-e-macs-pre-custom.el") :no-error :no-message)
 ;; preferences BEFORE loading any of the modules.
 
