@@ -137,7 +137,7 @@ DEFINITIONS is a sequence of string and command pairs."
           (cl-mapcar #'cons keys commands)))))
 
 (prot-emacs-keybind global-map
-                    "M-TAB" #'indent-relative)
+                    "M-TAB" #'indent-relative) ;;
 
 (load (locate-user-emacs-file "matt-e-macs-pre-custom.el") :no-error :no-message)
 ;; preferences BEFORE loading any of the modules.

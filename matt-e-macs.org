@@ -2383,15 +2383,18 @@ Minibuffer default values
       :ensure t
       :defer t
       :bind (:map eglot-mode-map
-		  ("C-c C-d" . eldoc)
-		  ("C-c C-e" . eglot-rename)
-		  ("C-c C-f" . eglot-format-buffer))
+                  ("C-c C-d" . eldoc)
+                  ("C-c C-e" . eglot-rename)
+                  ("C-c C-f" . eglot-format-buffer))
       :hook ((python-ts-mode . eglot-ensure)
-	     (python-ts-mode . (lambda () (set-fill-column 88))))
+             (python-ts-mode . (lambda () (set-fill-column 88))))
       :config
       (setq eglot-sync-connect nil)
+      ;;(add-to-list 'eglot-server-programs
+      ;;             '(python-ts-mode . ("ruff" "server")))
       (setq-default eglot-workspace-configuration
-		    '((:pylsp . (:plugins (:ruff (:enabled t :formatEnabled t :lineLength 88 :format ["I"])))))))
+                    '((:pylsp . (:plugins (:ruff (:enabled t :formatEnabled t :lineLength 88 :format ["I"]))))))
+      )
 
     )
 #+end_src
@@ -2408,7 +2411,7 @@ Minibuffer default values
   (add-hook 'markdown-mode-hook 'auto-fill-mode)
   (add-hook 'markdown-mode-hook (lambda () (set-fill-column 80)))
 #+end_src
-*** makefile-gmake-mode
+*** makefile-gmake-moed
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-lang.el" :mkdirp yes
   (use-package make-mode
     :ensure t
