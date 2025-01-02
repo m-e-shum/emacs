@@ -1824,8 +1824,7 @@ Minibuffer default values
       ;; (setq org-directory (expand-file-name "~/notes/2024/"))
       (setq org-imenu-depth 7)
 
-      (setq org-agenda-files '("~/notes/2024"))
-  ;;			     "/da/dmp/cb/shumma1/notes/2024"))
+      (setq org-agenda-files '("~/notes/2025"))
 
       (setq org-startup-folded t)
 
@@ -2241,8 +2240,8 @@ Minibuffer default values
         (setq org-startup-indented t ;; auto aligns text with header
               org-startup-folded t ;; startup folded
               org-ellipsis " 󰅀 " ;; folding symbol
-              org-directory (my-first-existing-directory '("/da/dmp/cb/shumma1/notes/2024"
-                                                           "/Users/shumma1/notes/2024"))
+              org-directory (my-first-existing-directory '("/home/shumma1/notes/2025"
+                                                           "/Users/shumma1/notes/2025"))
               org-agenda-files `(,org-directory)
               org-hide-emphasis-markers nil
               org-pretty-entities t
