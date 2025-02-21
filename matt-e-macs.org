@@ -2392,11 +2392,14 @@ Minibuffer default values
       ;;(add-to-list 'eglot-server-programs
       ;;             '(python-ts-mode . ("ruff" "server")))
       (setq-default eglot-workspace-configuration
-                    '((:pylsp . (:plugins (:ruff (:enabled t :formatEnabled t :lineLength 88 :format ["I"]))))))
+                    '((:pylsp . (:plugins (
+                                           :jedi_completion (:include_params t :fuzzy t)
+                                           :ruff (:enabled t :formatEnabled t :lineLength 88 :format ["I"])
+                                           )))))
       )
 
     )
-#+end_src
+    #+end_src
 
 *** markdown-mode
 #+begin_src emacs-lisp :tangle "matt-e-macs-modules/matt-e-macs-lang.el" :mkdirp yes
