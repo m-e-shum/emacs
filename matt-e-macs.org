@@ -388,10 +388,9 @@ User setting specifications /before/ modules get loaded.
   (use-package emacs
     :ensure nil
     :demand t
-    :custom
-    (image-scaling-factor 1.0)
     :config
   ;;;; General settings and common custom functions (prot-simple.el)
+    (setq image-scaling-factor 1.0)
     (setq blink-matching-paren nil)
     (setq delete-pair-blink-delay 0.1) ; Emacs28 -- see `prot-simple-delete-pair-dwim'
     (setq help-window-select t)
