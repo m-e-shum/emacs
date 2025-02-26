@@ -1,9 +1,9 @@
 ;; Group 
 (defgroup matt-e-macs nil
   "User options for my dotemacs.
-		  These produce the expected results only when set in a file called
-		  matt-e-macs-pre-custom.el.  This file must be in the same
-		  directory as the init.el."
+  	    These produce the expected results only when set in a file called
+  	    matt-e-macs-pre-custom.el.  This file must be in the same
+  	    directory as the init.el."
   :group 'file)
 
 (defcustom matt-e-macs-load-theme-family 'modus
@@ -20,10 +20,10 @@
   before all other modules of my setup."
   :group 'matt-e-macs
   :type '(choice :tag "Set of themes to load" :value modus
-		 (const :tag "The `ef-themes' module" ef)
-		 (const :tag "The `modus-themes' module" modus)
-		 (const :tag "The `standard-themes' module" standard)
-		 (const :tag "Do not load a theme module" nil)))
+  	   (const :tag "The `ef-themes' module" ef)
+  	   (const :tag "The `modus-themes' module" modus)
+  	   (const :tag "The `standard-themes' module" standard)
+  	   (const :tag "Do not load a theme module" nil)))
 
 (setq custom-safe-themes t)
 
@@ -37,9 +37,9 @@
   before all other modules of my setup."
   :group 'matt-e-macs
   :type '(choice :tag "Minibuffer user interface"
-		     (const :tag "Default user interface" nil)
-		     (const :tag "The `mct' module" mct)
-		     (const :tag "The `vertico' module" vertico)))
+  	       (const :tag "Default user interface" nil)
+  	       (const :tag "The `mct' module" mct)
+  	       (const :tag "The `vertico' module" vertico)))
 
 (defcustom matt-e-emacs-completion-extras t
     "When non-nil load extras for minibuffer completion.
