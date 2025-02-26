@@ -1,6 +1,6 @@
 ;;; prot-vertico.el --- Custom Vertico extras -*- lexical-binding: t -*-
 
-;; Copyright (C) 2023  Protesilaos Stavrou
+;; Copyright (C) 2023-2025  Protesilaos Stavrou
 
 ;; Author: Protesilaos Stavrou <info@protesilaos.com>
 ;; URL: https://protesilaos.com/emacs/dotemacs
@@ -40,7 +40,8 @@
                              :prompt    ""
                              :separator ""
                              :ellipsis  ""
-                             :no-match  "")))
+                             :no-match  ""))
+    (vertico-preselect . prompt))
   "List of configurations for minimal Vertico multiform.
 The minimal view is intended to be more private or less
 revealing.  This is important when, for example, a prompt shows
@@ -54,6 +55,7 @@ automatically.")
 
 (defvar prot-vertico-multiform-maximal
   '((vertico-count . 10)
+    (vertico-preselect . directory)
     (vertico-resize . t))
   "List of configurations for maximal Vertico multiform.")
 
@@ -73,7 +75,7 @@ automatically.")
 This is done to accommodate `prot-vertico-multiform-minimal'."
   (interactive)
   (if vertico-unobtrusive-mode
-      (let ((vertico--index 0))
+      (progn
         (vertico-multiform-vertical)
         (vertico-next 1))
     (vertico-next 1)))
@@ -95,8 +97,32 @@ This is done to accommodate `prot-vertico-multiform-minimal'."
   (if (and vertico-unobtrusive-mode (> vertico--total 1))
       (progn
         (minibuffer-complete)
-        (vertico-multiform-vertical))
+        (prot-vertico-private-next))
     (vertico-insert)))
+
+(defun prot-vertico-private-exit ()
+  "Exit with the candidate if `prot-vertico-multiform-minimal'.
+If there are more candidates that match the given input, expand the
+minibuffer to show the remaining candidates and select the first one.
+Else do `vertico-exit'."
+  (interactive)
+  (cond
+   ((and (= vertico--total 1)
+         (not (eq 'file (vertico--metadata-get 'category))))
+    (minibuffer-complete)
+    (vertico-exit))
+   ((and vertico-unobtrusive-mode
+         (not minibuffer--require-match)
+         (or (string-empty-p (minibuffer-contents))
+             minibuffer-default
+             (eq vertico-preselect 'directory)
+             (eq vertico-preselect 'prompt)))
+    (vertico-exit-input))
+   ((and vertico-unobtrusive-mode (> vertico--total 1))
+    (minibuffer-complete-and-exit)
+    (prot-vertico-private-next))
+   (t
+    (vertico-exit))))
 
 (provide 'prot-vertico)
 ;;; prot-vertico.el ends here
