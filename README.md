@@ -27,3 +27,9 @@ Therefore, to add your own customizations, use the following files:
 * `post-init.el`
 * `pre-early-init.el`
 * `post-early-init.el`
+
+## MacOS: install `emacs-plus`
+
+`emacs-plus` contains helpful libraries, especially for native compilation. (Feb 2025: your mac is too old to install)
+
+[Install `emacs-plus`.](https://github.com/d12frosted/homebrew-emacs-plus?tab=readme-ov-file#install)
