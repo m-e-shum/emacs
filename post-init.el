@@ -13,7 +13,6 @@
   (compile-angel-on-load-mode)
   (add-hook 'emacs-lisp-mode-hook #'compile-angel-on-save-local-mode))
 
-
 ;; Auto-revert in Emacs is a feature that automatically updates the
 ;; contents of a buffer to reflect changes made to the underlying file
 ;; on disk.
@@ -38,7 +37,6 @@
 ;; the precise point where you previously left off.
 (add-hook 'after-init-hook #'save-place-mode)
 
-
 ;; Terminal Emulator in C
 (use-package vterm
   :ensure t
@@ -47,7 +45,6 @@
   :config
   ;; Speed up vterm
   (setq vterm-timer-delay 0.01))
-
 
 ;; Completion
 (use-package vertico
@@ -164,7 +161,8 @@
          ("M-r" . consult-history))
 
   ;; Enable automatic preview at point in the *Completions* buffer.
-  :hook (completion-list-mode . consult-preview-at-point-mode)
+  :hook
+  (completion-list-mode . consult-preview-at-point-mode)
 
   :init
   ;; Optionally configure the register formatting. This improves the register
@@ -187,6 +185,7 @@
    consult--source-recent-file consult--source-project-recent-file
    ;; :preview-key "M-."
    :preview-key '(:debounce 0.4 any))
+  (setq consult-line-numbers-widen t)
   (setq consult-narrow-key "<"))
 
 (use-package corfu
@@ -221,7 +220,6 @@
   (add-hook 'completion-at-point-functions #'cape-file)
   (add-hook 'completion-at-point-functions #'cape-elisp-block))
 
-
 ;; Code Folding
 (use-package outline-indent
   :ensure t
@@ -240,11 +238,17 @@
   :custom
   (outline-indent-ellipsis " ▼ "))
 
+(use-package crux
+  :bind
+  (("C-a" . crux-move-beginning-of-line)))
 
 ;; EGLOT
 (use-package eglot
   :ensure nil
   :defer t
+  :bind (:map eglot-mode-map
+              ("C-c C-d" . eldoc)
+              ("C-c C-f" . eglot-format-buffer))
   :commands (eglot
              eglot-ensure
              eglot-rename
@@ -254,57 +258,53 @@
 (setq-default eglot-workspace-configuration
               `(:pylsp (:plugins
                         (;; Fix imports and syntax using `eglot-format-buffer`
-                         :isort (:enabled t)
-                         :autopep8 (:enabled t)
-
+                         :jedi_completion (:include_params t :fuzzy t)
+                         :ruff (:enabled t :formatEnabled t :linelength 88 :format ["I"])
                          ;; Syntax checkers (works with Flymake)
-                         :pylint (:enabled t)
-                         :pycodestyle (:enabled t)
-                         :flake8 (:enabled t)
-                         :pyflakes (:enabled t)
-                         :pydocstyle (:enabled t)
-                         :mccabe (:enabled t)
-
-                         :yapf (:enabled :json-false)
-                         :rope_autoimport (:enabled :json-false)))))
+                         ;; :pylint (:enabled t)
+                         ;; :pycodestyle (:enabled t)
+                         ;; :flake8 (:enabled t)
+                         ;; :pyflakes (:enabled t)
+                         ;; :pydocstyle (:enabled t)
+                         ;; :mccabe (:enabled t)
+                         ;; 
+                         ;; :yapf (:enabled :json-false)
+                         ;; :rope_autoimport (:enabled :json-false)
+                         ))))
 
 (add-hook 'python-mode-hook #'eglot)
 (add-hook 'python-ts-mode-hook #'eglot)
+(add-hook 'prog-mode-hook #'display-line-numbers-mode)
 
-
-(use-package easysession
-  :ensure t
-  :defer t
-  :commands (easysession-switch-to
-             easysession-save-as
-             easysession-save-mode
-             easysession-load-including-geometry)
-
-  :custom
-  (easysession-mode-line-misc-info t)  ; Display the session in the modeline
-  (easysession-save-interval (* 10 60))  ; Save every 10 minutes
-
-  :init
-  ;; Key mappings:
-  ;; C-c l for switching sessions
-  ;; and C-c s for saving the current session
-  (global-set-key (kbd "C-c l") 'easysession-switch-to)
-  (global-set-key (kbd "C-c s") 'easysession-save-as)
-
-  ;; The depth 102 and 103 have been added to to `add-hook' to ensure that the
-  ;; session is loaded after all other packages. (Using 103/102 is particularly
-  ;; useful for those using minimal-emacs.d, where some optimizations restore
-  ;; `file-name-handler-alist` at depth 101 during `emacs-startup-hook`.)
-  (add-hook 'emacs-startup-hook #'easysession-load-including-geometry 102)
-  (add-hook 'emacs-startup-hook #'easysession-save-mode 103))
-
+;; (use-package easysession
+;; :ensure nil
+;; :defer t
+;; :commands (easysession-switch-to
+;;            easysession-save-as
+;;            easysession-save-mode
+;;            easysession-load-including-geometry)
+;; 
+;; :custom
+;; (easysession-mode-line-misc-info t)  ; Display the session in the modeline
+;; (easysession-save-interval (* 10 60))  ; Save every 10 minutes
+;; 
+;; :init
+;; ;; Key mappings:
+;; ;; C-c l for switching sessions
+;; ;; and C-c s for saving the current session
+;; (global-set-key (kbd "C-c l") 'easysession-switch-to)
+;; (global-set-key (kbd "C-c s") 'easysession-save-as)
+;; 
+;; ;; The depth 102 and 103 have been added to to `add-hook' to ensure that the
+;; ;; session is loaded after all other packages. (Using 103/102 is particularly
+;; ;; useful for those using minimal-emacs.d, where some optimizations restore
+;; ;; `file-name-handler-alist` at depth 101 during `emacs-startup-hook`.)
+;; (add-hook 'emacs-startup-hook #'easysession-load-including-geometry 102)
+;; (add-hook 'emacs-startup-hook #'easysession-save-mode 103))
 
 ;; Other customizations
 ;; Hide warnings and display only errors
 (setq warning-minimum-level :error)
-
-;; Display of line numbers in the buffer:
-;; (display-line-numbers-mode 1)
 
 (use-package which-key
   :ensure nil ; builtin
@@ -365,4 +365,119 @@
 (add-hook 'dired-mode-hook #'dired-omit-mode)
 
 ;; Enable on-the-fly spell checking (Flyspell mode).
-(add-hook text-mode-hook #'flyspell-mode)
+;;(add-hook text-mode-hook #'flyspell-mode) ;; broken Emacs 30
+
+(use-package hl-line
+  :ensure nil
+  :commands (hl-line-mode)
+  :config
+  (setq hl-line-sticky-flag nil)
+  (setq hl-line-overlay-priority -50)
+  )
+
+(use-package pulsar
+  :ensure t
+  :config
+  (setopt pulsar-pulse t
+          pulsar-delay 0.055
+          pulsar-iterations 10
+          pulsar-face 'pulsar-magenta
+          pulsar-highlight-face 'pulsar-yellow)
+  (pulsar-global-mode 1)  
+  )
+
+(use-package lin
+  :ensure t
+  :hook (after-init . lin-global-mode)
+  :config
+  (setq lin-face 'lin-magenta))
+
+(use-package spacious-padding
+  :ensure t
+  :hook (after-init . spacious-padding-mode)
+  :init
+  ;; These are defaults
+  (setq spacious-padding-widths
+        '( :internal-border-width 30
+           :header-line-width 4
+           :mode-line-width 6
+           :tab-width 4
+           :right-divider-width 30
+           :scroll-bar-width 8
+           :left-fringe-width 20
+           :right-fringe-width 20)))
+
+(use-package whitespace
+  :ensure nil
+  )
+
+(use-package display-line-numbers
+  :ensure nil
+  :config
+  (setq-default display-line-numbers-type t)
+  (setq display-line-numbers-major-tick 0)
+  (setq display-line-numbers-minor-tick 0)
+  (setq-default display-line-numbers-widen t))
+
+;;GIT
+(use-package magit
+  :demand t
+  :bind ("C-x g" . magit-status)
+  :init
+  (setq magit-define-global-key-bindings nil)
+  (setq magit-section-visibility-indicator '(" 󰅀"))
+  :config
+  (setq git-commit-summary-max-length 50)
+  ;; NOTE 2023-01-24: I used to also include `overlong-summary-line'
+  ;; in this list, but I realised I do not need it.  My summaries are
+  ;; always in check.  When I exceed the limit, it is for a good
+  ;; reason.
+  (setq git-commit-style-convention-checks '(non-empty-second-line))
+
+  (setq magit-diff-refine-hunk t)
+
+  )
+
+;; ORG mode
+(use-package org
+  :ensure t
+  :mode (("\\.org$" . org-mode))
+  :preface
+  (defun my-first-existing-directory (directories)
+    "Return the first existing directory from the given list DIRECTORIES.
+     The directory path is expanded to its absolute path."
+    (catch 'found
+      (dolist (dir directories)
+        (when (file-directory-p dir)
+          (throw 'found (expand-file-name dir))))
+      nil))  ;; Return nil if no existing directory is found
+  :config
+  (setq org-startup-indented t ;; auto aligns text with header
+        org-startup-folded t ;; startup folded
+        org-ellipsis " 󰅀 " ;; folding symbol
+        org-directory (my-first-existing-directory '("/home/shumma1/notes/2025"
+                                                     "/Users/shumma1/notes/2025"))
+        org-agenda-files `(,org-directory)
+        org-hide-emphasis-markers nil
+        org-pretty-entities t
+        org-return-follows-link t
+        org-fontify-quote-and-verse-blocks t
+        org-fontify-whole-block-delimiter-line t
+        org-fontify-done-headline nil
+        org-fontify-todo-headline nil
+        org-fontify-whole-heading-line nil
+        org-enforce-todo-dependencies t
+        org-enforce-todo-checkbox-dependencies t
+        org-todo-keywords '((sequence "TODO(t)" "IN-PROGRESS(i)" "|" "DONE(d)")
+                            (sequence "|" "CONSIDER(s)" "WAITING(w)" "CANCELLED(c)"))
+        ))
+
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((emacs-lisp . t)
+   (shell . t)
+   (python . t)))
+
+(use-package org-bullets
+  :ensure t
+  :hook (org-mode . org-bullets-mode))

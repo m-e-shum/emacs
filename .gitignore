@@ -4,5 +4,4 @@ archive
 .python-version
 elpa/
 var/
-early-init.el
-init.el
+
