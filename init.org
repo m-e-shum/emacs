@@ -15,6 +15,14 @@ Commands:
 #+begin_src emacs-lisp :tangle "pre-early-init.el" :mkdirp yes
   ;;; pre-early-init.el --- DESCRIPTION -*- no-byte-compile: t; lexical-binding: t; -*-
 #+end_src
+** Remove clutter
+#+begin_src emacs-lisp :tangle "pre-early-init.el" :mkdirp yes
+  ;; Reducing clutter in ~/.emacs.d by redirecting files to ~/emacs.d/var/
+  (setq minimal-emacs-var-dir (expand-file-name "var/" minimal-emacs-user-directory))
+  (setq package-user-dir (expand-file-name "elpa" minimal-emacs-var-dir))
+  (setq user-emacs-directory minimal-emacs-var-dir)
+  (setq custom-file null-device)
+#+end_src
 * ~post-early-init.el~
 ** Header
 #+begin_src emacs-lisp :tangle "post-early-init.el" :mkdirp yes
@@ -332,6 +340,25 @@ Commands:
   (add-hook 'python-mode-hook #'eglot)
   (add-hook 'python-ts-mode-hook #'eglot)
   (add-hook 'prog-mode-hook #'display-line-numbers-mode)
+#+end_src
+** Markdown
+#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
+  ;;; Markdown (markdown-mode)
+  (use-package markdown-mode
+    :ensure t
+    :defer t
+    :config
+    (setq markdown-fontify-code-blocks-natively t))
+
+  (add-hook 'markdown-mode-hook 'auto-fill-mode)
+  (add-hook 'markdown-mode-hook (lambda () (set-fill-column 80)))
+#+end_src
+** Make
+#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
+  (use-package make-mode
+    :ensure t
+    :mode ("Makefile\..*" . makefile-gmake-mode)
+    )
 #+end_src
 ** Sessions (NOT implemented)
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
