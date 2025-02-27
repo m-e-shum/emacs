@@ -358,7 +358,7 @@ Commands:
   (use-package make-mode
     :ensure t
     :mode ("Makefile\..*" . makefile-gmake-mode)
-    )
+    a)
 #+end_src
 ** Sessions (NOT implemented)
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
