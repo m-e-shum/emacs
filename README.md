@@ -22,7 +22,9 @@ ln -s minimal-emacs.d/early-init.el
 ln -s minimal-emacs.d/init.el
 ```
 
-Therefore, to add your own customizations, use the following files:
+## Use `org-babel-tangle` to create custom files
+
+Tangle `init.org` to create the following files:
 * `pre-init.el`
 * `post-init.el`
 * `pre-early-init.el`
