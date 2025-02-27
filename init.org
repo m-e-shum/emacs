@@ -4,6 +4,7 @@
 Commands:
 - Use ~C-c C-v C-t~ to /tangle/ ~*init.el~ files.
 - Use ~C-c C-v C-d~ to split or /demarcate/ a code block.
+- Use ~M-S-<up/down>~ to use /org-shift/ a bullet point
 
 * ~pre-init.el~
 ** Header
@@ -32,21 +33,6 @@ Commands:
 #+begin_src emacs-lisp :tangle "post-early-init.el" :mkdirp yes
   (load-theme 'modus-vivendi-deuteranopia t)
 #+end_src
-** Emacs
-#+begin_src emacs-lisp :tangle "post-early-init.el" :mkdirp yes
-  (use-package emacs
-    :ensure nil
-    :demand t
-    :config
-    ;;; General settings
-    (setq blink-matching-paren nil)
-    (setq help-window-select t)
-    :bind
-    ( :map global-map
-      ("M-c" . capitalize-dwim)
-      ("M-l" . downcase-dwim)
-      ("M-u" . upcase-dwim)))
-#+end_src
 * ~post-init.el~
 ** Header
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
@@ -66,6 +52,25 @@ Commands:
 
     (compile-angel-on-load-mode)
     (add-hook 'emacs-lisp-mode-hook #'compile-angel-on-save-local-mode))
+#+end_src
+** Emacs
+#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
+  (use-package emacs
+    :ensure nil
+    :demand t
+    :config
+    ;;; General settings
+    (setq blink-matching-paren nil)
+    (setq help-window-select t)
+    (setq tab-always-indent 'complete)
+    (setq tab-first-completion 'word-or-paren-or-punct)
+    (setq-default tab-width 4
+    	      indent-tabs-mode nil)
+    :bind
+    ( :map global-map
+      ("M-c" . capitalize-dwim)
+      ("M-l" . downcase-dwim)
+      ("M-u" . upcase-dwim)))
 #+end_src
 ** Auto-revert, recentf, savehist, save-place
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
@@ -309,7 +314,7 @@ Commands:
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   ;; EGLOT
   (use-package eglot
-    :ensure nil
+    :ensure t
     :defer t
     :bind (:map eglot-mode-map
                 ("C-c C-d" . eldoc)
@@ -337,9 +342,24 @@ Commands:
                            ;; :rope_autoimport (:enabled :json-false)
                            ))))
 
-  (add-hook 'python-mode-hook #'eglot)
+  ;;(add-hook 'python-mode-hook #'eglot)
   (add-hook 'python-ts-mode-hook #'eglot)
   (add-hook 'prog-mode-hook #'display-line-numbers-mode)
+#+end_src
+** treesitter
+#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
+  ;; Install tree-sitter and tree-sitter-langs
+  (require 'tree-sitter)
+  (global-tree-sitter-mode)
+
+  (use-package treesit-auto
+    :custom
+    (treesit-auto-install 'prompt)
+    :config
+    (treesit-auto-add-to-auto-mode-alist 'all)
+    (global-treesit-auto-mode))
+  
+        
 #+end_src
 ** Markdown
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
@@ -358,7 +378,7 @@ Commands:
   (use-package make-mode
     :ensure t
     :mode ("Makefile\..*" . makefile-gmake-mode)
-    a)
+    )
 #+end_src
 ** Sessions (NOT implemented)
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
@@ -556,6 +576,14 @@ Commands:
           org-directory (my-first-existing-directory '("/home/shumma1/notes/2025"
                                                        "/Users/shumma1/notes/2025"))
           org-agenda-files `(,org-directory)
+          org-structure-template-alist '(("s" . "src")
+                                         ("e" . "src emacs-lisp")
+                                         ("E" . "src emacs-lisp :results value code :lexical t")
+                                         ("t" . "src emacs-lisp :tangle FILENAME")
+                                         ("T" . "src emacs-lisp :tangle FILENAME :mkdirp yes")
+                                         ("x" . "example")
+                                         ("X" . "export")
+                                         ("q" . "quote"))
           org-hide-emphasis-markers nil
           org-pretty-entities t
           org-return-follows-link t
