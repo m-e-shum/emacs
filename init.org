@@ -286,9 +286,8 @@ Commands:
     (add-hook 'completion-at-point-functions #'cape-file)
     (add-hook 'completion-at-point-functions #'cape-elisp-block))
 #+end_src
-** Code folding, crux
+** Code folding, crux, shell
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
-
   ;; Code Folding
   (use-package outline-indent
     :ensure t
@@ -299,10 +298,7 @@ Commands:
     ;; The minor mode can also be automatically activated for a certain modes.
     ;; For example for Python and YAML:
     (add-hook 'python-mode-hook #'outline-indent-minor-mode)
-    (add-hook 'python-ts-mode-hook #'outline-indent-minor-mode)
-
     (add-hook 'yaml-mode-hook #'outline-indent-minor-mode)
-    (add-hook 'yaml-ts-mode-hook #'outline-indent-minor-mode)
 
     :custom
     (outline-indent-ellipsis " ▼ "))
@@ -310,61 +306,34 @@ Commands:
   (use-package crux
     :bind
     (("C-a" . crux-move-beginning-of-line)))
-#+end_src
-** treesitter
-#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
-  ;; Remap python to python-ts-mode
-  ;; (setq major-mode-remap-alist
-  ;;       '((python-mode . python-ts-mode)))
-  ;; 
-  ;;
 
   (use-package exec-path-from-shell
     :ensure t
     :config
     (when (memq window-system '(mac ns x))
       (exec-path-from-shell-initialize)))
-
-  (use-package treesit-auto
-    :custom
-    (treesit-auto-install 'prompt)
-    :config
-    (treesit-auto-add-to-auto-mode-alist 'all)
-    (global-treesit-auto-mode)
-    )
-
-  (setq treesit-extra-load-path '("~/.emacs.d/var/tree-sitter"))
-
-  ;; Can't get to work
-  ;; (use-package tree-sitter
-  ;;   :init
-  ;;   (setq treesit-language-source-alist
-  ;;         '((elisp      . ("https://github.com/Wilfred/tree-sitter-elisp"))
-  ;;           (rust       . ("https://github.com/tree-sitter/tree-sitter-rust"))
-  ;;           (toml       . ("https://github.com/tree-sitter/tree-sitter-toml"))
-  ;;           (python     . ("https://github.com/tree-sitter/tree-sitter-python"))
-  ;;           (javascript . ("https://github.com/tree-sitter/tree-sitter-javascript"))))
-  ;;   :hook (tree-sitter-after-on . tree-sitter-hl-mode)
-  ;;   :config
-  ;;   (global-tree-sitter-mode)
-  ;;   ;; for major mode language register
-  ;;   (setq tree-sitter-major-mode-language-alist
-  ;;         '((emacs-lisp-mode . elisp)
-  ;;           (python-ts-mode . python)
-  ;;           (bash-ts-mode . bash)
-  ;;           (rust-ts-mode . rust)
-  ;;           (lisp-data-mode . elisp)))
-  ;;   )
-  ;; (use-package tree-sitter-langs
-  ;;   :ensure t
-  ;;   :after tree-sitter
-  ;;   )
-
-
+#+end_src
+** Tree-sitter
+- Emacs 30 does NOT need specified "lang-ts-mode" b/c it's built in
+  - To check, open python file and ~describe-variable~ if ~tree-sitter-mode~ is true
+  - /NOTE/: if you're using Emacs 29, you will need python-ts-mode, etc.
+#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
+  ;; Tree-Sitter
+  ;; Emacs 30 does NOT need python-ts-mode, etc.
+  ;; If you want to check if ts mode is running, describe variable
+  ;;   tree-sitter-mode, tree-sitter-hl-mode should be true
+  ;;   (I think it turns on font-lock-mode too)
+  (require 'tree-sitter)
+  (require 'tree-sitter-langs)
+  (global-tree-sitter-mode)
+  ;;(setq major-mode-remap-alist '((python-mode . python-ts-mode)))
+  ;;(setq tree-sitter-major-mode-language-alist
+  ;;      '((python-ts-mode . python)))
+  ;; (add-hook 'python-ts-mode-hook #'tree-sitter-mode)
+  (add-hook 'python-mode-hook #'tree-sitter-hl-mode)
 #+end_src
 ** EGLOT
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
-
   ;; EGLOT
   (use-package eglot
     :ensure t
@@ -372,10 +341,10 @@ Commands:
                 ("C-c C-d" . eldoc)
                 ("C-c C-f" . eglot-format-buffer))
     :hook
-    (python-ts-mode-hook 'eglot-ensure)
+    (python-mode-hook 'eglot-ensure)
     :config
     (setq eglot-sync-connect nil)
-    (add-to-list 'eglot-server-programs '(python-ts-mode . ("ruff" "server")))
+    ;; (add-to-list 'eglot-server-programs '(python-ts-mode . ("ruff" "server")))
     ;; Workspace
     (setq-default eglot-workspace-configuration
                 `(:pylsp (:plugins
@@ -398,9 +367,6 @@ Commands:
 
   ;; Display Line numbers when prog-mode is detected
   (add-hook 'prog-mode-hook #'display-line-numbers-mode)
-
-  ;; Syntax highlight
-  (add-hook 'python-ts-mode-hook #'font-lock-mode)
 #+end_src
 ** Markdown
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
