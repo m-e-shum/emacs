@@ -325,11 +325,12 @@ Commands:
   ;;   (I think it turns on font-lock-mode too)
   (require 'tree-sitter)
   (require 'tree-sitter-langs)
-  (global-tree-sitter-mode)
+  (global-tree-sitter-mode 1)
   ;;(setq major-mode-remap-alist '((python-mode . python-ts-mode)))
   ;;(setq tree-sitter-major-mode-language-alist
   ;;      '((python-ts-mode . python)))
   ;; (add-hook 'python-ts-mode-hook #'tree-sitter-mode)
+
   (add-hook 'python-mode-hook #'tree-sitter-hl-mode)
 #+end_src
 ** EGLOT
@@ -341,10 +342,9 @@ Commands:
                 ("C-c C-d" . eldoc)
                 ("C-c C-f" . eglot-format-buffer))
     :hook
-    (python-mode-hook 'eglot-ensure)
+    (python-ts-mode-hook 'eglot-ensure) ;; Seems to be crucial for tree-sitter to work automatically
     :config
     (setq eglot-sync-connect nil)
-    ;; (add-to-list 'eglot-server-programs '(python-ts-mode . ("ruff" "server")))
     ;; Workspace
     (setq-default eglot-workspace-configuration
                 `(:pylsp (:plugins
