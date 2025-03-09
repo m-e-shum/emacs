@@ -22,7 +22,6 @@ Commands:
   (setq minimal-emacs-var-dir (expand-file-name "var/" minimal-emacs-user-directory))
   (setq package-user-dir (expand-file-name "elpa" minimal-emacs-var-dir))
   (setq user-emacs-directory minimal-emacs-var-dir)
-  (setq custom-file null-device)
 #+end_src
 * ~post-early-init.el~
 ** Header
@@ -38,6 +37,10 @@ Commands:
 (Important for ~post-init.elc~ to not be created.)
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   ;;; post-init.el --- DESCRIPTION -*- no-byte-compile: t; lexical-binding: t; -*-
+#+end_src
+** Remove ~custom.el~
+#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
+(setq custom-file null-device);
 #+end_src
 ** Speed up with =compile-angel=
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
@@ -393,6 +396,13 @@ Commands:
 
   (add-hook 'markdown-mode-hook 'auto-fill-mode)
   (add-hook 'markdown-mode-hook (lambda () (set-fill-column 80)))
+#+end_src
+** YAML
+#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
+  (use-package yaml-mode
+    :ensure t)
+
+  (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode))
 #+end_src
 ** Make
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
