@@ -401,6 +401,12 @@ Commands:
   (add-hook 'markdown-mode-hook 'auto-fill-mode)
   (add-hook 'markdown-mode-hook (lambda () (set-fill-column 80)))
 #+end_src
+** Dockerfile
+#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
+  (use-package dockerfile-mode
+    :ensure t
+    :mode ("Dockerfile\\'" . dockerfile-mode))
+#+end_src
 ** YAML
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   (use-package yaml-mode
