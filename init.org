@@ -340,8 +340,12 @@ Commands:
   ;; If you want to check if ts mode is running, describe variable
   ;;   tree-sitter-mode, tree-sitter-hl-mode should be true
   ;;   (I think it turns on font-lock-mode too)
-  (require 'tree-sitter)
-  (require 'tree-sitter-langs)
+  ;; (require 'tree-sitter)
+  ;; (require 'tree-sitter-langs)
+  (use-package tree-sitter
+    :ensure t)
+  (use-package tree-sitter-langs
+    :ensure t)
   (global-tree-sitter-mode 1)
   ;;(setq major-mode-remap-alist '((python-mode . python-ts-mode)))
   ;;(setq tree-sitter-major-mode-language-alist
