@@ -6,6 +6,9 @@ Commands:
 - Use ~C-c C-v C-d~ to split or /demarcate/ a code block.
 - Use ~M-S-<up/down>~ to use /org-shift/ a bullet point
 
+Learn:
+- How to use [[https://github.com/radian-software/straight.el?tab=readme-ov-file#tldr][straight.el]] (Could be useful for installing =combobulate=)
+
 * ~pre-init.el~
 ** Header
 #+begin_src emacs-lisp :tangle "pre-init.el" :mkdirp yes
@@ -30,7 +33,7 @@ Commands:
 #+end_src
 ** Load theme
 #+begin_src emacs-lisp :tangle "post-early-init.el" :mkdirp yes
-  (load-theme 'modus-vivendi-deuteranopia t)
+  (load-theme 'modus-vivendi-tinted t)
 #+end_src
 * ~post-init.el~
 ** Header
@@ -336,23 +339,22 @@ Commands:
   - /NOTE/: if you're using Emacs 29, you will need python-ts-mode, etc.
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   ;; Tree-Sitter
-  ;; Emacs 30 does NOT need python-ts-mode, etc.
-  ;; If you want to check if ts mode is running, describe variable
-  ;;   tree-sitter-mode, tree-sitter-hl-mode should be true
-  ;;   (I think it turns on font-lock-mode too)
-  ;; (require 'tree-sitter)
-  ;; (require 'tree-sitter-langs)
   (use-package tree-sitter
     :ensure t)
   (use-package tree-sitter-langs
     :ensure t)
   (global-tree-sitter-mode 1)
-  ;;(setq major-mode-remap-alist '((python-mode . python-ts-mode)))
-  ;;(setq tree-sitter-major-mode-language-alist
-  ;;      '((python-ts-mode . python)))
-  ;; (add-hook 'python-ts-mode-hook #'tree-sitter-mode)
 
   (add-hook 'python-mode-hook #'tree-sitter-hl-mode)
+#+end_src
+** TODO Combobulate
+[[https://github.com/mickeynp/combobulate][Github Repo]]
+#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
+  ;; (use-package combobulate
+  ;;   :custom
+  ;;   (combobulate-key-prefix "C-c o")
+  ;;   :hook ((prog-mode . "C-c o"))
+  ;;   )
 #+end_src
 ** EGLOT
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
