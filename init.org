@@ -33,7 +33,7 @@ Learn:
 #+end_src
 ** Load theme
 #+begin_src emacs-lisp :tangle "post-early-init.el" :mkdirp yes
-  (load-theme 'modus-vivendi-tinted t)
+  (load-theme 'modus-vivendi-deuteranopia t)
 #+end_src
 * ~post-init.el~
 ** Header
