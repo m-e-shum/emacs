@@ -356,6 +356,46 @@ Learn:
   ;;   :hook ((prog-mode . "C-c o"))
   ;;   )
 #+end_src
+** =gptel=
+#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
+  (use-package auth-source :ensure t)
+
+  (defun get-password-from-authinfo (host user)
+    "Retrieve the password for HOST and USER from auth-sources (e.g., ~/.authinfo)."
+    (let ((auth-result (car (auth-source-search :host host :user user :require '(:secret)))))
+      (when auth-result
+        (let ((secret (plist-get auth-result :secret)))
+          ;; If the secret is a function, call it to retrieve the actual password
+          (if (functionp secret)
+              (funcall secret)
+            secret)))))
+
+
+  (use-package gptel
+    :ensure t
+    :config
+    (setq
+     gptel-model 'gpt-4o-mini
+     gptel-api-key (get-password-from-authinfo "openai-gdm.openai.azure.com" "api-key")
+     gptel-backend (gptel-make-azure "Azure-1"
+                     :protocol "https"
+                     :host "openai-gdm.openai.azure.com"
+                     :endpoint "/openai/deployments/gpt-4o-mini/chat/completions?api-version=2025-01-01-preview"
+                     :stream t
+                     :key #'gptel-api-key
+                     :models '(gpt-4o-mini)))
+    ;; (setq gptel-model  'gpt-4o
+    ;;       gptel-api-key (get-password-from-authinfo "api.github.com" "m-e-shum") ;(getenv "GITHUB_TOKEN")
+    ;;       gptel-backend
+    ;;       (gptel-make-openai "Github Models"
+    ;;         :host "models.inference.ai.azure.com"
+    ;;         :endpoint "/chat/completions?api-version=2024-05-01-preview"
+    ;;         :stream t
+    ;;         :key gptel-api-key
+    ;;         :models '(gpt-4o)
+    ;;         ))
+    )
+#+end_src
 ** EGLOT
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   ;; EGLOT
@@ -398,10 +438,12 @@ Learn:
     :ensure t
     :defer t
     :config
-    (setq markdown-fontify-code-blocks-natively t))
-
-  (add-hook 'markdown-mode-hook 'auto-fill-mode)
-  (add-hook 'markdown-mode-hook (lambda () (set-fill-column 80)))
+    (setq markdown-fontify-code-blocks-natively t)
+    :hook
+    (markdown-mode . (lambda ()
+                       (auto-fill-mode)
+                       (set-fill-column 80)
+                       (visual-line-mode))))
 #+end_src
 ** Dockerfile
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
@@ -641,7 +683,7 @@ Learn:
           org-enforce-todo-dependencies t
           org-enforce-todo-checkbox-dependencies t
           org-todo-keywords '((sequence "TODO(t)" "IN-PROGRESS(i)" "|" "DONE(d)")
-                              (sequence "|" "CONSIDER(s)" "WAITING(w)" "CANCELLED(c)"))
+                              (sequence "|" "QUEUED(q)" "WAITING(w)" "CANCELLED(c)"))
           ))
 
   (org-babel-do-load-languages
