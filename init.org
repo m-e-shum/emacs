@@ -219,6 +219,9 @@ Learn:
     :ensure t
     :defer t
     :commands vterm
+    :bind (:map global-map
+              ("C-c v <RET>"  . 'vterm)
+              ("C-c v o" . 'vterm-other-window))
     :config
     ;; Speed up vterm
     (setq vterm-timer-delay 0.01))
@@ -781,7 +784,7 @@ Learn:
       (add-to-list 'keycast-substitute-alist `(,event nil))))
 
 #+end_src
-** GIT
+** Magit (Git)
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   ;;GIT
   (use-package transient :ensure t)
