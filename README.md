@@ -32,6 +32,7 @@ Tangle `init.org` to create the following files:
 
 ## MacOS: install `emacs-plus`
 
-`emacs-plus` contains helpful libraries, especially for native compilation. (Feb 2025: your mac is too old to install)
+`emacs-plus` contains helpful libraries, especially for native compilation.
+*Update Mar 2025*: I was able to successfully install `emacs-plus` version 30.
 
 [Install `emacs-plus`.](https://github.com/d12frosted/homebrew-emacs-plus?tab=readme-ov-file#install)
