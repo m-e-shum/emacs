@@ -8,11 +8,81 @@ Commands:
 
 Learn:
 - How to use [[https://github.com/radian-software/straight.el?tab=readme-ov-file#tldr][straight.el]] (Could be useful for installing =combobulate=)
+  - /Note/: As of now, =straight= has better compatibility with default ~use-package~ than
+    =elpaca=. Keeping =straight=.
 
 * ~pre-init.el~
 ** Header
 #+begin_src emacs-lisp :tangle "pre-init.el" :mkdirp yes
   ;;; pre-init.el --- DESCRIPTION -*- no-byte-compile: t; lexical-binding: t; -*-
+#+end_src
+** Try straight
+#+begin_src emacs-lisp :tangle "pre-init.el" :mkdirp yes
+;; Straight bootstrap
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name
+        "straight/repos/straight.el/bootstrap.el"
+        (or (bound-and-true-p straight-base-dir)
+            user-emacs-directory)))
+      (bootstrap-version 7))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+#+end_src
+** Elpaca Part 1
+#+begin_src emacs-lisp :tangle "pre-init.el" :mkdirp yes
+  ;; (defvar elpaca-installer-version 0.10)
+  ;; (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
+  ;; (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
+  ;; (defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
+  ;; (defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
+  ;;                               :ref nil :depth 1 :inherit ignore
+  ;;                               :files (:defaults "elpaca-test.el" (:exclude "extensions"))
+  ;;                               :build (:not elpaca--activate-package)))
+  ;; (let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
+  ;;        (build (expand-file-name "elpaca/" elpaca-builds-directory))
+  ;;        (order (cdr elpaca-order))
+  ;;        (default-directory repo))
+  ;;   (add-to-list 'load-path (if (file-exists-p build) build repo))
+  ;;   (unless (file-exists-p repo)
+  ;;     (make-directory repo t)
+  ;;     (when (<= emacs-major-version 28) (require 'subr-x))
+  ;;     (condition-case-unless-debug err
+  ;;         (if-let* ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
+  ;;                   ((zerop (apply #'call-process `("git" nil ,buffer t "clone"
+  ;;                                                   ,@(when-let* ((depth (plist-get order :depth)))
+  ;;                                                       (list (format "--depth=%d" depth) "--no-single-branch"))
+  ;;                                                   ,(plist-get order :repo) ,repo))))
+  ;;                   ((zerop (call-process "git" nil buffer t "checkout"
+  ;;                                         (or (plist-get order :ref) "--"))))
+  ;;                   (emacs (concat invocation-directory invocation-name))
+  ;;                   ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
+  ;;                                         "--eval" "(byte-recompile-directory \".\" 0 'force)")))
+  ;;                   ((require 'elpaca))
+  ;;                   ((elpaca-generate-autoloads "elpaca" repo)))
+  ;;             (progn (message "%s" (buffer-string)) (kill-buffer buffer))
+  ;;           (error "%s" (with-current-buffer buffer (buffer-string))))
+  ;;       ((error) (warn "%s" err) (delete-directory repo 'recursive))))
+  ;;   (unless (require 'elpaca-autoloads nil t)
+  ;;     (require 'elpaca)
+  ;;     (elpaca-generate-autoloads "elpaca" repo)
+  ;;     (load "./elpaca-autoloads")))
+  ;; (add-hook 'after-init-hook #'elpaca-process-queues)
+  ;; (elpaca `(,@elpaca-order))
+  ;; 
+  ;; ;; Optional: Install use-package support
+  ;; ;; If you enable elpaca-use-package, some use-package definitions, such as
+  ;; Vertico's, may need modifications. See the following discussion for details:
+  ;; https://github.com/jamescherti/minimal-emacs.d/issues/54
+  ;;
+  ;;(elpaca elpaca-use-package
+     ;;(elpaca-use-package-mode))
 #+end_src
 * ~pre-early-init.el~
 ** Header
@@ -25,6 +95,14 @@ Learn:
   (setq minimal-emacs-var-dir (expand-file-name "var/" minimal-emacs-user-directory))
   (setq package-user-dir (expand-file-name "elpa" minimal-emacs-var-dir))
   (setq user-emacs-directory minimal-emacs-var-dir)
+#+end_src
+** Debug
+#+begin_src emacs-lisp :tangle "pre-early-ini.el" :mkdirp yes
+  (setq debug-on-error t)
+#+end_src
+** Elpaca Part 2
+#+begin_src emacs-lisp :tangle "pre-early-init.el" :mkdirp yes
+  ;;(setq minimal-emacs-package-initialize-and-refresh nil)
 #+end_src
 * ~post-early-init.el~
 ** Header
@@ -52,19 +130,34 @@ Learn:
   (use-package compile-angel
     :ensure t
     :demand t
-    :config
+    :custom
     ;; Set `compile-angel-verbose` to nil to suppress output from compile-angel.
     ;; Drawback: The minibuffer will not display compile-angel's actions.
-    (setq compile-angel-verbose t)
+    (compile-angel-verbose t)
 
-    (compile-angel-on-load-mode)
-    (add-hook 'emacs-lisp-mode-hook #'compile-angel-on-save-local-mode))
+    :config
+    ;; The following directive prevents compile-angel from compiling your init
+    ;; files. If you choose to remove this push to `compile-angel-excluded-files'
+    ;; and compile your pre/post-init files, ensure you understand the
+    ;; implications and thoroughly test your code. For example, if you're using
+    ;; `use-package', you'll need to explicitly add `(require 'use-package)` at
+    ;; the top of your init file.
+    (push "/pre-init.el" compile-angel-excluded-files)
+    (push "/post-init.el" compile-angel-excluded-files)
+    (push "/pre-early-init.el" compile-angel-excluded-files)
+    (push "/post-early-init.el" compile-angel-excluded-files)
+    
+    ;; A local mode that compiles .el files whenever the user saves them.
+    ;; (add-hook 'emacs-lisp-mode-hook #'compile-angel-on-save-local-mode)
+
+    ;; A global mode that compiles .el files before they are loaded.
+    (compile-angel-on-load-mode))
+  
 #+end_src
 ** Emacs
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   (use-package emacs
     :ensure nil
-    :demand t
     :config
     ;;; General settings
     (setq blink-matching-paren nil)
@@ -343,7 +436,7 @@ Learn:
     :ensure t)
   (use-package tree-sitter-langs
     :ensure t)
-  (global-tree-sitter-mode 1)
+  ;;(global-tree-sitter-mode 1)
 
   (add-hook 'python-mode-hook #'tree-sitter-hl-mode)
 #+end_src
@@ -358,7 +451,7 @@ Learn:
 #+end_src
 ** =gptel=
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
-  (use-package auth-source :ensure t)
+  (require 'auth-source)
 
   (defun get-password-from-authinfo (host user)
     "Retrieve the password for HOST and USER from auth-sources (e.g., ~/.authinfo)."
@@ -370,12 +463,12 @@ Learn:
               (funcall secret)
             secret)))))
 
-
   (use-package gptel
     :ensure t
     :config
     (setq
      gptel-model 'gpt-4o-mini
+     ;;gptel-proxy "http://nibr-proxy.global.nibr.novartis.net:2011"
      gptel-api-key (get-password-from-authinfo "openai-gdm.openai.azure.com" "api-key")
      gptel-backend (gptel-make-azure "Azure-1"
                      :protocol "https"
@@ -383,9 +476,10 @@ Learn:
                      :endpoint "/openai/deployments/gpt-4o-mini/chat/completions?api-version=2025-01-01-preview"
                      :stream t
                      :key #'gptel-api-key
-                     :models '(gpt-4o-mini)))
+                     :models '(gpt-4o-mini))))
+    
     ;; (setq gptel-model  'gpt-4o
-    ;;       gptel-api-key (get-password-from-authinfo "api.github.com" "m-e-shum") ;(getenv "GITHUB_TOKEN")
+    ;;       gptel-api-key (get-password-from-authinfo "api.github.com" "m-e-shum") 
     ;;       gptel-backend
     ;;       (gptel-make-openai "Github Models"
     ;;         :host "models.inference.ai.azure.com"
@@ -394,7 +488,7 @@ Learn:
     ;;         :key gptel-api-key
     ;;         :models '(gpt-4o)
     ;;         ))
-    )
+    ;; )
 #+end_src
 ** EGLOT
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
@@ -458,14 +552,7 @@ Learn:
 
   (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode))
 #+end_src
-** Make
-#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
-  (use-package make-mode
-    :ensure t
-    :mode ("Makefile\..*" . makefile-gmake-mode)
-    )
-#+end_src
-** Sessions (NOT implemented)
+** MAYBE Sessions (NOT implemented)
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   ;; (use-package easysession
   ;; :ensure nil
@@ -614,17 +701,89 @@ Learn:
     (setq display-line-numbers-major-tick 0)
     (setq display-line-numbers-minor-tick 0)
     (setq-default display-line-numbers-widen t))
+#+end_src
+** DONE Modeline
+#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
+  ;; Download appropriate prot-modeline files
+  (straight-use-package
+     '(prot-modeline :type git
+                     :host gitlab
+                     :repo "protesilaos/dotfiles"
+                     :files ("emacs/.emacs.d/prot-lisp/prot-modeline.el" 
+                             "emacs/.emacs.d/prot-lisp/prot-common.el")
+                     :main "emacs/.emacs.d/prot-lisp/prot-modeline.el"))
 
-  (use-package doom-modeline
+  ;; Now set the config with use-package
+  (use-package prot-modeline
+    :ensure nil
+    :config
+    (setq mode-line-compact nil) ; Emacs 28
+    (setq mode-line-right-align-edge 'right-margin) ; Emacs 30
+    (setq-default mode-line-format
+                  '("%e"
+                    prot-modeline-kbd-macro
+                    prot-modeline-narrow
+                    prot-modeline-buffer-status
+                    prot-modeline-window-dedicated-status
+                    prot-modeline-input-method
+                    "  "
+                    prot-modeline-buffer-identification
+                    "  "
+                    prot-modeline-major-mode
+                    prot-modeline-process
+                    "  "
+                    prot-modeline-vc-branch
+                    "  "
+                    prot-modeline-eglot
+                    "  "
+                    prot-modeline-flymake
+                    "  "
+                    mode-line-format-right-align ; Emacs 30
+                    prot-modeline-notmuch-indicator
+                    "  "
+                    prot-modeline-misc-info))
+
+    (with-eval-after-load 'spacious-padding
+      (defun prot/modeline-spacious-indicators ()
+        "Set box attribute to `'prot-modeline-indicator-button' if spacious-padding is enabled."
+        (if (bound-and-true-p spacious-padding-mode)
+            (set-face-attribute 'prot-modeline-indicator-button nil :box t)
+          (set-face-attribute 'prot-modeline-indicator-button nil :box 'unspecified)))
+      
+      ;; Run it at startup and then afterwards whenever
+      ;; `spacious-padding-mode' is toggled on/off.
+      (prot/modeline-spacious-indicators)
+
+      (add-hook 'spacious-padding-mode-hook #'prot/modeline-spacious-indicators)))
+    
+#+end_src
+** DONE Keycast
+#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
+  (use-package keycast
     :ensure t
-    :init (doom-modeline-mode 1))
+    :defer
+    :custom
+    (keycast-mode-line-format "%2s%k%c%R")
+    (keycast-mode-line-insert-after 'prot-modeline-vc-branch)
+    (keycast-mode-line-window-predicate 'mode-line-window-selected-p)
+    (keycast-mode-line-remove-tail-elements nil)
+    :config
+    (dolist (input '(self-insert-command org-self-insert-command))
+      (add-to-list 'keycast-substitute-alist `(,input "." "Typing…")))
 
+    (dolist (event '( mouse-event-p mouse-movement-p mwheel-scroll handle-select-window
+                      mouse-set-point mouse-drag-region))
+      (add-to-list 'keycast-substitute-alist `(,event nil))))
 
 #+end_src
 ** GIT
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   ;;GIT
+  (use-package transient :ensure t)
+
   (use-package magit
+    :ensure t
+    :after transient
     :demand t
     :bind ("C-x g" . magit-status)
     :init
@@ -683,7 +842,7 @@ Learn:
           org-enforce-todo-dependencies t
           org-enforce-todo-checkbox-dependencies t
           org-todo-keywords '((sequence "TODO(t)" "IN-PROGRESS(i)" "|" "DONE(d)")
-                              (sequence "|" "QUEUED(q)" "WAITING(w)" "CANCELLED(c)"))
+                              (sequence "|" "QUEUED(q)" "MAYBE(m)" "CANCELLED(c)"))
           ))
 
   (org-babel-do-load-languages
