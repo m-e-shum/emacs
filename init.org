@@ -495,7 +495,7 @@ Learn:
       :endpoint "/chat/completions?api-version=2024-05-01-preview"
       :stream t
       :key (get-password-from-authinfo "api.github.com" "m-e-shum")
-      :models '(gpt-4o DeepSeek-R1)))
+      :models '(mistral-small-2503 DeepSeek-R1)))
    
 #+end_src
 ** EGLOT
