@@ -475,7 +475,7 @@ Learn:
               ("C-c g r" . 'gptel-rewrite))
     :config
     (setq
-     gptel-model 'gpt-4o-mini
+     gptel-model 'o3-mini
      gptel-api-key (get-password-from-authinfo "openai-gdm.openai.azure.com" "api-key")
      gptel-backend (gptel-make-azure "Azure-1"
                      :protocol "https"
