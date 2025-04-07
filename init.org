@@ -1,5 +1,5 @@
 #+title: init.org
-#+author: Matt Shum
+#+author: Matt Shmu
 
 Commands:
 - Use ~C-c C-v C-t~ to /tangle/ ~*init.el~ files.
@@ -16,7 +16,7 @@ Learn:
 #+begin_src emacs-lisp :tangle "pre-init.el" :mkdirp yes
   ;;; pre-init.el --- DESCRIPTION -*- no-byte-compile: t; lexical-binding: t; -*-
 #+end_src
-** Try straight
+** Straight
 #+begin_src emacs-lisp :tangle "pre-init.el" :mkdirp yes
 ;; Straight bootstrap
 (defvar bootstrap-version)
@@ -97,8 +97,8 @@ Learn:
   (setq user-emacs-directory minimal-emacs-var-dir)
 #+end_src
 ** Debug
-#+begin_src emacs-lisp :tangle "pre-early-ini.el" :mkdirp yes
-  (setq debug-on-error t)
+#+begin_src emacs-lisp :tangle "pre-early-init.el" :mkdirp yes
+  (setq debug-on-error nil)
 #+end_src
 ** Elpaca Part 2
 #+begin_src emacs-lisp :tangle "pre-early-init.el" :mkdirp yes
@@ -146,13 +146,16 @@ Learn:
     (push "/post-init.el" compile-angel-excluded-files)
     (push "/pre-early-init.el" compile-angel-excluded-files)
     (push "/post-early-init.el" compile-angel-excluded-files)
-    
+
     ;; A local mode that compiles .el files whenever the user saves them.
     ;; (add-hook 'emacs-lisp-mode-hook #'compile-angel-on-save-local-mode)
 
     ;; A global mode that compiles .el files before they are loaded.
     (compile-angel-on-load-mode))
-  
+#+end_src
+** Straight (use-package syntax)
+#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
+  (straight-use-package 'use-package)
 #+end_src
 ** Emacs
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
@@ -434,20 +437,20 @@ Learn:
   - To check, open python file and ~describe-variable~ if ~tree-sitter-mode~ is true
   - /NOTE/: if you're using Emacs 29, you will need python-ts-mode, etc.
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
-  (use-package tree-sitter
-    :straight (:type built-in))
-  (use-package tree-sitter-langs
-    :straight (:type built-in))
+   (use-package tree-sitter
+     :straight t)
+     
+   (use-package tree-sitter-langs
+     :straight t)
 
-  (add-to-list 'tree-sitter-load-path (expand-file-name "~/.emacs.d/var/straight/build/tree-sitter-langs/bin"))
-  (add-to-list 'load-path (expand-file-name "~/.emacs.d/var/straight/build/tree-sitter-langs/bin"))
-  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
-    
+   ;;(add-to-list 'tree-sitter-load-path (expand-file-name "~/.emacs.d/var/straight/build/tree-sitter-langs/bin"))
+   ;;(add-to-list 'load-path (expand-file-name "~/.emacs.d/var/straight/build/tree-sitter-langs/bin"))
+   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
+     
 #+end_src
 ** TODO Combobulate
 [[https://github.com/mickeynp/combobulate][Github Repo]]
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
-  (straight-use-package 'use-package)
 
   ;; Set a key prefix before the package is loaded (if necessary)
    (use-package combobulate
