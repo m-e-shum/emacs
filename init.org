@@ -432,7 +432,7 @@ Learn:
     (when (memq window-system '(mac ns x))
       (exec-path-from-shell-initialize)))
 #+end_src
-** Tree-sitter ~add-to-list 'load-path~
+** Tree-sitter
 - Emacs 30 does NOT need specified "lang-ts-mode" b/c it's built in
   - To check, open python file and ~describe-variable~ if ~tree-sitter-mode~ is true
   - /NOTE/: if you're using Emacs 29, you will need python-ts-mode, etc.
@@ -443,12 +443,10 @@ Learn:
    (use-package tree-sitter-langs
      :straight t)
 
-   ;;(add-to-list 'tree-sitter-load-path (expand-file-name "~/.emacs.d/var/straight/build/tree-sitter-langs/bin"))
-   ;;(add-to-list 'load-path (expand-file-name "~/.emacs.d/var/straight/build/tree-sitter-langs/bin"))
    (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
      
 #+end_src
-** TODO Combobulate
+** DONE Combobulate
 [[https://github.com/mickeynp/combobulate][Github Repo]]
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
 
