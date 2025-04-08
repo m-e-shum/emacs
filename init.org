@@ -13,8 +13,8 @@ Learn:
 
 * ~pre-init.el~
 ** Header
-#+begin_src emacs-lisp :tangle "pre-init.el" :mkdirp yes
-  ;;; pre-init.el --- DESCRIPTION -*- no-byte-compile: t; lexical-binding: t; -*-
+#+begin_src emacs-lisp :tangle "pre-init.el" :mkdirp yes 
+ ;;; pre-init.el --- DESCRIPTION -*- no-byte-compile: t; lexical-binding: t; -*-
 #+end_src
 ** Straight
 #+begin_src emacs-lisp :tangle "pre-init.el" :mkdirp yes
@@ -35,55 +35,6 @@ Learn:
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 #+end_src
-** Elpaca Part 1
-#+begin_src emacs-lisp :tangle "pre-init.el" :mkdirp yes
-  ;; (defvar elpaca-installer-version 0.10)
-  ;; (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
-  ;; (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
-  ;; (defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
-  ;; (defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
-  ;;                               :ref nil :depth 1 :inherit ignore
-  ;;                               :files (:defaults "elpaca-test.el" (:exclude "extensions"))
-  ;;                               :build (:not elpaca--activate-package)))
-  ;; (let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
-  ;;        (build (expand-file-name "elpaca/" elpaca-builds-directory))
-  ;;        (order (cdr elpaca-order))
-  ;;        (default-directory repo))
-  ;;   (add-to-list 'load-path (if (file-exists-p build) build repo))
-  ;;   (unless (file-exists-p repo)
-  ;;     (make-directory repo t)
-  ;;     (when (<= emacs-major-version 28) (require 'subr-x))
-  ;;     (condition-case-unless-debug err
-  ;;         (if-let* ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
-  ;;                   ((zerop (apply #'call-process `("git" nil ,buffer t "clone"
-  ;;                                                   ,@(when-let* ((depth (plist-get order :depth)))
-  ;;                                                       (list (format "--depth=%d" depth) "--no-single-branch"))
-  ;;                                                   ,(plist-get order :repo) ,repo))))
-  ;;                   ((zerop (call-process "git" nil buffer t "checkout"
-  ;;                                         (or (plist-get order :ref) "--"))))
-  ;;                   (emacs (concat invocation-directory invocation-name))
-  ;;                   ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
-  ;;                                         "--eval" "(byte-recompile-directory \".\" 0 'force)")))
-  ;;                   ((require 'elpaca))
-  ;;                   ((elpaca-generate-autoloads "elpaca" repo)))
-  ;;             (progn (message "%s" (buffer-string)) (kill-buffer buffer))
-  ;;           (error "%s" (with-current-buffer buffer (buffer-string))))
-  ;;       ((error) (warn "%s" err) (delete-directory repo 'recursive))))
-  ;;   (unless (require 'elpaca-autoloads nil t)
-  ;;     (require 'elpaca)
-  ;;     (elpaca-generate-autoloads "elpaca" repo)
-  ;;     (load "./elpaca-autoloads")))
-  ;; (add-hook 'after-init-hook #'elpaca-process-queues)
-  ;; (elpaca `(,@elpaca-order))
-  ;; 
-  ;; ;; Optional: Install use-package support
-  ;; ;; If you enable elpaca-use-package, some use-package definitions, such as
-  ;; Vertico's, may need modifications. See the following discussion for details:
-  ;; https://github.com/jamescherti/minimal-emacs.d/issues/54
-  ;;
-  ;;(elpaca elpaca-use-package
-     ;;(elpaca-use-package-mode))
-#+end_src
 * ~pre-early-init.el~
 ** Header
 #+begin_src emacs-lisp :tangle "pre-early-init.el" :mkdirp yes
@@ -98,11 +49,7 @@ Learn:
 #+end_src
 ** Debug
 #+begin_src emacs-lisp :tangle "pre-early-init.el" :mkdirp yes
-  (setq debug-on-error nil)
-#+end_src
-** Elpaca Part 2
-#+begin_src emacs-lisp :tangle "pre-early-init.el" :mkdirp yes
-  ;;(setq minimal-emacs-package-initialize-and-refresh nil)
+  (setq debug-on-error t)
 #+end_src
 * ~post-early-init.el~
 ** Header
@@ -160,6 +107,7 @@ Learn:
 ** Emacs
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   (use-package emacs
+    :straight (:type built-in)
     :ensure nil
     :config
     ;;; General settings
@@ -219,8 +167,6 @@ Learn:
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   ;; Terminal Emulator in C
   (use-package vterm
-    :ensure t
-    :defer t
     :commands vterm
     :bind (:map global-map
               ("C-c v <RET>"  . 'vterm)
@@ -234,7 +180,6 @@ Learn:
   ;; Completion
   (use-package vertico
     ;; (Note: It is recommended to also enable the savehist package.)
-    :ensure t
     :defer t
     :commands vertico-mode
     :hook (after-init . vertico-mode))
@@ -243,7 +188,6 @@ Learn:
     ;; Vertico leverages Orderless' flexible matching capabilities, allowing users
     ;; to input multiple patterns separated by spaces, which Orderless then
     ;; matches in any order against the candidates.
-    :ensure t
     :custom
     (completion-styles '(orderless basic))
     (completion-category-defaults nil)
@@ -253,7 +197,6 @@ Learn:
     ;; Marginalia allows Embark to offer you preconfigured actions in more contexts.
     ;; In addition to that, Marginalia also enhances Vertico by adding rich
     ;; annotations to the completion candidates displayed in Vertico's interface.
-    :ensure t
     :defer t
     :commands (marginalia-mode marginalia-cycle)
     :hook (after-init . marginalia-mode))
@@ -262,7 +205,6 @@ Learn:
     ;; Embark is an Emacs package that acts like a context menu, allowing
     ;; users to perform context-sensitive actions on selected items
     ;; directly from the completion interface.
-    :ensure t
     :defer t
     :commands (embark-act
                embark-dwim
@@ -286,12 +228,12 @@ Learn:
                    (window-parameters (mode-line-format . none)))))
 
   (use-package embark-consult
-    :ensure t
+    
     :hook
     (embark-collect-mode . consult-preview-at-point-mode))
 
   (use-package consult
-    :ensure t
+    
     :bind (;; C-c bindings in `mode-specific-map'
            ("C-c M-x" . consult-mode-command)
            ("C-c h" . consult-history)
@@ -374,7 +316,7 @@ Learn:
     (setq consult-narrow-key "<"))
 
   (use-package corfu
-    :ensure t
+    
     :defer t
     :commands (corfu-mode global-corfu-mode)
 
@@ -394,7 +336,7 @@ Learn:
     (global-corfu-mode))
 
   (use-package cape
-    :ensure t
+    
     :defer t
     :commands (cape-dabbrev cape-file cape-elisp-block)
     :bind ("C-c p" . cape-prefix-map)
@@ -409,15 +351,14 @@ Learn:
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   ;; Code Folding
   (use-package outline-indent
-    :ensure t
     :defer t
     :commands outline-indent-minor-mode
 
     :init
     ;; The minor mode can also be automatically activated for a certain modes.
     ;; For example for Python and YAML:
-    (add-hook 'python-mode-hook #'outline-indent-minor-mode)
-    (add-hook 'yaml-mode-hook #'outline-indent-minor-mode)
+    ;;(add-hook 'python-mode-hook #'outline-indent-minor-mode)
+    ;;(add-hook 'yaml-mode-hook #'outline-indent-minor-mode)
 
     :custom
     (outline-indent-ellipsis " ▼ "))
@@ -427,180 +368,218 @@ Learn:
     (("C-a" . crux-move-beginning-of-line)))
 
   (use-package exec-path-from-shell
-    :ensure t
+    
     :config
     (when (memq window-system '(mac ns x))
       (exec-path-from-shell-initialize)))
 #+end_src
-** Tree-sitter
-- Emacs 30 does NOT need specified "lang-ts-mode" b/c it's built in
-  - To check, open python file and ~describe-variable~ if ~tree-sitter-mode~ is true
-  - /NOTE/: if you're using Emacs 29, you will need python-ts-mode, etc.
+** ORG mode
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
-   (use-package tree-sitter
-     :straight t)
-     
-   (use-package tree-sitter-langs
-     :straight t)
-
-   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
-     
-#+end_src
-** DONE Combobulate
-[[https://github.com/mickeynp/combobulate][Github Repo]]
-#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
-
-  ;; Set a key prefix before the package is loaded (if necessary)
-   (use-package combobulate
-     :straight
-     (combobulate
-      :type git
-      :host github
-      :repo "mickeynp/combobulate")
-     :preface
-     (setq combobulate-key-prefix "C-c o")
-     :hook
-     ((python-mode . combobulate-mode)
-      (yaml-mode . combobulate-mode)))
-
-#+end_src
-** gptel
-#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
-  (require 'auth-source)
-
-  (defun get-password-from-authinfo (host user)
-    "Retrieve the password for HOST and USER from auth-sources (e.g., ~/.authinfo)."
-    (let ((auth-result (car (auth-source-search :host host :user user :require '(:secret)))))
-      (when auth-result
-        (let ((secret (plist-get auth-result :secret)))
-          ;; If the secret is a function, call it to retrieve the actual password
-          (if (functionp secret)
-              (funcall secret)
-            secret)))))
-
-  (use-package gptel
-    :ensure t
-    :bind (:map global-map
-              ("C-c <RET>"  . 'gptel-send)
-              ;;("C-c g n" . 'gptel-with-option)
-              ("C-c g m" . 'gptel-menu)
-              ("C-c g r" . 'gptel-rewrite))
+  ;; ORG mode
+  (use-package org
+    :straight (:type built-in)
+    :mode (("\\.org$" . org-mode))
+    :preface
+    (defun my-first-existing-directory (directories)
+      "Return the first existing directory from the given list DIRECTORIES.
+       The directory path is expanded to its absolute path."
+      (catch 'found
+        (dolist (dir directories)
+          (when (file-directory-p dir)
+            (throw 'found (expand-file-name dir))))
+        nil))  ;; Return nil if no existing directory is found
     :config
-    (setq
-     gptel-model 'o3-mini
-     gptel-api-key (get-password-from-authinfo "openai-gdm.openai.azure.com" "api-key")
-     gptel-backend (gptel-make-azure "Azure-1"
-                     :protocol "https"
-                     :host "openai-gdm.openai.azure.com"
-                     :endpoint "/openai/deployments/o3-mini/chat/completions?api-version=2025-01-01-preview"
-                     :stream t
-                     :key (get-password-from-authinfo "openai-gdm.openai.azure.com" "api-key")
-                     :models '(o3-mini)))
-    (gptel-make-anthropic "Claude"
-      :stream t
-      :key (get-password-from-authinfo "api.anthropic.com" "my-claude-key"))
-    (gptel-make-gemini "Gemini"
-      :stream t
-      :key (get-password-from-authinfo "gemini" "gemini-api-key"))
-    (gptel-make-openai "Github Models"
-      :host "models.inference.ai.azure.com"
-      :endpoint "/chat/completions?api-version=2024-05-01-preview"
-      :stream t
-      :key (get-password-from-authinfo "api.github.com" "m-e-shum")
-      :models '(mistral-small-2503 DeepSeek-R1)))
-   
+    (setq org-startup-indented t ;; auto aligns text with header
+          org-startup-folded t ;; startup folded
+          org-ellipsis " 󰅀 " ;; folding symbol
+          org-directory (my-first-existing-directory '("/home/shumma1/notes/2025/"
+                                                       "/Users/shumma1/notes/2025/"))
+          org-agenda-files `(,org-directory)
+          org-structure-template-alist '(("s" . "src")
+                                         ("e" . "src emacs-lisp")
+                                         ("E" . "src emacs-lisp :results value code :lexical t")
+                                         ("t" . "src emacs-lisp :tangle FILENAME")
+                                         ("T" . "src emacs-lisp :tangle FILENAME :mkdirp yes")
+                                         ("x" . "example")
+                                         ("X" . "export")
+                                         ("q" . "quote"))
+          org-hide-emphasis-markers nil
+          org-pretty-entities t
+          org-return-follows-link t
+          org-fontify-quote-and-verse-blocks t
+          org-fontify-whole-block-delimiter-line t
+          org-fontify-done-headline nil
+          org-fontify-todo-headline nil
+          org-fontify-whole-heading-line nil
+          org-enforce-todo-dependencies t
+          org-enforce-todo-checkbox-dependencies t
+          org-todo-keywords '((sequence "TODO(t)" "IN-PROGRESS(i)" "|" "DONE(d)")
+                              (sequence "|" "QUEUED(q)" "MAYBE(m)" "CANCELLED(c)"))
+          ))
+
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((emacs-lisp . t)
+     (shell . t)
+     (python . t)))
+
+  (use-package org-bullets
+    :hook (org-mode . org-bullets-mode))
 #+end_src
-** EGLOT
+** DONE Modeline
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
-  ;; EGLOT
-  (use-package eglot
-    :ensure t
-    :bind (:map eglot-mode-map
-                ("C-c C-d" . eldoc)
-                ("C-c C-f" . eglot-format-buffer))
-    :hook
-    (python-ts-mode-hook 'eglot-ensure) ;; Seems to be crucial for tree-sitter to work automatically
+  ;; Download appropriate prot-modeline files
+  (straight-use-package
+     '(prot-modeline :type git
+                     :host gitlab
+                     :repo "protesilaos/dotfiles"
+                     :files ("emacs/.emacs.d/prot-lisp/prot-modeline.el" 
+                             "emacs/.emacs.d/prot-lisp/prot-common.el")
+                     :main "emacs/.emacs.d/prot-lisp/prot-modeline.el"))
+
+  ;; Now set the config with use-package
+  (use-package prot-modeline
+    :ensure nil
     :config
-    (setq eglot-sync-connect nil)
-    ;; Workspace
-    (setq-default eglot-workspace-configuration
-                `(:pylsp (:plugins
-                          (;;; Fix imports and syntax using `eglot-format-buffer`
-                           :jedi_completion (:include_params t :fuzzy t)
-                           :ruff (:enabled t :formatEnabled t :linelength 88 :format ["I"])
-                             ;;; Syntax checkers (works with Flymake)
-                             ;; :pylint (:enabled t)
-                             ;; :pycodestyle (:enabled t)
-                             ;; :flake8 (:enabled t)
-                             ;; :pyflakes (:enabled t)
-                             ;; :pydocstyle (:enabled t)
-                             ;; :mccabe (:enabled t)
-                             ;; :yapf (:enabled :json-false)
-                             ;; :rope_autoimport (:enabled :json-false)
-                           ))))
+    (setq mode-line-compact nil) ; Emacs 28
+    (setq mode-line-right-align-edge 'right-margin) ; Emacs 30
+    (setq-default mode-line-format
+                  '("%e"
+                    prot-modeline-kbd-macro
+                    prot-modeline-narrow
+                    prot-modeline-buffer-status
+                    prot-modeline-window-dedicated-status
+                    prot-modeline-input-method
+                    "  "
+                    prot-modeline-buffer-identification
+                    "  "
+                    prot-modeline-major-mode
+                    prot-modeline-process
+                    "  "
+                    prot-modeline-vc-branch
+                    "  "
+                    prot-modeline-eglot
+                    "  "
+                    prot-modeline-flymake
+                    "  "
+                    mode-line-format-right-align ; Emacs 30
+                    prot-modeline-notmuch-indicator
+                    "  "
+                    prot-modeline-misc-info))
+
+    (with-eval-after-load 'spacious-padding
+      (defun prot/modeline-spacious-indicators ()
+        "Set box attribute to `'prot-modeline-indicator-button' if spacious-padding is enabled."
+        (if (bound-and-true-p spacious-padding-mode)
+            (set-face-attribute 'prot-modeline-indicator-button nil :box t)
+          (set-face-attribute 'prot-modeline-indicator-button nil :box 'unspecified)))
+      
+      ;; Run it at startup and then afterwards whenever
+      ;; `spacious-padding-mode' is toggled on/off.
+      (prot/modeline-spacious-indicators)
+
+      (add-hook 'spacious-padding-mode-hook #'prot/modeline-spacious-indicators)))
+    
+#+end_src
+
+** DONE Keycast
+#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
+  (use-package keycast
+    
+    :defer
+    :custom
+    (keycast-mode-line-format "%2s%k%c%R")
+    (keycast-mode-line-insert-after 'prot-modeline-vc-branch)
+    (keycast-mode-line-window-predicate 'mode-line-window-selected-p)
+    (keycast-mode-line-remove-tail-elements nil)
+    :config
+    (dolist (input '(self-insert-command org-self-insert-command))
+      (add-to-list 'keycast-substitute-alist `(,input "." "Typing…")))
+
+    (dolist (event '( mouse-event-p mouse-movement-p mwheel-scroll handle-select-window
+                      mouse-set-point mouse-drag-region))
+      (add-to-list 'keycast-substitute-alist `(,event nil))))
+
+#+end_src
+** Magit (Git)
+#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
+  ;;GIT
+  (use-package transient )
+
+  (use-package magit
+    
+    :after transient
+    :demand t
+    :bind ("C-x g" . magit-status)
+    :init
+    (setq magit-define-global-key-bindings nil)
+    (setq magit-section-visibility-indicator '(" 󰅀"))
+    :config
+    (setq git-commit-summary-max-length 50)
+    ;; NOTE 2023-01-24: I used to also include `overlong-summary-line'
+    ;; in this list, but I realised I do not need it.  My summaries are
+    ;; always in check.  When I exceed the limit, it is for a good
+    ;; reason.
+    (setq git-commit-style-convention-checks '(non-empty-second-line))
+
+    (setq magit-diff-refine-hunk t)
 
     )
-
-
-  ;; Display Line numbers when prog-mode is detected
-  (add-hook 'prog-mode-hook #'display-line-numbers-mode)
 #+end_src
-** Markdown
+** Visuals:
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
-  ;;; Markdown (markdown-mode)
-  (use-package markdown-mode
-    :ensure t
-    :defer t
+
+  (use-package hl-line
+    :ensure nil
+    :commands (hl-line-mode)
     :config
-    (setq markdown-fontify-code-blocks-natively t)
-    :hook
-    (markdown-mode . (lambda ()
-                       (auto-fill-mode)
-                       (set-fill-column 80)
-                       (visual-line-mode))))
-#+end_src
-** Dockerfile
-#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
-  (use-package dockerfile-mode
-    :ensure t
-    :mode ("Dockerfile\\'" . dockerfile-mode))
-#+end_src
-** YAML
-#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
-  ;;(use-package yaml-mode :ensure t)
-  (use-package yaml-mode
-    :straight (:type built-in)
-    :mode "\\.ya?ml\\'")
+    (setq hl-line-sticky-flag nil)
+    (setq hl-line-overlay-priority -50)
+    )
 
-  ;;(add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode))
-#+end_src
-** MAYBE Sessions (NOT implemented)
-#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
-  ;; (use-package easysession
-  ;; :ensure nil
-  ;; :defer t
-  ;; :commands (easysession-switch-to
-  ;;            easysession-save-as
-  ;;            easysession-save-mode
-  ;;            easysession-load-including-geometry)
-  ;; 
-  ;; :custom
-  ;; (easysession-mode-line-misc-info t)  ; Display the session in the modeline
-  ;; (easysession-save-interval (* 10 60))  ; Save every 10 minutes
-  ;; 
-  ;; :init
-  ;; ;; Key mappings:
-  ;; ;; C-c l for switching sessions
-  ;; ;; and C-c s for saving the current session
-  ;; (global-set-key (kbd "C-c l") 'easysession-switch-to)
-  ;; (global-set-key (kbd "C-c s") 'easysession-save-as)
-  ;; 
-  ;; ;; The depth 102 and 103 have been added to to `add-hook' to ensure that the
-  ;; ;; session is loaded after all other packages. (Using 103/102 is particularly
-  ;; ;; useful for those using minimal-emacs.d, where some optimizations restore
-  ;; ;; `file-name-handler-alist` at depth 101 during `emacs-startup-hook`.)
-  ;; (add-hook 'emacs-startup-hook #'easysession-load-including-geometry 102)
-  ;; (add-hook 'emacs-startup-hook #'easysession-save-mode 103))
+  (use-package pulsar
+    
+    :config
+    (setopt pulsar-pulse t
+            pulsar-delay 0.055
+            pulsar-iterations 10
+            pulsar-face 'pulsar-magenta
+            pulsar-highlight-face 'pulsar-yellow)
+    (pulsar-global-mode 1)  
+    )
+
+  (use-package lin
+    
+    :hook (after-init . lin-global-mode)
+    :config
+    (setq lin-face 'lin-magenta))
+
+  (use-package spacious-padding
+    
+    :hook (after-init . spacious-padding-mode)
+    :init
+    ;; These are defaults
+    (setq spacious-padding-widths
+          '( :internal-border-width 30
+             :header-line-width 4
+             :mode-line-width 6
+             :tab-width 4
+             :right-divider-width 30
+             :scroll-bar-width 8
+             :left-fringe-width 20
+             :right-fringe-width 20)))
+
+  (use-package whitespace
+    :ensure nil
+    )
+
+  (use-package display-line-numbers
+    :ensure nil
+    :config
+    (setq-default display-line-numbers-type t)
+    (setq display-line-numbers-major-tick 0)
+    (setq display-line-numbers-minor-tick 0)
+    (setq-default display-line-numbers-widen t))
 #+end_src
 ** Other Customizations
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
@@ -609,7 +588,7 @@ Learn:
   (setq warning-minimum-level :error)
 
   (use-package which-key
-    :ensure nil ; builtin
+    :straight (:type built-in)
     :defer t
     :commands which-key-mode
     :hook (after-init . which-key-mode)
@@ -669,213 +648,113 @@ Learn:
   ;; Enable on-the-fly spell checking (Flyspell mode).
   ;;(add-hook text-mode-hook #'flyspell-mode) ;; broken Emacs 30
 #+end_src
-** Visuals:
+** gptel
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
+  (require 'auth-source)
 
-  (use-package hl-line
-    :ensure nil
-    :commands (hl-line-mode)
-    :config
-    (setq hl-line-sticky-flag nil)
-    (setq hl-line-overlay-priority -50)
-    )
+  (defun get-password-from-authinfo (host user)
+    "Retrieve the password for HOST and USER from auth-sources (e.g., ~/.authinfo)."
+    (let ((auth-result (car (auth-source-search :host host :user user :require '(:secret)))))
+      (when auth-result
+        (let ((secret (plist-get auth-result :secret)))
+          ;; If the secret is a function, call it to retrieve the actual password
+          (if (functionp secret)
+              (funcall secret)
+            secret)))))
 
-  (use-package pulsar
-    :ensure t
-    :config
-    (setopt pulsar-pulse t
-            pulsar-delay 0.055
-            pulsar-iterations 10
-            pulsar-face 'pulsar-magenta
-            pulsar-highlight-face 'pulsar-yellow)
-    (pulsar-global-mode 1)  
-    )
-
-  (use-package lin
-    :ensure t
-    :hook (after-init . lin-global-mode)
-    :config
-    (setq lin-face 'lin-magenta))
-
-  (use-package spacious-padding
-    :ensure t
-    :hook (after-init . spacious-padding-mode)
-    :init
-    ;; These are defaults
-    (setq spacious-padding-widths
-          '( :internal-border-width 30
-             :header-line-width 4
-             :mode-line-width 6
-             :tab-width 4
-             :right-divider-width 30
-             :scroll-bar-width 8
-             :left-fringe-width 20
-             :right-fringe-width 20)))
-
-  (use-package whitespace
-    :ensure nil
-    )
-
-  (use-package display-line-numbers
-    :ensure nil
-    :config
-    (setq-default display-line-numbers-type t)
-    (setq display-line-numbers-major-tick 0)
-    (setq display-line-numbers-minor-tick 0)
-    (setq-default display-line-numbers-widen t))
-#+end_src
-** DONE Modeline
-#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
-  ;; Download appropriate prot-modeline files
-  (straight-use-package
-     '(prot-modeline :type git
-                     :host gitlab
-                     :repo "protesilaos/dotfiles"
-                     :files ("emacs/.emacs.d/prot-lisp/prot-modeline.el" 
-                             "emacs/.emacs.d/prot-lisp/prot-common.el")
-                     :main "emacs/.emacs.d/prot-lisp/prot-modeline.el"))
-
-  ;; Now set the config with use-package
-  (use-package prot-modeline
-    :ensure nil
-    :config
-    (setq mode-line-compact nil) ; Emacs 28
-    (setq mode-line-right-align-edge 'right-margin) ; Emacs 30
-    (setq-default mode-line-format
-                  '("%e"
-                    prot-modeline-kbd-macro
-                    prot-modeline-narrow
-                    prot-modeline-buffer-status
-                    prot-modeline-window-dedicated-status
-                    prot-modeline-input-method
-                    "  "
-                    prot-modeline-buffer-identification
-                    "  "
-                    prot-modeline-major-mode
-                    prot-modeline-process
-                    "  "
-                    prot-modeline-vc-branch
-                    "  "
-                    prot-modeline-eglot
-                    "  "
-                    prot-modeline-flymake
-                    "  "
-                    mode-line-format-right-align ; Emacs 30
-                    prot-modeline-notmuch-indicator
-                    "  "
-                    prot-modeline-misc-info))
-
-    (with-eval-after-load 'spacious-padding
-      (defun prot/modeline-spacious-indicators ()
-        "Set box attribute to `'prot-modeline-indicator-button' if spacious-padding is enabled."
-        (if (bound-and-true-p spacious-padding-mode)
-            (set-face-attribute 'prot-modeline-indicator-button nil :box t)
-          (set-face-attribute 'prot-modeline-indicator-button nil :box 'unspecified)))
-      
-      ;; Run it at startup and then afterwards whenever
-      ;; `spacious-padding-mode' is toggled on/off.
-      (prot/modeline-spacious-indicators)
-
-      (add-hook 'spacious-padding-mode-hook #'prot/modeline-spacious-indicators)))
+  (use-package gptel
     
-#+end_src
-** DONE Keycast
-#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
-  (use-package keycast
-    :ensure t
-    :defer
-    :custom
-    (keycast-mode-line-format "%2s%k%c%R")
-    (keycast-mode-line-insert-after 'prot-modeline-vc-branch)
-    (keycast-mode-line-window-predicate 'mode-line-window-selected-p)
-    (keycast-mode-line-remove-tail-elements nil)
+    :bind (:map global-map
+              ("C-c <RET>"  . 'gptel-send)
+              ;;("C-c g n" . 'gptel-with-option)
+              ("C-c g m" . 'gptel-menu)
+              ("C-c g r" . 'gptel-rewrite))
     :config
-    (dolist (input '(self-insert-command org-self-insert-command))
-      (add-to-list 'keycast-substitute-alist `(,input "." "Typing…")))
-
-    (dolist (event '( mouse-event-p mouse-movement-p mwheel-scroll handle-select-window
-                      mouse-set-point mouse-drag-region))
-      (add-to-list 'keycast-substitute-alist `(,event nil))))
-
+    (setq
+     gptel-model 'o3-mini
+     gptel-api-key (get-password-from-authinfo "openai-gdm.openai.azure.com" "api-key")
+     gptel-backend (gptel-make-azure "Azure-1"
+                     :protocol "https"
+                     :host "openai-gdm.openai.azure.com"
+                     :endpoint "/openai/deployments/o3-mini/chat/completions?api-version=2025-01-01-preview"
+                     :stream t
+                     :key (get-password-from-authinfo "openai-gdm.openai.azure.com" "api-key")
+                     :models '(o3-mini)))
+    (gptel-make-anthropic "Claude"
+      :stream t
+      :key (get-password-from-authinfo "api.anthropic.com" "my-claude-key"))
+    (gptel-make-gemini "Gemini"
+      :stream t
+      :key (get-password-from-authinfo "gemini" "gemini-api-key"))
+    (gptel-make-openai "Github Models"
+      :host "models.inference.ai.azure.com"
+      :endpoint "/chat/completions?api-version=2024-05-01-preview"
+      :stream t
+      :key (get-password-from-authinfo "api.github.com" "m-e-shum")
+      :models '(mistral-small-2503 DeepSeek-R1)))
+   
 #+end_src
-** Magit (Git)
+** EGLOT
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
-  ;;GIT
-  (use-package transient :ensure t)
-
-  (use-package magit
-    :ensure t
-    :after transient
-    :demand t
-    :bind ("C-x g" . magit-status)
-    :init
-    (setq magit-define-global-key-bindings nil)
-    (setq magit-section-visibility-indicator '(" 󰅀"))
+  ;; EGLOT
+  (use-package eglot
+    :straight (:type built-in)
+    :bind (:map eglot-mode-map
+                ("C-c C-d" . eldoc)
+                ("C-c C-f" . eglot-format-buffer))
+    ;;:hook
+    ;;(python-ts-mode-hook 'eglot-ensure) ;; Seems to be crucial for tree-sitter to work automatically
     :config
-    (setq git-commit-summary-max-length 50)
-    ;; NOTE 2023-01-24: I used to also include `overlong-summary-line'
-    ;; in this list, but I realised I do not need it.  My summaries are
-    ;; always in check.  When I exceed the limit, it is for a good
-    ;; reason.
-    (setq git-commit-style-convention-checks '(non-empty-second-line))
-
-    (setq magit-diff-refine-hunk t)
+    (setq eglot-sync-connect nil)
+    ;; Workspace
+    (setq-default eglot-workspace-configuration
+                `(:pylsp (:plugins
+                          (;;; Fix imports and syntax using `eglot-format-buffer`
+                           :jedi_completion (:include_params t :fuzzy t)
+                           :ruff (:enabled t :formatEnabled t :linelength 88 :format ["I"])
+                             ;;; Syntax checkers (works with Flymake)
+                             ;; :pylint (:enabled t)
+                             ;; :pycodestyle (:enabled t)
+                             ;; :flake8 (:enabled t)
+                             ;; :pyflakes (:enabled t)
+                             ;; :pydocstyle (:enabled t)
+                             ;; :mccabe (:enabled t)
+                             ;; :yapf (:enabled :json-false)
+                             ;; :rope_autoimport (:enabled :json-false)
+                           ))))
 
     )
+
+
+  ;; Display Line numbers when prog-mode is detected
+  (add-hook 'prog-mode-hook #'display-line-numbers-mode)
 #+end_src
-** ORG mode
+** DONE Combobulate
+[[https://github.com/mickeynp/combobulate][Github Repo]]
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
-  ;; ORG mode
-  (use-package org
-    :ensure t
-    :mode (("\\.org$" . org-mode))
+  ;; Set a key prefix before the package is loaded (if necessary)
+  (use-package combobulate
+    :straight
+    (combobulate
+     :type git
+     :host github
+     :repo "mickeynp/combobulate")
     :preface
-    (defun my-first-existing-directory (directories)
-      "Return the first existing directory from the given list DIRECTORIES.
-       The directory path is expanded to its absolute path."
-      (catch 'found
-        (dolist (dir directories)
-          (when (file-directory-p dir)
-            (throw 'found (expand-file-name dir))))
-        nil))  ;; Return nil if no existing directory is found
-    :config
-    (setq org-startup-indented t ;; auto aligns text with header
-          org-startup-folded t ;; startup folded
-          org-ellipsis " 󰅀 " ;; folding symbol
-          org-directory (my-first-existing-directory '("/home/shumma1/notes/2025"
-                                                       "/Users/shumma1/notes/2025"))
-          org-agenda-files `(,org-directory)
-          org-structure-template-alist '(("s" . "src")
-                                         ("e" . "src emacs-lisp")
-                                         ("E" . "src emacs-lisp :results value code :lexical t")
-                                         ("t" . "src emacs-lisp :tangle FILENAME")
-                                         ("T" . "src emacs-lisp :tangle FILENAME :mkdirp yes")
-                                         ("x" . "example")
-                                         ("X" . "export")
-                                         ("q" . "quote"))
-          org-hide-emphasis-markers nil
-          org-pretty-entities t
-          org-return-follows-link t
-          org-fontify-quote-and-verse-blocks t
-          org-fontify-whole-block-delimiter-line t
-          org-fontify-done-headline nil
-          org-fontify-todo-headline nil
-          org-fontify-whole-heading-line nil
-          org-enforce-todo-dependencies t
-          org-enforce-todo-checkbox-dependencies t
-          org-todo-keywords '((sequence "TODO(t)" "IN-PROGRESS(i)" "|" "DONE(d)")
-                              (sequence "|" "QUEUED(q)" "MAYBE(m)" "CANCELLED(c)"))
-          ))
-
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((emacs-lisp . t)
-     (shell . t)
-     (python . t)))
-
-  (use-package org-bullets
-    :ensure t
-    :hook (org-mode . org-bullets-mode))
+    (setq combobulate-key-prefix "C-c o ")
+    :hook
+    (prog-mode . combobulate-mode))
 #+end_src
-
+** Tree-Sitter
+- Tree-sitter is built-in for Emacs 30
+- You may need to build the tree-sitter directory (see [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter]])
+- All you may need to do is below?
+#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
+  (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
+  (add-to-list 'major-mode-remap-alist '(yaml-mode . yaml-ts-mode))
+  (add-to-list 'major-mode-remap-alist '(bash-mode . bash-ts-mode))
+#+end_src
+*** YAML
+#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
+(add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-mode))
+#+end_src
 
