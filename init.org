@@ -108,7 +108,6 @@ Learn:
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   (use-package emacs
     :straight (:type built-in)
-    :ensure nil
     :config
     ;;; General settings
     (setq blink-matching-paren nil)
@@ -530,7 +529,7 @@ Learn:
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
 
   (use-package hl-line
-    :ensure nil
+    :straight (:type built-in)
     :commands (hl-line-mode)
     :config
     (setq hl-line-sticky-flag nil)
@@ -570,11 +569,11 @@ Learn:
              :right-fringe-width 20)))
 
   (use-package whitespace
-    :ensure nil
+    :straight (:type built-in)
     )
 
   (use-package display-line-numbers
-    :ensure nil
+    :straight (:type built-in)
     :config
     (setq-default display-line-numbers-type t)
     (setq display-line-numbers-major-tick 0)
@@ -626,7 +625,7 @@ Learn:
   (setq confirm-kill-emacs 'y-or-n-p)
 
   (use-package uniquify
-    :ensure nil
+    :straight (:type built-in)
     :custom
     (uniquify-buffer-name-style 'reverse)
     (uniquify-separator "•")
