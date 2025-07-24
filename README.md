@@ -30,9 +30,15 @@ Tangle `init.org` to create the following files:
 * `pre-early-init.el`
 * `post-early-init.el`
 
-## MacOS: install `emacs-plus`
+## Use emacsclient
 
-`emacs-plus` contains helpful libraries, especially for native compilation.
-*Update Mar 2025*: I was able to successfully install `emacs-plus` version 30.
+Put below in your `~/.bashrc`:
 
-[Install `emacs-plus`.](https://github.com/d12frosted/homebrew-emacs-plus?tab=readme-ov-file#install)
+```bash
+function e {
+    local file="$1"
+    emacsclient -nw --socket-name=shumma1 "$file" || (emacs --daemon=shumma1 && sleep 1 && emacsclient -nw --socket-name=shumma1 "$file")
+}
+export e
+# to use, type: e <file_name>
+```
