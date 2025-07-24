@@ -158,7 +158,7 @@ Learn:
                                 (scroll-up 1)))
     (setq mouse-sel-mode t))
 #+end_src
-** Auto-revert, recentf, savehist, save-place
+** Auto-revert, recentf, saveihst, save-place
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   ;; Auto-revert in Emacs is a feature that automatically updates the
   ;; contents of a buffer to reflect changes made to the underlying file
@@ -814,17 +814,17 @@ Learn:
 - You may need to build the tree-sitter directory (see [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter]])
 - All you may need to do is below?
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
-  (straight-use-package 'tree-sitter)
-  (straight-use-package 'tree-sitter-langs)
-  (tree-sitter-require 'python)
-  (tree-sitter-require 'rust)
-  (tree-sitter-require 'bash)
-  (global-tree-sitter-mode)
-  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
+    (straight-use-package 'tree-sitter)
+    (straight-use-package 'tree-sitter-langs)
+    (tree-sitter-require 'python)
+    (tree-sitter-require 'rust)
+    (tree-sitter-require 'bash)
+    (global-tree-sitter-mode)
+    (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
 
-  ;;(add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
-  ;;(add-to-list 'major-mode-remap-alist '(yaml-mode . yaml-ts-mode))
-  ;;(add-to-list 'major-mode-remap-alist '(bash-mode . bash-ts-mode))
+    ;;(add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
+    ;;(add-to-list 'major-mode-remap-alist '(yaml-mode . yaml-ts-mode))
+    ;;(add-to-list 'major-mode-remap-alist '(bash-mode . bash-ts-mode))
 #+end_src
 *** YAML
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
