@@ -56,10 +56,6 @@ Learn:
 #+begin_src emacs-lisp :tangle "post-early-init.el" :mkdirp yes
   ;;; post-early-init.el --- DESCRIPTION -*- no-byte-compile: t; lexical-binding: t; -*-
 #+end_src
-** Load theme
-#+begin_src emacs-lisp :tangle "post-early-init.el" :mkdirp yes
-  (load-theme 'modus-vivendi-deuteranopia t)
-#+end_src
 * ~post-init.el~
 ** Header
 (Important for ~post-init.elc~ to not be created.)
@@ -104,6 +100,10 @@ Learn:
       ;; A global mode that compiles .el files before they are loaded.
       ;;(compile-angel-on-load-mode)
       )
+#+end_src
+** Theme
+#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
+  (load-theme 'modus-vivendi-deuteranopia t)
 #+end_src
 ** PATH
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
