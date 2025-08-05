@@ -1,5 +1,7 @@
 
 
+
+
 #+title: init.org
 #+author: Matt Shum
 
@@ -432,6 +434,8 @@ Learn:
 
   (use-package org-bullets
     :hook (org-mode . org-bullets-mode))
+
+  (use-package htmlize)
 #+end_src
 ** DONE Modeline
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
@@ -668,54 +672,46 @@ Learn:
 #+end_src
 ** gptel
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
-      (require 'auth-source)
+  (require 'auth-source)
 
-      (defun get-password-from-authinfo (host user)
-        "Retrieve the password for HOST and USER from auth-sources (e.g., ~/.authinfo)."
-        (let ((auth-result (car (auth-source-search :host host :user user :require '(:secret)))))
-          (when auth-result
-            (let ((secret (plist-get auth-result :secret)))
-              ;; If the secret is a function, call it to retrieve the actual password
-              (if (functionp secret)
-                  (funcall secret)
-                secret)))))
+  (defun get-password-from-authinfo (host user)
+    "Retrieve the password for HOST and USER from auth-sources (e.g., ~/.authinfo)."
+    (let ((auth-result (car (auth-source-search :host host :user user :require '(:secret)))))
+      (when auth-result
+        (let ((secret (plist-get auth-result :secret)))
+          ;; If the secret is a function, call it to retrieve the actual password
+          (if (functionp secret)
+              (funcall secret)
+            secret)))))
 
-      (use-package gptel
-        
-        :bind (:map global-map
-                  ("C-c <RET>"  . 'gptel-send)
-                  ;;("C-c g n" . 'gptel-with-option)
-                  ("C-c g m" . 'gptel-menu)
-                  ("C-c g r" . 'gptel-rewrite))
-        :config
-        (setq
-         gptel-model 'o3-mini
-         gptel-api-key (get-password-from-authinfo "openai-gdm.openai.azure.com" "api-key")
-         gptel-backend
-         (gptel-make-azure "Azure-1"
-                         :protocol "https"
-                         :host "openai-gdm.openai.azure.com"
-                         :endpoint "/openai/deployments/o3-mini/chat/completions?api-version=2025-01-01-preview"
-                         :stream t
-                         :key (get-password-from-authinfo "openai-gdm.openai.azure.com" "api-key")
-                         :models '(o3-mini)))
-        (gptel-make-anthropic "Claude"
-          :stream t
-          :key (get-password-from-authinfo "api.anthropic.com" "my-claude-key"))
-        (gptel-make-gemini "Gemini"
-          :stream t
-          :key (get-password-from-authinfo "gemini" "gemini-api-key"))
-        ;; (gptel-make-cohere "Cohere"
-        ;;                    :stream t
-        ;;                    :key (get-password-from-authinfo "cohere" "api-key"))
-        ;;
-        (gptel-make-openai "Github Models"
-          :host "models.inference.ai.azure.com"
-          :endpoint "/chat/completions?api-version=2024-05-01-preview"
-          :stream t
-          :key (get-password-from-authinfo "api.github.com" "m-e-shum")
-          :models '(mistral-small-2503 DeepSeek-R1)))
-       
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;; (use-package gptel                                                                                   ;;
+  ;;   :bind (:map global-map                                                                             ;;
+  ;;             ("C-c <RET>"  . 'gptel-send)                                                             ;;
+  ;;             ;;("C-c g n" . 'gptel-with-option)                                                       ;;
+  ;;             ("C-c g m" . 'gptel-menu)                                                                ;;
+  ;;             ("C-c g r" . 'gptel-rewrite))                                                            ;;
+  ;;   :config                                                                                            ;;
+  ;;   (setq gptel-model 'gemini-2.5-pro-exp-03-25                                                        ;;
+  ;;         gptel-backend (gptel-make-gemini "Gemini"                                                    ;;
+  ;;                         :stream t                                                                    ;;
+  ;;                         :key (get-password-from-authinfo "api.gemini.google.com" "gemini-api-key"))) ;;
+  ;;   ;;; Add backend                                                                                    ;;
+  ;;   (gptel-make-bedrock "Bedrock"                                                                      ;;
+  ;;     :stream t                                                                                        ;;
+  ;;     :models '(claude-sonnet-4-20250514)                                                              ;;
+  ;;     :region "us-east-1"                                                                              ;;
+  ;;     :model-region 'us)                                                                               ;;
+  ;;   )                                                                                                  ;;
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    
+    ;; (gptel-make-openai "Github Models"
+    ;;   :host "models.inference.ai.azure.com"
+    ;;   :endpoint "/chat/completions?api-version=2024-05-01-preview"
+    ;;   :stream t
+    ;;   :key (get-password-from-authinfo "api.github.com" "m-e-shum")
+    ;;   :models '(mistral-small-2503 DeepSeek-R1)))
+   
 #+end_src
 ** EGLOT
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
