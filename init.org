@@ -1,7 +1,3 @@
-
-
-
-
 #+title: init.org
 #+author: Matt Shum
 
@@ -682,8 +678,23 @@ Learn:
           ;; If the secret is a function, call it to retrieve the actual password
           (if (functionp secret)
               (funcall secret)
+            
             secret)))))
 
+  (use-package gptel
+    :bind (:map global-map                                                                             ;;
+                ("C-c <RET>" . 'gptel-send)
+                ("C-c g m" . 'gptel-menu)
+                ("C-c g r" . 'gptel-rewrite))
+    :config
+    (setq gptel-model 'claude-3.7-sonnet)
+    (setq gptel-use-curl 't)
+    (setq gptel-backend (gptel-make-gh-copilot "Copilot"))
+    :custom
+    (gptel-proxy "http://nibr-proxy.global.nibr.novartis.net:2011")
+    )
+    
+    
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; (use-package gptel                                                                                   ;;
   ;;   :bind (:map global-map                                                                             ;;
@@ -704,14 +715,31 @@ Learn:
   ;;     :model-region 'us)                                                                               ;;
   ;;   )                                                                                                  ;;
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    
-    ;; (gptel-make-openai "Github Models"
-    ;;   :host "models.inference.ai.azure.com"
-    ;;   :endpoint "/chat/completions?api-version=2024-05-01-preview"
-    ;;   :stream t
-    ;;   :key (get-password-from-authinfo "api.github.com" "m-e-shum")
-    ;;   :models '(mistral-small-2503 DeepSeek-R1)))
-   
+
+  ;; (gptel-make-openai "Github Models"
+  ;;   :host "models.inference.ai.azure.com"
+  ;;   :endpoint "/chat/completions?api-version=2024-05-01-preview"
+  ;;   :stream t
+  ;;   :key (get-password-from-authinfo "api.github.com" "m-e-shum")
+  ;;   :models '(mistral-small-2503 DeepSeek-R1)))
+#+end_src
+** copilot
+#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
+
+  (use-package copilot
+    :straight (:host github :repo "copilot-emacs/copilot.el" :files ("*.el"))
+    :ensure t
+    :bind (:map copilot-completion-map
+                ("TAB" . copilot-accept-completion)
+                ("<tab>" . copilot-accept-completion))
+    )
+
+  (add-hook 'prog-mode-hook 'copilot-mode)
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  ;; (define-key copilot-completion-map (kbd "<tab>") 'copilot-accept-completion) ;;
+  ;; (define-key copilot-completion-map (kbd "TAB") 'copilot-accept-completion)   ;;
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 #+end_src
 ** EGLOT
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
