@@ -687,7 +687,7 @@ Learn:
                 ("C-c g m" . 'gptel-menu)
                 ("C-c g r" . 'gptel-rewrite))
     :config
-    (setq gptel-model 'claude-3.7-sonnet)
+    (setq gptel-model 'claude-sonnet-4)
     (setq gptel-use-curl 't)
     (setq gptel-backend (gptel-make-gh-copilot "Copilot"))
     ;;:custom
