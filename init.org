@@ -690,8 +690,8 @@ Learn:
     (setq gptel-model 'claude-3.7-sonnet)
     (setq gptel-use-curl 't)
     (setq gptel-backend (gptel-make-gh-copilot "Copilot"))
-    :custom
-    (gptel-proxy "http://nibr-proxy.global.nibr.novartis.net:2011")
+    ;;:custom
+    ;;(gptel-proxy "http://nibr-proxy.global.nibr.novartis.net:2011")
     )
     
     
