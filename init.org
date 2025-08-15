@@ -103,7 +103,20 @@ Learn:
 #+end_src
 ** Theme
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
-  (load-theme 'modus-vivendi-deuteranopia t)
+  (defun disable-all-themes ()
+    "Disable all active custom themes."
+    (interactive)
+    (dolist (theme custom-enabled-themes)
+      (disable-theme theme)))
+
+  (defadvice load-theme (before disable-themes-first activate)
+    "Disable all active themes before loading a new one."
+    (dolist (theme custom-enabled-themes)
+      (disable-theme theme)))
+
+  (use-package ef-themes)
+  ;;(load-theme 'modus-vivendi-deuteranopia t)
+  (load-theme 'ef-owl t)
 #+end_src
 ** PATH
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
