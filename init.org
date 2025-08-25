@@ -343,6 +343,7 @@ Learn:
     :commands (corfu-mode global-corfu-mode)
 
     :hook ((prog-mode . corfu-mode)
+           (org-mode . corfu-mode)
            (shell-mode . corfu-mode)
            (eshell-mode . corfu-mode))
 
@@ -368,6 +369,15 @@ Learn:
     (add-hook 'completion-at-point-functions #'cape-dabbrev)
     (add-hook 'completion-at-point-functions #'cape-file)
     (add-hook 'completion-at-point-functions #'cape-elisp-block))
+
+  (use-package completion-preview
+    :straight (:type built-in)
+    :hook (prog-mode . completion-preview-mode)
+    :bind
+    ( :map completion-preview-active-mode-map
+      ("M-n" . completion-preview-next-candidate)
+      ("M-p" . completion-preview-prev-candidate)))
+
 #+end_src
 ** Code folding, crux, shell
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
@@ -569,7 +579,7 @@ Learn:
     (setopt pulsar-pulse t
             pulsar-delay 0.055
             pulsar-iterations 10
-            pulsar-face 'pulsar-magenta
+            pulsar-face 'pulsar-yellow
             pulsar-highlight-face 'pulsar-yellow)
     (pulsar-global-mode 1)  
     )
@@ -762,8 +772,8 @@ Learn:
     :bind (:map eglot-mode-map
                 ("C-c C-d" . eldoc)
                 ("C-c C-f" . eglot-format-buffer))
-    ;;:hook
-    ;;(python-ts-mode-hook 'eglot-ensure) ;; Seems to be crucial for tree-sitter to work automatically
+    :hook
+    (python-ts-mode-hook 'eglot-ensure) ;; Seems to be crucial for tree-sitter to work automatically
     :config
     (setq eglot-sync-connect nil)
     (setq eglot-autoshutdown nil)
@@ -844,5 +854,12 @@ Learn:
 *** YAML
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   (add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-mode))
+#+end_src
+** Olivetti
+#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
+  (use-package olivetti
+    :defer t
+    :ensure t
+    )
 #+end_src
 
