@@ -128,22 +128,25 @@ Learn:
 #+end_src
 ** Emacs
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
-  (use-package emacs
-    :straight (:type built-in)
-    :config
-    ;;; General settings
-    (setq blink-matching-paren nil)
-    (setq help-window-select t)
-    (setq tab-always-indent 'complete)
-    (setq tab-first-completion 'word-or-paren-or-punct)
-    (setq font-lock-maximum-decoration t)
-    (setq-default tab-width 4
-    	      indent-tabs-mode nil)
-    :bind
-    ( :map global-map
-      ("M-c" . capitalize-dwim)
-      ("M-l" . downcase-dwim)
-      ("M-u" . upcase-dwim)))
+(use-package emacs
+  :straight (:type built-in)
+  :init
+  (setq custom-safe-themes t)
+  :config
+  ;;; General settings
+  (setq blink-matching-paren nil)
+  (setq help-window-select t)
+  (setq tab-always-indent 'complete)
+  (setq tab-first-completion 'word-or-paren-or-punct)
+  (setq font-lock-maximum-decoration t)
+  (setq-default tab-width 4
+                fill-column 88
+  	            indent-tabs-mode nil)
+  :bind
+  ( :map global-map
+    ("M-c" . capitalize-dwim)
+    ("M-l" . downcase-dwim)
+    ("M-u" . upcase-dwim)))
 #+end_src
 ** Mouse
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
@@ -402,59 +405,61 @@ Learn:
 #+end_src
 ** ORG mode
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
-  ;; ORG mode
-  (use-package org
-    :straight (:type built-in)
-    :mode (("\\.org$" . org-mode))
-    :preface
-    (defun my-first-existing-directory (directories)
-      "Return the first existing directory from the given list DIRECTORIES.
-       The directory path is expanded to its absolute path."
-      (catch 'found
-        (dolist (dir directories)
-          (when (file-directory-p dir)
-            (throw 'found (expand-file-name dir))))
-        nil))  ;; Return nil if no existing directory is found
-    :config
-    (setq org-startup-indented t ;; auto aligns text with header
-          org-startup-folded t ;; startup folded
-          org-ellipsis " 󰅀 " ;; folding symbol
-          org-directory (my-first-existing-directory '("/home/shumma1/notes/2025/"
-                                                       "/Users/shumma1/notes/2025/"))
-          org-agenda-files `(,org-directory)
-          org-structure-template-alist '(("s" . "src")
-                                         ("e" . "src emacs-lisp")
-                                         ("E" . "src emacs-lisp :results value code :lexical t")
-                                         ("t" . "src emacs-lisp :tangle FILENAME")
-                                         ("T" . "src emacs-lisp :tangle FILENAME :mkdirp yes")
-                                         ("x" . "example")
-                                         ("X" . "export")
-                                         ("q" . "quote"))
-          org-hide-emphasis-markers nil
-          org-pretty-entities t
-          org-return-follows-link t
-          org-fontify-quote-and-verse-blocks t
-          org-fontify-whole-block-delimiter-line t
-          org-fontify-done-headline nil
-          org-fontify-todo-headline nil
-          org-fontify-whole-heading-line nil
-          org-enforce-todo-dependencies t
-          org-enforce-todo-checkbox-dependencies t
-          org-default-priority ?C
-          org-todo-keywords '((sequence "TODO(t)" "IN-PROGRESS(i)" "PAUSED(p)" "|" "DONE(d)")
-                              (sequence "|" "QUEUED(q)" "CANCELLED(c)"))
-          ))
+;; ORG mode
+(use-package org
+  :straight (:type built-in)
+  :mode (("\\.org$" . org-mode))
+  :preface
+  (defun my-first-existing-directory (directories)
+    "Return the first existing directory from the given list DIRECTORIES.
+     The directory path is expanded to its absolute path."
+    (catch 'found
+      (dolist (dir directories)
+        (when (file-directory-p dir)
+          (throw 'found (expand-file-name dir))))
+      nil))  ;; Return nil if no existing directory is found
+  :config
+  (setq org-startup-indented t ;; auto aligns text with header
+        org-startup-folded t ;; startup folded
+        org-ellipsis " 󰅀 " ;; folding symbol
+        org-directory (my-first-existing-directory '("/home/shumma1/notes/2025/"
+                                                     "/Users/shumma1/notes/2025/"))
+        org-agenda-files `(,org-directory)
+        org-structure-template-alist '(("s" . "src")
+                                       ("e" . "src emacs-lisp")
+                                       ("E" . "src emacs-lisp :results value code :lexical t")
+                                       ("t" . "src emacs-lisp :tangle FILENAME")
+                                       ("T" . "src emacs-lisp :tangle FILENAME :mkdirp yes")
+                                       ("x" . "example")
+                                       ("X" . "export")
+                                       ("q" . "quote"))
+        org-hide-emphasis-markers nil
+        org-pretty-entities t
+        org-return-follows-link t
+        org-fontify-quote-and-verse-blocks t
+        org-fontify-whole-block-delimiter-line t
+        org-fontify-done-headline nil
+        org-fontify-todo-headline nil
+        org-fontify-whole-heading-line nil
+        org-enforce-todo-dependencies t
+        org-enforce-todo-checkbox-dependencies t
+        org-src-preserve-indentation nil
+        org-edit-src-content-indentation 0
+        org-default-priority ?C
+        org-todo-keywords '((sequence "TODO(t)" "IN-PROGRESS(i)" "PAUSED(p)" "|" "DONE(d)")
+                            (sequence "|" "QUEUED(q)" "CANCELLED(c)"))
+        ))
 
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((emacs-lisp . t)
-     (shell . t)
-     (python . t)))
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((emacs-lisp . t)
+   (shell . t)
+   (python . t)))
 
-  (use-package org-bullets
-    :hook (org-mode . org-bullets-mode))
+(use-package org-bullets
+  :hook (org-mode . org-bullets-mode))
 
-  (use-package htmlize)
+(use-package htmlize)
 #+end_src
 ** DONE Modeline
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
@@ -535,8 +540,8 @@ Learn:
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   (use-package transient
     :straight (:type built-in))
-  (use-package casual
-    :after transient)
+  ;;( use-package casual
+   ;;  :after transient)
 #+end_src
 
 ** Magit (Git)
@@ -691,60 +696,60 @@ Learn:
 #+end_src
 ** gptel
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
-  (require 'auth-source)
+(require 'auth-source)
 
-  (defun get-password-from-authinfo (host user)
-    "Retrieve the password for HOST and USER from auth-sources (e.g., ~/.authinfo)."
-    (let ((auth-result (car (auth-source-search :host host :user user :require '(:secret)))))
-      (when auth-result
-        (let ((secret (plist-get auth-result :secret)))
-          ;; If the secret is a function, call it to retrieve the actual password
-          (if (functionp secret)
-              (funcall secret)
-            
-            secret)))))
+(defun get-password-from-authinfo (host user)
+  "Retrieve the password for HOST and USER from auth-sources (e.g., ~/.authinfo)."
+  (let ((auth-result (car (auth-source-search :host host :user user :require '(:secret)))))
+    (when auth-result
+      (let ((secret (plist-get auth-result :secret)))
+        ;; If the secret is a function, call it to retrieve the actual password
+        (if (functionp secret)
+            (funcall secret)
+          
+          secret)))))
 
-  (use-package gptel
-    :bind (:map global-map                                                                             ;;
-                ("C-c <RET>" . 'gptel-send)
-                ("C-c g m" . 'gptel-menu)
-                ("C-c g r" . 'gptel-rewrite))
-    :config
-    (setq gptel-model 'claude-sonnet-4)
-    (setq gptel-use-curl 't)
-    (setq gptel-backend (gptel-make-gh-copilot "Copilot"))
-    ;;:custom
-    ;;(gptel-proxy "http://nibr-proxy.global.nibr.novartis.net:2011")
-    )
-    
-    
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  ;; (use-package gptel                                                                                   ;;
-  ;;   :bind (:map global-map                                                                             ;;
-  ;;             ("C-c <RET>"  . 'gptel-send)                                                             ;;
-  ;;             ;;("C-c g n" . 'gptel-with-option)                                                       ;;
-  ;;             ("C-c g m" . 'gptel-menu)                                                                ;;
-  ;;             ("C-c g r" . 'gptel-rewrite))                                                            ;;
-  ;;   :config                                                                                            ;;
-  ;;   (setq gptel-model 'gemini-2.5-pro-exp-03-25                                                        ;;
-  ;;         gptel-backend (gptel-make-gemini "Gemini"                                                    ;;
-  ;;                         :stream t                                                                    ;;
-  ;;                         :key (get-password-from-authinfo "api.gemini.google.com" "gemini-api-key"))) ;;
-  ;;   ;;; Add backend                                                                                    ;;
-  ;;   (gptel-make-bedrock "Bedrock"                                                                      ;;
-  ;;     :stream t                                                                                        ;;
-  ;;     :models '(claude-sonnet-4-20250514)                                                              ;;
-  ;;     :region "us-east-1"                                                                              ;;
-  ;;     :model-region 'us)                                                                               ;;
-  ;;   )                                                                                                  ;;
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(use-package gptel
+  :bind (:map global-map                                                                             ;;
+              ("C-c <RET>" . 'gptel-send)
+              ("C-c g m" . 'gptel-menu)
+              ("C-c g r" . 'gptel-rewrite))
+  :config
+  (setq gptel-model 'claude-sonnet-4)
+  (setq gptel-use-curl 't)
+  (setq gptel-backend (gptel-make-gh-copilot "Copilot"))
+  :hook
+  (gptel-mode . visual-line-mode)
+  )
+  
+  
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; (use-package gptel                                                                                   ;;
+;;   :bind (:map global-map                                                                             ;;
+;;             ("C-c <RET>"  . 'gptel-send)                                                             ;;
+;;             ;;("C-c g n" . 'gptel-with-option)                                                       ;;
+;;             ("C-c g m" . 'gptel-menu)                                                                ;;
+;;             ("C-c g r" . 'gptel-rewrite))                                                            ;;
+;;   :config                                                                                            ;;
+;;   (setq gptel-model 'gemini-2.5-pro-exp-03-25                                                        ;;
+;;         gptel-backend (gptel-make-gemini "Gemini"                                                    ;;
+;;                         :stream t                                                                    ;;
+;;                         :key (get-password-from-authinfo "api.gemini.google.com" "gemini-api-key"))) ;;
+;;   ;;; Add backend                                                                                    ;;
+;;   (gptel-make-bedrock "Bedrock"                                                                      ;;
+;;     :stream t                                                                                        ;;
+;;     :models '(claude-sonnet-4-20250514)                                                              ;;
+;;     :region "us-east-1"                                                                              ;;
+;;     :model-region 'us)                                                                               ;;
+;;   )                                                                                                  ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-  ;; (gptel-make-openai "Github Models"
-  ;;   :host "models.inference.ai.azure.com"
-  ;;   :endpoint "/chat/completions?api-version=2024-05-01-preview"
-  ;;   :stream t
-  ;;   :key (get-password-from-authinfo "api.github.com" "m-e-shum")
-  ;;   :models '(mistral-small-2503 DeepSeek-R1)))
+;; (gptel-make-openai "Github Models"
+;;   :host "models.inference.ai.azure.com"
+;;   :endpoint "/chat/completions?api-version=2024-05-01-preview"
+;;   :stream t
+;;   :key (get-password-from-authinfo "api.github.com" "m-e-shum")
+;;   :models '(mistral-small-2503 DeepSeek-R1)))
 #+end_src
 ** copilot
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
@@ -857,9 +862,16 @@ Learn:
 #+end_src
 ** Olivetti
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
-  (use-package olivetti
-    :defer t
-    :ensure t
-    )
+(use-package olivetti
+  :defer t
+  :ensure t
+  )
+#+end_src
+** SQL
+#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
+(use-package sql
+  :mode ("\\.ddl\\'" . sql-mode)
+  :config
+  (setq tab-width 4))
 #+end_src
 
