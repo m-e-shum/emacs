@@ -1,0 +1,617 @@
+#+title: new-init.org
+#+author: Matt Shum
+
+* Getting Started
+- Use ~C-c C-v C-t~ to /tangle/ ~*init.el~ files.
+- Use ~C-c C-v C-d~ to split or /demarcate/ a code block.
+- Use ~M-S-<up/down>~ to use /org-shift/ a bullet point
+* Other: ~pre/post~
+** ~pre-init.el~
+#+begin_src emacs-lisp :tangle "pre-init.el" :mkdirp yes
+  ;;; pre-init.el -- DESCRIPTION -*- no-byte-compile: t; lexical-binding: t; -*-
+
+  ;; Straight Set-Up
+  (defvar bootstrap-version)
+  (let ((bootstrap-file
+         (expand-file-name
+          "straight/repos/straight.el/bootstrap.el"
+          (or (bound-and-true-p straight-base-dir)
+              user-emacs-directory)))
+        (bootstrap-version 7))
+    (unless (file-exists-p bootstrap-file)
+      (with-current-buffer
+          (url-retrieve-synchronously
+           "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+           'silent 'inhibit-cookies)
+        (goto-char (point-max))
+        (eval-print-last-sexp)))
+    (load bootstrap-file nil 'nomessage))
+#+end_src
+** ~pre-early-init.el~
+#+begin_src emacs-lisp :tangle "pre-early-init.el" :mkdirp yes
+  ;;; pre-early-init.el -- DESCRIPTION -*- no-byte-compile: t; lexical-binding: t; -*-
+
+  ;; Reducing clutter by redirecting files to "~/.emacs.d/var/"
+  (setq minimal-emacs-var-dir (expand-file-name "var/" minimal-emacs-user-directory))
+  (setq package-user-dir (expand-file-name "elpa" minimal-emacs-var-dir))
+  (setq user-emacs-directory minimal-emacs-var-dir)
+
+  ;; Debug
+  (setq debug-on-error t)
+#+end_src
+
+*** Debug
+** ~post-early-init.el~
+#+begin_src emacs-lisp :tangle "post-early-init.el" :mkdirp yes
+  ;;; post-early-init.el --- DESCRIPTION -*- no-byte-compile: t; lexical-binding: t; -*-
+#+end_src
+* Main: ~post-init.el~
+** =compile-angel=
+**Note**: Must be a the top of the file!
+#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
+  ;;; post-init.el --- DESCRIPTION -*- no-byte-compile: t; lexical-binding: t; -*-
+
+  (use-package compile-angel
+    :ensure t
+    :demand t
+    :custom
+    ;; Set `compile-angel-verbose` to nil to suppress output from compile-angel.
+    ;; Drawback: The minibuffer will not display compile-angel's actions.
+    (compile-angel-verbose t)
+    
+    :config
+    ;; The following directive prevents compile-angel from compiling your init
+    ;; files. If you choose to remove this push to `compile-angel-excluded-files'
+    ;; and compile your pre/post-init files, ensure you understand the
+    ;; implications and thoroughly test your code. For example, if you're using
+    ;; `use-package', you'll need to explicitly add `(require 'use-package)` at
+    ;; the top of your init file.
+    (push "/pre-init.el" compile-angel-excluded-files)
+    (push "/post-init.el" compile-angel-excluded-files)
+    (push "/pre-early-init.el" compile-angel-excluded-files)
+    (push "/post-early-init.el" compile-angel-excluded-files)
+          
+    ;; A local mode that compiles .el files whenever the user saves them.
+    (add-hook 'emacs-lisp-mode-hook #'compile-angel-on-save-local-mode)
+    
+    ;; A global mode that compiles .el files before they are loaded.
+    ;;(compile-angel-on-load-mode)
+    )
+#+end_src
+** Set-Up Customizations
+#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
+;; Remove custom.el
+(setq custom-file null-device)
+
+;; Straight (use-package syntax)
+(straight-use-package 'use-package)
+
+;; Path
+(require 'exec-path-from-shell)
+(when (memq window-system '(mac ns x))
+  (exec-path-from-shell-initialize))
+(when (daemonp)
+  (exec-path-from-shell-initialize))
+
+;; Emacs
+(use-package emacs
+  :straight (:type built-in)
+  :init
+  (setq custom-safe-themes t)
+  :config
+  ;;; General settings
+  (setq blink-matching-paren nil
+        help-window-select t
+        tab-always-indent 'complete
+        tab-first-completion 'word-or-paren-or-punct
+        font-lock-maximum-decoration t)
+  (setq-default tab-width 4
+                fill-column 88
+  	            indent-tabs-mode nil)
+  :bind
+  ( :map global-map
+    ("M-c" . capitalize-dwim)
+    ("M-d" . downcase-dwim) ; lowercase
+    ("M-u" . upcase-dwim))) ; uppercase
+
+;; Mouse
+(unless window-system
+  (require 'mouse)
+  (xterm-mouse-mode t)
+  (global-set-key [mouse-4] (lambda()
+                              (interactive)
+                              (scroll-down 1)))
+  (global-set-key [mouse-5] (lambda()
+                              (interactive)
+                              (scroll-up 1)))
+  (setq mouse-sel-mode t))
+
+;; Hide Warnings
+(setq warning-minimum-level :error)
+
+;; Auto suggests key-bindings
+(use-package which-key
+  :straight (:type built-in)
+  :defer t
+  :commands which-key-mode
+  :hook (after-init . which-key-mode)
+  :custom
+  (which-key-idle-delay 1.5)
+  (which-key-idle-secondary-delay 0.25)
+  (which-key-add-column-padding 1)
+  (which-key-max-description-length 40))
+
+;; Built in Menus
+(use-package transient
+  :straight (:type built-in))
+
+;; Help with Commands
+;; Must come after transient
+;;(use-package casual :after transient)
+
+;; Display the time in the modeline
+(display-time-mode 1)
+
+;; Paren match highlighting
+(show-paren-mode 1)
+
+;; Track changes in the window configuration, allowing undoing actions such as
+;; closing windows.
+(winner-mode 1)
+
+;; Replace selected text with typed text
+(delete-selection-mode 1)
+
+;; Configure confirmation
+(setq confirm-kill-emacs 'y-or-n-p)
+
+;; Precision scrolling
+(unless (and (eq window-system 'mac)
+             (bound-and-true-p mac-carbon-version-string))
+  ;; Enables `pixel-scroll-precision-mode' on all operating systems and Emacs
+  ;; versions, except for emacs-mac.
+  ;; Enabling `pixel-scroll-precision-mode' is unnecessary with emacs-mac, as
+  ;; this version of Emacs natively supports smooth scrolling.
+  ;; https://bitbucket.org/mituharu/emacs-mac/commits/65c6c96f27afa446df6f9d8eff63f9cc012cc738
+  (setq pixel-scroll-precision-use-momentum nil) ; Precise/smoother scrolling
+  (pixel-scroll-precision-mode 1))
+
+;; Window Dividers
+;; https://www.gnu.org/software/emacs/manual/html_node/emacs/Window-Dividers.html
+(add-hook 'after-init-hook #'window-divider-mode)
+
+;; Set character count
+(setq-default fill-column 88)
+(add-hook 'text-mode-hook #'auto-fill-mode)
+
+;; Uniqing when buffers have the same name
+(use-package uniquify
+  :straight (:type built-in)
+  :custom
+  (uniquify-buffer-name-style 'reverse)
+  (uniquify-separator "•")
+  (uniquify-after-kill-buffer-p t)
+  (uniquify-ignore-buffers-re "^\\*"))
+
+;; Auto-revert in Emacs is a feature that automatically updates the
+;; contents of a buffer to reflect changes made to the underlying file
+;; on disk.
+(add-hook 'after-init-hook #'global-auto-revert-mode)
+
+;; recentf is an Emacs package that maintains a list of recently
+;; accessed files, making it easier to reopen files you have worked on
+;; recently.
+(add-hook 'after-init-hook #'(lambda()
+                               (let ((inhibit-message t))
+                                 (recentf-mode 1))))
+(add-hook 'kill-emacs-hook #'recentf-cleanup)
+
+;; savehist is an Emacs feature that preserves the minibuffer history between
+;; sessions. It saves the history of inputs in the minibuffer, such as commands,
+;; search strings, and other prompts, to a file. This allows users to retain
+;; their minibuffer history across Emacs restarts.
+(add-hook 'after-init-hook #'savehist-mode)
+
+;; save-place-mode enables Emacs to remember the last location within a file
+;; upon reopening. This feature is particularly beneficial for resuming work at
+;; the precise point where you previously left off.
+(add-hook 'after-init-hook #'save-place-mode)
+#+end_src
+** Theming
+*** Visuals
+#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
+  ;; Highlights current line
+  (use-package hl-line
+    :straight (:type built-in)
+    :commands (hl-line-mode)
+    :config
+    (setq hl-line-sticky-flag nil)
+    (setq hl-line-overlay-priority -50))
+
+  (use-package whitespace
+    :straight (:type built-in)
+    )
+
+  (use-package display-line-numbers
+    :straight (:type built-in)
+    :config
+    (setq-default display-line-numbers-type t)
+    (setq display-line-numbers-major-tick 0)
+    (setq display-line-numbers-minor-tick 0)
+    (setq-default display-line-numbers-widen t))
+
+  ;; Stylistic enhancement of hl-line-mode
+  (use-package lin
+    :hook (after-init . lin-global-mode)
+    :config
+    (setq lin-face 'lin-magenta))
+
+  ;; Pulse to show current line
+  (use-package pulsar
+    :config
+    (setopt pulsar-pulse t
+            pulsar-delay 0.055
+            pulsar-iterations 15
+            pulsar-face 'pulsar-yellow
+            pulsar-highlight-face 'pulsar-yellow)
+    (pulsar-global-mode 1))
+
+  ;; Padding
+  (use-package spacious-padding
+    :hook (after-init . spacious-padding-mode))
+
+  ;; Centering (olivetti-mode)
+  (use-package olivetti
+    :defer t
+    :ensure t)
+#+end_src
+*** Theme
+#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
+  (use-package ef-themes
+    :ensure t) ; More themes
+  (mapc #'disable-theme custom-enabled-themes)  ; Disable all active themes
+  (load-theme 'ef-owl t) 
+#+end_src
+** Org Mode
+#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
+  ;; ORG Mode
+  (use-package org
+    :straight (:type built-in)
+    :mode (("\\.org$" . org-mode))
+    :preface
+    (defun my-first-existing-directory (directories)
+      "Return the first existing directory from the given list DIRECTORIES.
+       The directory path is expanded to its absolute path."
+      (catch 'found
+        (dolist (dir directories)
+          (when (file-directory-p dir)
+            (throw 'found (expand-file-name dir))))
+        nil))  ;; Return nil if no existing directory is found
+    :config
+    (setq org-startup-indented t ;; auto aligns text with header
+          org-startup-folded t ;; startup folded
+          org-ellipsis " 󰅀 " ;; folding symbol
+          org-directory (my-first-existing-directory '("/home/shumma1/notes/2025/"
+                                                       "/Users/shumma1/notes/2025/"))
+          org-agenda-files `(,org-directory)
+          org-structure-template-alist '(("s" . "src")
+                                         ("e" . "src emacs-lisp")
+                                         ("E" . "src emacs-lisp :results value code :lexical t")
+                                         ("t" . "src emacs-lisp :tangle FILENAME")
+                                         ("T" . "src emacs-lisp :tangle FILENAME :mkdirp yes")
+                                         ("x" . "example")
+                                         ("X" . "export")
+                                         ("q" . "quote"))
+          org-hide-emphasis-markers nil
+          org-pretty-entities t
+          org-return-follows-link t
+          org-fontify-quote-and-verse-blocks t
+          org-fontify-whole-block-delimiter-line t
+          org-fontify-done-headline nil
+          org-fontify-todo-headline nil
+          org-fontify-whole-heading-line nil
+          org-enforce-todo-dependencies t
+          org-enforce-todo-checkbox-dependencies t
+          org-default-priority ?C
+          org-todo-keywords '((sequence "TODO(t)" "IN-PROGRESS(i)" "PAUSED(p)" "|" "DONE(d)")
+                              (sequence "|" "QUEUED(q)" "CANCELLED(c)"))
+          ))
+
+  ;; Langs
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((emacs-lisp . t)
+     (shell . t)
+     (python . t)))
+
+  ;; Pretty Bullets
+  (use-package org-bullets
+    :hook (org-mode . org-bullets-mode))
+#+end_src
+** =magit=
+#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
+  ;; Git
+  (use-package magit
+    :after transient
+    :demand t
+    :bind ("C-x g" . magit-status)
+    :init
+    (setq magit-define-global-key-bindings nil)
+    (setq magit-section-visibility-indicator '(" 󰅀"))
+    :config
+    (setq git-commit-summary-max-length 50)
+    (setq git-commit-style-convention-checks '(non-empty-second-line))
+    (setq magit-diff-refine-hunk t))
+#+end_src
+** Shell
+#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
+  (use-package vterm
+    :commands vterm
+    :bind (:map global-map
+                ("C-c v <RET>" . 'vterm)
+                ("C-c v o" . 'vterm-other-window))
+    :config
+    (setq vterm-timer-delay 0.01)) ;; speed up 
+#+end_src
+** Completion and Navigation
+#+begin_src emacs-lisp :tangle "post-init-el" :mkdirp yes
+  ;; Corfu enhances in-buffer completion by displaying a compact popup with
+  ;; current candidates, positioned either below or above the point. Candidates
+  ;; can be selected by navigating up or down.
+  (use-package corfu
+    :ensure t
+    :commands (corfu-mode global-corfu-mode)
+    :hook ((prog-mode . corfu-mode)
+           (shell-mode . corfu-mode)
+           (eshell-mode . corfu-mode))
+    :custom
+    ;; Hide commands in M-x which do not apply to the current mode.
+    (read-extended-command-predicate #'command-completion-default-include-p)
+    ;; Disable Ispell completion function. As an alternative try `cape-dict'.
+    (text-mode-ispell-word-completion nil)
+    (tab-always-indent 'complete)
+    ;; Enable Corfu
+    :config
+    (global-corfu-mode))
+
+  ;; Cape, or Completion At Point Extensions, extends the capabilities of
+  ;; in-buffer completion. It integrates with Corfu or the default completion UI,
+  ;; by providing additional backends through completion-at-point-functions.
+  (use-package cape
+    :ensure t
+    :commands (cape-dabbrev cape-file cape-elisp-block)
+    :bind ("C-c p" . cape-prefix-map)
+    :init
+    ;; Add to the global default value of `completion-at-point-functions' which is
+    ;; used by `completion-at-point'.
+    (add-hook 'completion-at-point-functions #'cape-dabbrev)
+    (add-hook 'completion-at-point-functions #'cape-file)
+    (add-hook 'completion-at-point-functions #'cape-elisp-block))
+
+  (use-package completion-preview
+    :straight (:type built-in)
+    :hook (prog-mode . completion-preview-mode)
+    :bind
+    ( :map completion-preview-active-mode-map
+      ("M-n" . completion-preview-next-candidate)
+      ("M-p" . completion-preview-prev-candidate)))
+
+#+end_src
+- Vertico, Consult, Embark collectively enhance completion and navigation
+#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
+  ;; Movement
+  (use-package crux
+    :bind (("C-a" . crux-move-beginining-of-line)))
+
+  ;; Vertico
+  (use-package vertico
+    :ensure t
+    :config (vertico-mode))
+
+  ;; Vertico leverages Orderless' flexible matching capabilities, allowing users
+  ;; to input multiple patterns separated by spaces, which Orderless then
+  ;; matches in any order against the candidates.
+  (use-package orderless
+    :ensure t
+    :custom
+    (completion-styles '(orderless basic))
+    (completion-category-defaults nil)
+    (completion-category-overrides '((file (styles partial-completion)))))
+
+  ;; Marginalia allows Embark to offer you preconfigured actions in more contexts.
+  ;; In addition to that, Marginalia also enhances Vertico by adding rich
+  ;; annotations to the completion candidates displayed in Vertico's interface.
+  (use-package marginalia
+    :ensure t
+    :commands (marginalia-mode marginalia-cycle)
+    :hook (after-init . marginalia-mode))
+
+
+  ;; Embark is an Emacs package that acts like a context menu, allowing
+  ;; users to perform context-sensitive actions on selected items
+  ;; directly from the completion interface.
+  (use-package embark
+    :ensure t
+    :commands (embark-act
+               embark-dwim
+               embark-export
+               embark-collect
+               embark-bindings
+               embark-prefix-help-command)
+    :bind
+    (("C-." . embark-act)         ;; pick some comfortable binding
+     ("C-;" . embark-dwim)        ;; good alternative: M-.
+     ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
+
+    :init
+    (setq prefix-help-command #'embark-prefix-help-command)
+
+    :config
+    ;; Hide the mode line of the Embark live/completions buffers
+    (add-to-list 'display-buffer-alist
+                 '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                   nil
+                   (window-parameters (mode-line-format . none)))))
+
+  ;; Consult offers a suite of commands for efficient searching, previewing, and
+  ;; interacting with buffers, file contents, and more, improving various tasks.
+  (use-package consult
+    :ensure t
+    :bind (;; C-c bindings in `mode-specific-map'
+           ("C-c M-x" . consult-mode-command)
+           ("C-c h" . consult-history)
+           ("C-c k" . consult-kmacro)
+           ("C-c m" . consult-man)
+           ("C-c i" . consult-info)
+           ([remap Info-search] . consult-info)
+           ;; C-x bindings in `ctl-x-map'
+           ("C-x M-:" . consult-complex-command)
+           ("C-x b" . consult-buffer)
+           ("C-x p b" . consult-project-buffer)
+           ;; Custom M-# bindings for fast register access
+           ("M-#" . consult-register-load)
+           ("M-'" . consult-register-store)
+           ("C-M-#" . consult-register)
+           ;; Other custom bindings
+           ("M-y" . consult-yank-pop)
+           ;; M-g bindings in `goto-map'
+           ("M-g e" . consult-compile-error)
+           ("M-g f" . consult-flymake)
+           ("M-g g" . consult-goto-line)
+           ("M-g M-g" . consult-goto-line)
+           ("M-g o" . consult-outline)
+           ("M-g m" . consult-mark)
+           ("M-g k" . consult-global-mark)
+           ("M-g i" . consult-imenu)
+           ("M-g I" . consult-imenu-multi)
+           ;; M-s bindings in `search-map'
+           ("M-s d" . consult-find)
+           ("M-s c" . consult-locate)
+           ("M-s g" . consult-grep)
+           ("M-s G" . consult-git-grep)
+           ("M-s r" . consult-ripgrep)
+           ("M-s l" . consult-line)
+           ("M-s L" . consult-line-multi)
+           ("M-s k" . consult-keep-lines)
+           ("M-s u" . consult-focus-lines)
+           ;; Isearch integration
+           ("M-s e" . consult-isearch-history)
+           :map isearch-mode-map
+           ("M-e" . consult-isearch-history)
+           ("M-s e" . consult-isearch-history)
+           ("M-s l" . consult-line)
+           ("M-s L" . consult-line-multi)
+           ;; Minibuffer history
+           :map minibuffer-local-map
+           ("M-s" . consult-history)
+           ("M-r" . consult-history))
+
+    ;; Enable automatic preview at point in the *Completions* buffer.
+    :hook (completion-list-mode . consult-preview-at-point-mode)
+
+    :init
+    ;; Optionally configure the register formatting. This improves the register
+    (setq register-preview-delay 0.5
+          register-preview-function #'consult-register-format)
+
+    ;; Optionally tweak the register preview window.
+    (advice-add #'register-preview :override #'consult-register-window)
+
+    ;; Use Consult to select xref locations with preview
+    (setq xref-show-xrefs-function #'consult-xref
+          xref-show-definitions-function #'consult-xref)
+
+    ;; Aggressive asynchronous that yield instantaneous results. (suitable for
+    ;; high-performance systems.) Note: Minad, the author of Consult, does not
+    ;; recommend aggressive values.
+    ;; Read: https://github.com/minad/consult/discussions/951
+    ;;
+    ;; However, the author of minimal-emacs.d uses these parameters to achieve
+    ;; immediate feedback from Consult.
+    (setq consult-async-input-debounce 0.02
+          consult-async-input-throttle 0.05
+          consult-async-refresh-delay 0.02)
+
+    :config
+    (consult-customize
+     consult-theme :preview-key '(:debounce 0.2 any)
+     consult-ripgrep consult-git-grep consult-grep
+     consult-bookmark consult-recent-file consult-xref
+     consult--source-bookmark consult--source-file-register
+     consult--source-recent-file consult--source-project-recent-file
+     ;; :preview-key "M-."
+     :preview-key '(:debounce 0.4 any))
+    (setq consult-narrow-key "<"))
+
+#+end_src
+** =eglot=
+#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
+  (setq m/ty-uvx-command
+      '("uvx" "ty" "server"))
+
+  (use-package eglot
+    :straight (:type built-in)
+    :bind (:map eglot-mode-map
+                ("C-c C-d" . eldoc)
+                ("C-c C-f" . eglot-format-buffer))
+    :config
+    (setq eglot-sync-connect nil)
+    (setq eglot-autoshutdown nil)
+    (add-to-list 'eglot-server-programs `(python-mode . ,m/ty-uvx-command))
+    :hook
+    (python-mode-hook 'eglot-ensure)
+    )
+#+end_src
+** Tree-Sitter
+#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
+  (setq treesit-language-source-alist
+        '((bash "https://github.com/tree-sitter/tree-sitter-bash")
+          (cmake "https://github.com/uyha/tree-sitter-cmake")
+          (css "https://github.com/tree-sitter/tree-sitter-css")
+          (elisp "https://github.com/Wilfred/tree-sitter-elisp")
+          (go "https://github.com/tree-sitter/tree-sitter-go")
+          (html "https://github.com/tree-sitter/tree-sitter-html")
+          (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "master" "src")
+          (json "https://github.com/tree-sitter/tree-sitter-json")
+          (make "https://github.com/alemuller/tree-sitter-make")
+          (markdown "https://github.com/ikatyang/tree-sitter-markdown")
+          (python "https://github.com/tree-sitter/tree-sitter-python" "v0.20.4")
+          (toml "https://github.com/tree-sitter/tree-sitter-toml")
+          (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
+          (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
+          (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
+
+  (add-to-list 'treesit-extra-load-path "~/.emacs.d/var/tree-sitter/")
+#+end_src
+** Code
+*** Combobulate
+#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
+#+end_src
+** =copilot=
+#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
+(use-package copilot
+  :straight (:host github :repo "copilot-emacs/copilot.el" :files ("*.el"))
+  :ensure t
+  :bind (:map copilot-completion-map
+              ("TAB" . copilot-accept-completion)
+              ("<tab>" . copilot-accept-completion))
+  )
+
+(add-hook 'prog-mode-hook 'copilot-mode)
+#+end_src
+** =gptel=
+#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
+(use-package gptel
+  :bind (:map global-map                                                                             ;;
+            ("C-c <RET>" . 'gptel-send)
+            ("C-c g m" . 'gptel-menu)
+            ("C-c g r" . 'gptel-rewrite))
+:config
+(setq gptel-model 'claude-sonnet-4)
+(setq gptel-use-curl 't)
+(setq gptel-backend (gptel-make-gh-copilot "Copilot"))
+:hook
+(gptel-mode . visual-line-mode)
+)
+
+#+end_src
