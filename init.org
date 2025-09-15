@@ -1,3 +1,4 @@
+
 #+title: init.org
 #+author: Matt Shum
 
@@ -49,7 +50,7 @@ Learn:
 #+end_src
 ** Debug
 #+begin_src emacs-lisp :tangle "pre-early-init.el" :mkdirp yes
-  (setq debug-on-error t)
+;;  (setq debug-on-error t)
 #+end_src
 * ~post-early-init.el~
 ** Header
@@ -98,7 +99,7 @@ Learn:
       (add-hook 'emacs-lisp-mode-hook #'compile-angel-on-save-local-mode)
 
       ;; A global mode that compiles .el files before they are loaded.
-      ;;(compile-angel-on-load-mode)
+      (compile-angel-on-load-mode)
       )
 #+end_src
 ** Theme
@@ -405,50 +406,48 @@ Learn:
 #+end_src
 ** ORG mode
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
-;; ORG mode
-(use-package org
-  :straight (:type built-in)
-  :mode (("\\.org$" . org-mode))
-  :preface
-  (defun my-first-existing-directory (directories)
-    "Return the first existing directory from the given list DIRECTORIES.
-     The directory path is expanded to its absolute path."
-    (catch 'found
-      (dolist (dir directories)
-        (when (file-directory-p dir)
-          (throw 'found (expand-file-name dir))))
-      nil))  ;; Return nil if no existing directory is found
-  :config
-  (setq org-startup-indented t ;; auto aligns text with header
-        org-startup-folded t ;; startup folded
-        org-ellipsis " 󰅀 " ;; folding symbol
-        org-directory (my-first-existing-directory '("/home/shumma1/notes/2025/"
-                                                     "/Users/shumma1/notes/2025/"))
-        org-agenda-files `(,org-directory)
-        org-structure-template-alist '(("s" . "src")
-                                       ("e" . "src emacs-lisp")
-                                       ("E" . "src emacs-lisp :results value code :lexical t")
-                                       ("t" . "src emacs-lisp :tangle FILENAME")
-                                       ("T" . "src emacs-lisp :tangle FILENAME :mkdirp yes")
-                                       ("x" . "example")
-                                       ("X" . "export")
-                                       ("q" . "quote"))
-        org-hide-emphasis-markers nil
-        org-pretty-entities t
-        org-return-follows-link t
-        org-fontify-quote-and-verse-blocks t
-        org-fontify-whole-block-delimiter-line t
-        org-fontify-done-headline nil
-        org-fontify-todo-headline nil
-        org-fontify-whole-heading-line nil
-        org-enforce-todo-dependencies t
-        org-enforce-todo-checkbox-dependencies t
-        org-src-preserve-indentation nil
-        org-edit-src-content-indentation 0
-        org-default-priority ?C
-        org-todo-keywords '((sequence "TODO(t)" "IN-PROGRESS(i)" "PAUSED(p)" "|" "DONE(d)")
-                            (sequence "|" "QUEUED(q)" "CANCELLED(c)"))
-        ))
+  ;; ORG mode
+  (use-package org
+    :straight (:type built-in)
+    :mode (("\\.org$" . org-mode))
+    :preface
+    (defun my-first-existing-directory (directories)
+      "Return the first existing directory from the given list DIRECTORIES.
+       The directory path is expanded to its absolute path."
+      (catch 'found
+        (dolist (dir directories)
+          (when (file-directory-p dir)
+            (throw 'found (expand-file-name dir))))
+        nil))  ;; Return nil if no existing directory is found
+    :config
+    (setq org-startup-indented t ;; auto aligns text with header
+          org-startup-folded t ;; startup folded
+          org-ellipsis " 󰅀 " ;; folding symbol
+          org-directory (my-first-existing-directory '("/home/shumma1/notes/2025/"
+                                                       "/Users/SHUMMA1/notes/2025/"))
+          org-agenda-files `(,org-directory)
+          org-structure-template-alist '(("s" . "src")
+                                         ("e" . "src emacs-lisp")
+                                         ("E" . "src emacs-lisp :results value code :lexical t")
+                                         ("t" . "src emacs-lisp :tangle FILENAME")
+                                         ("T" . "src emacs-lisp :tangle FILENAME :mkdirp yes")
+                                         ("x" . "example")
+                                         ("X" . "export")
+                                         ("q" . "quote"))
+          org-hide-emphasis-markers nil
+          org-pretty-entities t
+          org-return-follows-link t
+          org-fontify-quote-and-verse-blocks t
+          org-fontify-whole-block-delimiter-line t
+          org-fontify-done-headline nil
+          org-fontify-todo-headline nil
+          org-fontify-whole-heading-line nil
+          org-enforce-todo-dependencies t
+          org-enforce-todo-checkbox-dependencies t
+          org-default-priority ?C
+          org-todo-keywords '((sequence "TODO(t)" "IN-PROGRESS(i)" "PAUSED(p)" "|" "DONE(d)")
+                              (sequence "|" "QUEUED(q)" "CANCELLED(c)"))
+          ))
 
 (org-babel-do-load-languages
  'org-babel-load-languages
