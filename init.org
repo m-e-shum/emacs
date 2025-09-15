@@ -50,7 +50,7 @@ Learn:
 #+end_src
 ** Debug
 #+begin_src emacs-lisp :tangle "pre-early-init.el" :mkdirp yes
-;;  (setq debug-on-error t)
+  (setq debug-on-error t)
 #+end_src
 * ~post-early-init.el~
 ** Header
@@ -121,7 +121,7 @@ Learn:
 #+end_src
 ** PATH
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
-  (require 'exec-path-from-shell)
+  (use-package exec-path-from-shell)
   (when (memq window-system '(mac ns x))
     (exec-path-from-shell-initialize))
   (when (daemonp)
@@ -716,7 +716,7 @@ Learn:
   :config
   (setq gptel-model 'claude-sonnet-4)
   (setq gptel-use-curl 't)
-  (setq gptel-backend (gptel-make-gh-copilot "Copilot"))
+  (setq gptel-backend (gptel-make-gh-copilot "Github Copilot Enterprise"))
   :hook
   (gptel-mode . visual-line-mode)
   )
