@@ -808,21 +808,32 @@ Learn:
 [[https://github.com/mickeynp/combobulate][Github Repo]]
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   ;; Set a key prefix before the package is loaded (if necessary)
-  (use-package combobulate
-    :straight
-    (combobulate
-     :type git
-     :host github
-     :repo "mickeynp/combobulate")
-    :preface
-    (setq combobulate-key-prefix "C-c o ")
-    :hook
-    (prog-mode . combobulate-mode)
-    :config
-    ;; Additional configuration as needed
-    (message "Combobulate loaded.")
-    )
+
+  (use-package combobulate                 ;;
+    :straight                              ;;
+    (combobulate                           ;;
+     :type git                             ;;
+     :host github                          ;;
+     :repo "mickeynp/combobulate")         ;;
+    :preface                               ;;
+    (setq combobulate-key-prefix "C-c o ") ;;
+    :hook (prog-mode . combobulate-mode)   ;;
+    :config                                ;;
+    ;; Additional configuration as needed  ;;
+    (message "Combobulate loaded.")        ;;
+    )                                      ;;
 #+end_src
+
+** aggressive indent
+#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
+  (use-package aggressive-indent
+    :bind (:map aggressive-indent-mode-map
+                ("C-c C-q" . nil))
+    :hook (org-mode . aggressive-indent-mode)
+    )
+
+  (use-package sql-indent)
+  #+end_src
 ** Tree-Sitter
 - Tree-sitter is built-in for Emacs 30 (using "treesit")
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
@@ -868,9 +879,25 @@ Learn:
 #+end_src
 ** SQL
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
-(use-package sql
-  :mode ("\\.ddl\\'" . sql-mode)
-  :config
-  (setq tab-width 4))
+  (use-package sql
+    :mode ("\\.ddl\\'" . sql-mode)
+    :config
+    (setq tab-width 4))
 #+end_src
+** Markdown
+#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
+  (use-package markdown-mode
+    :defer t
+    :mode ("README\\.md\\'" . gfm-mode)
+    :init (setq markdown-command "multimarkdown")
+    :bind (:map markdown-mode-map
+                ("C-c C-e" . markdown-do)))
+#+end_src
+** Dockerfile
+#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
+  (use-package dockerfile-mode
+    :defer t)
+  (use-package groovy-mode
+    :defer t)
+    #+end_src
 
