@@ -58,20 +58,20 @@ Learn:
   ;;; post-early-init.el --- DESCRIPTION -*- no-byte-compile: t; lexical-binding: t; -*-
 #+end_src
 * ~post-init.el~
-** Header
+** DONE Header
 (Important for ~post-init.elc~ to not be created.)
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   ;;; post-init.el --- DESCRIPTION -*- no-byte-compile: t; lexical-binding: t; -*-
 #+end_src
-** Remove ~custom.el~
+** DONE Remove ~custom.el~
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
 (setq custom-file null-device);
 #+end_src
-** Straight (use-package syntax)
+** DONE Straight (use-package syntax)
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   (straight-use-package 'use-package)
 #+end_src
-** Speed up with =compile-angel=
+** DONE Speed up with =compile-angel=
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
     ;; Speed up Emacs
     ;; MUST be at the top of this file
@@ -516,20 +516,22 @@ Learn:
 
       (add-hook 'spacious-padding-mode-hook #'prot/modeline-spacious-indicators)))
 #+end_src
-*** Moody
-#+begin_src emacs-lisp 
-  ;; :tangle "post-init.el" :mkdirp yes
+*** CANCELLED Moody
+#+begin_src
+  ;;  emacs-lisp :tangle "post-init.el" :mkdirp yes
   (use-package moody
     :ensure t
+    :custom
+    (x-underline-at-descent-line t)
     :config
-    (moody-replace-mode-line-front-space)
+    ;;(moody-replace-mode-line-front-space)
     (moody-replace-mode-line-buffer-identification)
     (moody-replace-vc-mode))
 
-  (setq x-underline-at-descent-line t)
 
-  #+end_src
 
+    #+end_src
+    
 ** DONE Keycast
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   (use-package keycast
