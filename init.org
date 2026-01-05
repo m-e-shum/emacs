@@ -423,8 +423,8 @@ Learn:
     (setq org-startup-indented t ;; auto aligns text with header
           org-startup-folded t ;; startup folded
           org-ellipsis " 󰅀 " ;; folding symbol
-          org-directory (my-first-existing-directory '("/home/shumma1/notes/2025/"
-                                                       "/Users/SHUMMA1/notes/2025/"))
+          org-directory (my-first-existing-directory '("/home/shumma1/notes/2026/"
+                                                       "/Users/SHUMMA1/notes/2026/"))
           org-agenda-files `(,org-directory)
           org-structure-template-alist '(("s" . "src")
                                          ("e" . "src emacs-lisp")
@@ -636,6 +636,10 @@ Learn:
     (setq display-line-numbers-major-tick 0)
     (setq display-line-numbers-minor-tick 0)
     (setq-default display-line-numbers-widen t))
+
+  (use-package indent-bars
+    :hook ((prog-mode) . indent-bars-mode))
+    
 #+end_src
 ** Other Customizations
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
