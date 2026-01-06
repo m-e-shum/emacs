@@ -445,7 +445,7 @@ Learn:
           org-enforce-todo-checkbox-dependencies t
           org-default-priority ?C
           org-todo-keywords '((sequence "TODO(t)" "IN-PROGRESS(i)" "PAUSED(p)" "|" "DONE(d)")
-                              (sequence "|" "QUEUED(q)" "CANCELLED(c)"))
+                              (sequence "|" "LATER(l)" "CANCELLED(c)"))
           ))
 
 (org-babel-do-load-languages
