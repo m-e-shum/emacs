@@ -117,7 +117,6 @@ Learn:
 
   (use-package ef-themes)
   (load-theme 'modus-vivendi t)
-  ;;(load-theme 'ef-owl t)
   #+end_src
 ** PATH
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
@@ -781,7 +780,7 @@ Learn:
                 ("<tab>" . copilot-accept-completion))
     )
 
-  (add-hook 'prog-mode-hook 'copilot-mode)
+  ;;(add-hook 'prog-mode-hook 'copilot-mode)
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
   ;; (define-key copilot-completion-map (kbd "<tab>") 'copilot-accept-completion) ;;
@@ -795,35 +794,21 @@ Learn:
     :straight (:type built-in)
     :bind (:map eglot-mode-map
                 ("C-c C-d" . eldoc)
+                ("C-c C-o" . eglot-code-action-organize-imports)
                 ("C-c C-f" . eglot-format-buffer))
     :hook
     (python-ts-mode-hook 'eglot-ensure) ;; Seems to be crucial for tree-sitter to work automatically
     :config
     (setq eglot-sync-connect nil)
     (setq eglot-autoshutdown nil)
-    ;; Workspace
-    (setq-default eglot-workspace-configuration
-                `(:pylsp (:plugins
-                          (;;; Fix imports and syntax using `eglot-format-buffer`
-                           :jedi_completion (:include_params t :fuzzy t)
-                           :ruff (:enabled t :formatEnabled t :linelength 88 :format ["I"])
-                             ;;; Syntax checkers (works with Flymake)
-                             ;; :pylint (:enabled t)
-                             ;; :pycodestyle (:enabled t)
-                             ;; :flake8 (:enabled t)
-                             ;; :pyflakes (:enabled t)
-                             ;; :pydocstyle (:enabled t)
-                             ;; :mccabe (:enabled t)
-                             ;; :yapf (:enabled :json-false)
-                             ;; :rope_autoimport (:enabled :json-false)
-                           ))))
+    ;; Proper server program configuration
 
     )
 
 
   ;; Display Line numbers when prog-mode is detected
   (add-hook 'prog-mode-hook #'display-line-numbers-mode)
-#+end_src
+  #+end_src
 ** DONE Combobulate
 [[https://github.com/mickeynp/combobulate][Github Repo]]
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
@@ -919,5 +904,24 @@ Learn:
     :defer t)
   (use-package groovy-mode
     :defer t)
-    #+end_src
+#+end_src
+** Font
+#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
+  ;; Set the default font to DejaVu Sans Mono with specific size and weight
+  (set-face-attribute 'default nil
+                      :height 170 :weight 'normal :family "Iosevka Term")
+  (use-package all-the-icons
+    :if (display-graphic-p))
+#+end_src
+** Startup time
+#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
+  (defun display-startup-time ()
+    "Display the startup time and number of garbage collections."
+    (message "Emacs init loaded in %.2f seconds (Full emacs-startup: %.2fs) with %d garbage collections."
+             (float-time (time-subtract after-init-time before-init-time))
+             (time-to-seconds (time-since before-init-time))
+             gcs-done))
+
+  (add-hook 'emacs-startup-hook #'display-startup-time 100)
+  #+end_src
 
