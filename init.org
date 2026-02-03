@@ -71,6 +71,10 @@ Learn:
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   (straight-use-package 'use-package)
 #+end_src
+** Devel branch
+#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
+  (add-to-list 'package-archives '("gnu-devel" . "https://elpa.gnu.org/devel/"))
+  #+end_src
 ** DONE Speed up with =compile-angel=
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
     ;; Speed up Emacs
