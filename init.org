@@ -839,14 +839,12 @@ Learn:
 
 ** aggressive indent
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
-  (use-package aggressive-indent
-    :bind (:map aggressive-indent-mode-map
-                ("C-c C-q" . nil))
-    :hook (org-mode . aggressive-indent-mode)
-    )
+(use-package aggressive-indent
+  :bind (:map aggressive-indent-mode-map
+              ("C-c C-q" . nil)))
 
-  (use-package sql-indent)
-  #+end_src
+(use-package sql-indent)
+#+end_src
 ** Tree-Sitter
 - Tree-sitter is built-in for Emacs 30 (using "treesit")
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
