@@ -741,12 +741,41 @@ Learn:
                 ("C-c g m" . 'gptel-menu)
                 ("C-c g r" . 'gptel-rewrite))
     :config
+    (require 'gptel-integrations)
     (setq gptel-model 'claude-sonnet-4.5)
     (setq gptel-use-curl 't)
     (setq gptel-backend (gptel-make-gh-copilot "Github Copilot Enterprise"))
+    
+    ;; Enable thinking mode
+    (setq gptel-include-reasoning t)
+
+    ;; Customize heading level
+    (setq gptel-prompt-prefix-alist
+        '((markdown-mode . "# ")))
+  
+    ;; Or set response prefix separately
+    (setq gptel-response-prefix-alist
+        '((markdown-mode . "## ")))
+  
     :hook
     (gptel-mode . visual-line-mode)
     )
+
+(use-package mcp
+  :ensure t
+  :after gptel
+  :custom (mcp-hub-servers
+           `(("askit-tools" . (:url "http://nrusca-ldl30024.nibr.novartis.net:8000/mcp"))
+             ("literature" . (:url "http://nrusca-ldl30024.nibr.novartis.net:8001/mcp"))
+             ("structural-bioinformatics" . (:url "http://nrusca-ldl30024.nibr.novartis.net:8002/mcp"))
+             ("confluence" . (:url "http://nrusca-ldl30024.nibr.novartis.net:8004/mcp"))
+             ("opentargets" . (:url "http://nrusca-ldl30024.nibr.novartis.net:8006/mcp"))
+             ("visualizer" . (:url "http://nrusca-ldl30024.nibr.novartis.net:8003/mcp"))
+             ))
+  :config
+  (require 'mcp-hub)
+  (require 'gptel-integrations)
+  :hook (after-init . mcp-hub-start-all-server))
 
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
