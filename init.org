@@ -242,8 +242,8 @@ Learn:
              embark-bindings
              embark-prefix-help-command)
   :bind
-  (("C-." . embark-act)         ;; pick some comfortable binding
-   ("C-;" . embark-dwim)        ;; good alternative: M-.
+  (("C-x ." . embark-act)         ;; pick some comfortable binding
+   ("C-x ;" . embark-dwim)        ;; good alternative: M-.
    ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
 
   :init
@@ -760,6 +760,20 @@ Learn:
     :hook
     (gptel-mode . visual-line-mode)
     )
+
+(use-package gptel-quick
+  :straight (:host github :repo "karthink/gptel-quick")
+  :bind (:map global-map
+              ("C-x ?" . 'gptel-quick))
+  )
+
+;; (use-package gptel-agent
+;;   :straight (:host github :repo "karthink/gptel-agent")
+;;   :custom
+;;   (gptel-agent-dirs '("~/.emacs.d/var/straight/repos/gptel-agent/agents"))
+;;   :config
+;;   (gptel-agent-update)
+;;   )
 
 (use-package mcp
   :ensure t
