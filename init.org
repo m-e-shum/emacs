@@ -770,9 +770,9 @@ Learn:
 
 (use-package gptel-agent
   :straight (:host github :repo "karthink/gptel-agent")
-  :custom
-  (gptel-agent-dirs '("~/work/github/gptel-agent/agents"))
   :config
+  (when (file-directory-p "~/work/github/gptel-agent/agents")
+    (setq gptel-agent-dirs '("~/work/github/gptel-agent/agents")))
   (gptel-agent-update))
 
 (use-package mcp
