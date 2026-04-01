@@ -742,7 +742,7 @@ Learn:
                 ("C-c g r" . 'gptel-rewrite))
     :config
     (require 'gptel-integrations)
-    (setq gptel-model 'claude-sonnet-4.5)
+    (setq gptel-model 'claude-sonnet-4.6)
     (setq gptel-use-curl 't)
     (setq gptel-backend (gptel-make-gh-copilot "Github Copilot Enterprise"))
     
@@ -756,24 +756,24 @@ Learn:
     ;; Or set response prefix separately
     (setq gptel-response-prefix-alist
         '((markdown-mode . "## ")))
-  
+
+    
     :hook
     (gptel-mode . visual-line-mode)
     )
 
-(use-package gptel-quick
-  :straight (:host github :repo "karthink/gptel-quick")
-  :bind (:map global-map
-              ("C-x ?" . 'gptel-quick))
-  )
-
-;; (use-package gptel-agent
-;;   :straight (:host github :repo "karthink/gptel-agent")
-;;   :custom
-;;   (gptel-agent-dirs '("~/.emacs.d/var/straight/repos/gptel-agent/agents"))
-;;   :config
-;;   (gptel-agent-update)
+;; (use-package gptel-quick
+;;   :straight (:host github :repo "karthink/gptel-quick")
+;;   :bind (:map global-map
+;;               ("C-x ?" . 'gptel-quick))
 ;;   )
+
+(use-package gptel-agent
+  :straight (:host github :repo "karthink/gptel-agent")
+  :custom
+  (gptel-agent-dirs '("~/work/github/gptel-agent/agents"))
+  :config
+  (gptel-agent-update))
 
 (use-package mcp
   :ensure t
