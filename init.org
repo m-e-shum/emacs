@@ -642,6 +642,7 @@ Learn:
     (setq-default display-line-numbers-type t)
     (setq display-line-numbers-major-tick 0)
     (setq display-line-numbers-minor-tick 0)
+    (setq display-line-numbers-type 'visual)
     (setq-default display-line-numbers-widen t))
 
   (use-package indent-bars
