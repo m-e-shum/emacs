@@ -671,7 +671,7 @@ Learn:
 (package-initialize)
 (menu-bar-mode -1)
 (tool-bar-mode -1)
-(scroll-bar-mode -1)
+;;(scroll-bar-mode -1)
 ;;(setq-default line-spacing 0.4) ;; only works in gui
 
 (modify-all-frames-parameters
