@@ -804,12 +804,13 @@ Learn:
 ;;               ("C-x ?" . 'gptel-quick))
 ;;   )
 
+
 (use-package gptel-agent
-  :straight (:host github :repo "karthink/gptel-agent")
+  :ensure t;;(:host github :repo "karthink/gptel-agent")
   :config
-  (when (file-directory-p "~/work/github/gptel-agent/agents")
-    (setq gptel-agent-dirs '("~/work/github/gptel-agent/agents"))
-    (gptel-agent-update)))
+  (setq gptel-model 'claude-sonnet-4.5)
+  (gptel-agent-update))
+
 
 (use-package mcp
   :ensure t
