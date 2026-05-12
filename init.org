@@ -783,7 +783,7 @@ Learn:
     (setq gptel-backend (gptel-make-gh-copilot "Github Copilot Enterprise"))
     
     ;; Enable thinking mode
-    (setq gptel-include-reasoning t)
+    (setq gptel-include-reasoning "ignore")
 
     ;; Customize heading level
     (setq gptel-prompt-prefix-alist
