@@ -656,6 +656,7 @@ Learn:
     :straight (:type built-in)
     :config
     (setq-default display-line-numbers-type t)
+    (setq display-line-numbers-width-start t)
     (setq display-line-numbers-major-tick 0)
     (setq display-line-numbers-minor-tick 0)
     (setq display-line-numbers-type 'visual)
