@@ -491,7 +491,8 @@ Learn:
    '(prot-modeline :type git
                    :host gitlab
                    :repo "protesilaos/dotfiles"
-                   :files ("emacs/.emacs.d/prot-lisp/prot-modeline.el" 
+                   :files ("emacs/.emacs.d/prot-lisp/prot-modeline.el"
+  			 "emacs/.emacs.d/prot-lisp/prot-icons.el"
                            "emacs/.emacs.d/prot-lisp/prot-common.el")
                    :main "emacs/.emacs.d/prot-lisp/prot-modeline.el"))
 
@@ -771,32 +772,32 @@ Learn:
             
             secret)))))
 
-  (use-package gptel
-    :bind (:map global-map                                                                             ;;
+(use-package gptel
+  :bind (:map global-map                                                                             ;;
                 ("C-c <RET>" . 'gptel-send)
                 ("C-c g m" . 'gptel-menu)
                 ("C-c g r" . 'gptel-rewrite))
-    :config
-    (require 'gptel-integrations)
-    (setq gptel-model 'claude-sonnet-4.6)
-    (setq gptel-use-curl 't)
-    (setq gptel-backend (gptel-make-gh-copilot "Github Copilot Enterprise"))
+  :config
+  (require 'gptel-integrations)
+  (setq gptel-model 'claude-sonnet-4.6)
+  (setq gptel-use-curl 't)
+  (setq gptel-backend (gptel-make-gh-copilot "Github Copilot Enterprise"))
     
-    ;; Enable thinking mode
-    (setq gptel-include-reasoning "ignore")
-
-    ;; Customize heading level
-    (setq gptel-prompt-prefix-alist
+  ;; Enable thinking mode
+  (setq gptel-include-reasoning "ignore")
+  
+  ;; Customize heading level
+  (setq gptel-prompt-prefix-alist
         '((markdown-mode . "# ")))
   
-    ;; Or set response prefix separately
-    (setq gptel-response-prefix-alist
+  ;; Or set response prefix separately
+  (setq gptel-response-prefix-alist
         '((markdown-mode . "## ")))
 
     
-    :hook
-    (gptel-mode . visual-line-mode)
-    )
+  :hook
+  (gptel-mode . visual-line-mode)
+  )
 
 ;; (use-package gptel-quick
 ;;   :straight (:host github :repo "karthink/gptel-quick")
@@ -808,7 +809,7 @@ Learn:
 (use-package gptel-agent
   :ensure t;;(:host github :repo "karthink/gptel-agent")
   :config
-  (setq gptel-model 'claude-sonnet-4.5)
+  (setq gptel-model 'claude-sonnet-4.6)
   (gptel-agent-update))
 
 
@@ -878,14 +879,21 @@ Learn:
 ** EGLOT
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   ;; EGLOT
+(use-package jsonrpc
+  :ensure t
+  :demand t)
+
+
   (use-package eglot
     :straight (:type built-in)
+    :defer t
+    :commands (eglot eglot-ensure)
     :bind (:map eglot-mode-map
                 ("C-c C-d" . eldoc)
                 ("C-c C-o" . eglot-code-action-organize-imports)
                 ("C-c C-f" . eglot-format-buffer))
     :hook
-    (python-ts-mode-hook 'eglot-ensure) ;; Seems to be crucial for tree-sitter to work automatically
+    (python-ts-mode . eglot-ensure)
     :config
     (setq eglot-sync-connect nil)
     (setq eglot-autoshutdown nil)
