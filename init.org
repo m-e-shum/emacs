@@ -634,7 +634,6 @@ Learn:
     (setq lin-face 'lin-magenta))
 
   (use-package spacious-padding
-    
     :hook (after-init . spacious-padding-mode)
     :init
     ;; These are defaults
@@ -656,11 +655,14 @@ Learn:
     :straight (:type built-in)
     :config
     (setq-default display-line-numbers-type t)
-    (setq display-line-numbers-width-start t)
+    ;;(setq display-line-numbers-width-start t)
+    (setq-default display-line-numbers-width 5)
+    ;;(setq-default display-line-numbers-grow-only t)
     (setq display-line-numbers-major-tick 0)
     (setq display-line-numbers-minor-tick 0)
     (setq display-line-numbers-type 'visual)
-    (setq-default display-line-numbers-widen t))
+    ;;(setq-default display-line-numbers-widen t)
+    )
 
   (use-package indent-bars
     :hook ((prog-mode) . indent-bars-mode))
@@ -885,27 +887,32 @@ Learn:
   :demand t)
 
 
-  (use-package eglot
-    :straight (:type built-in)
-    :defer t
-    :commands (eglot eglot-ensure)
-    :bind (:map eglot-mode-map
-                ("C-c C-d" . eldoc)
-                ("C-c C-o" . eglot-code-action-organize-imports)
-                ("C-c C-f" . eglot-format-buffer))
-    :hook
-    (python-ts-mode . eglot-ensure)
-    :config
-    (setq eglot-sync-connect nil)
-    (setq eglot-autoshutdown nil)
-    ;; Proper server program configuration
+(use-package eglot
+  :straight (:type built-in)
+  :defer t
+  :commands (eglot eglot-ensure)
+  :bind (:map eglot-mode-map
+              ("C-c C-d" . eldoc)
+              ("C-c C-o" . eglot-code-action-organize-imports)
+              ("C-c C-f" . eglot-format-buffer))
+  :hook
+  (python-ts-mode . eglot-ensure)
+  :config
+  (setq eglot-sync-connect nil)
+  (setq eglot-autoshutdown nil)
+  )
 
-    )
+(use-package flymake
+  :straight (:type built-in)
+  :custom
+  (flymake-indicator-type 'fringes)  ; Use fringes instead of margin
+  :hook
+  (eglot-mode . flymake-mode))
 
 
-  ;; Display Line numbers when prog-mode is detected
-  (add-hook 'prog-mode-hook #'display-line-numbers-mode)
-  #+end_src
+;; Display Line numbers when prog-mode is detected
+(add-hook 'prog-mode-hook #'display-line-numbers-mode)
+#+end_src
 ** DONE Combobulate
 [[https://github.com/mickeynp/combobulate][Github Repo]]
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
