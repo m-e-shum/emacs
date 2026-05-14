@@ -913,24 +913,24 @@ Learn:
 ;; Display Line numbers when prog-mode is detected
 (add-hook 'prog-mode-hook #'display-line-numbers-mode)
 #+end_src
-** DONE Combobulate
+** DONE Combobulate (works but turning off)
 [[https://github.com/mickeynp/combobulate][Github Repo]]
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   ;; Set a key prefix before the package is loaded (if necessary)
 
-  (use-package combobulate                 ;;
-    :straight                              ;;
-    (combobulate                           ;;
-     :type git                             ;;
-     :host github                          ;;
-     :repo "mickeynp/combobulate")         ;;
-    :preface                               ;;
-    (setq combobulate-key-prefix "C-c o ") ;;
-    :hook (prog-mode . combobulate-mode)   ;;
-    :config                                ;;
-    ;; Additional configuration as needed  ;;
-    (message "Combobulate loaded.")        ;;
-    )                                      ;;
+  ;; (use-package combobulate                 ;;
+  ;;   :straight                              ;;
+  ;;   (combobulate                           ;;
+  ;;    :type git                             ;;
+  ;;    :host github                          ;;
+  ;;    :repo "mickeynp/combobulate")         ;;
+  ;;   :preface                               ;;
+  ;;   (setq combobulate-key-prefix "C-c o ") ;;
+  ;;   :hook (prog-mode . combobulate-mode)   ;;
+  ;;   :config                                ;;
+  ;;   ;; Additional configuration as needed  ;;
+  ;;   (message "Combobulate loaded.")        ;;
+  ;;   )                                      ;;
 #+end_src
 
 ** aggressive indent
@@ -955,7 +955,7 @@ Learn:
           (json "https://github.com/tree-sitter/tree-sitter-json")
           (make "https://github.com/alemuller/tree-sitter-make")
           (markdown "https://github.com/ikatyang/tree-sitter-markdown")
-          (python "https://github.com/tree-sitter/tree-sitter-python" "v0.20.4")
+          (python "https://github.com/tree-sitter/tree-sitter-python" "v0.25.0")
           (toml "https://github.com/tree-sitter/tree-sitter-toml")
           (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
           (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
