@@ -119,7 +119,7 @@ Learn:
       (disable-theme theme)))
 
   (use-package ef-themes)
-  (load-theme 'modus-vivendi t)
+  (load-theme 'modus-vivendi-tinted t)
   #+end_src
 ** PATH
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
@@ -193,14 +193,19 @@ Learn:
 ** Terminal Emulator =vterm=
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   ;; Terminal Emulator in C
-  (use-package vterm
-    :commands vterm
-    :bind (:map global-map
-              ("C-c v <RET>"  . 'vterm)
-              ("C-c v o" . 'vterm-other-window))
-    :config
-    ;; Speed up vterm
-    (setq vterm-timer-delay 0.01))
+  ;; (use-package vterm
+  ;;   :commands vterm
+  ;;   :bind (:map global-map
+  ;;             ("C-c v <RET>"  . 'vterm)
+  ;;             ("C-c v o" . 'vterm-other-window))
+  ;;   :config
+  ;;   ;; Speed up vterm
+  ;;   (setq vterm-timer-delay 0.01))
+
+  ;; ghostel
+  (use-package ghostel
+    :ensure t)
+
 #+end_src
 ** Completion
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
@@ -913,24 +918,24 @@ Learn:
 ;; Display Line numbers when prog-mode is detected
 (add-hook 'prog-mode-hook #'display-line-numbers-mode)
 #+end_src
-** DONE Combobulate (works but turning off)
+** DONE Combobulate
 [[https://github.com/mickeynp/combobulate][Github Repo]]
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   ;; Set a key prefix before the package is loaded (if necessary)
 
-  ;; (use-package combobulate                 ;;
-  ;;   :straight                              ;;
-  ;;   (combobulate                           ;;
-  ;;    :type git                             ;;
-  ;;    :host github                          ;;
-  ;;    :repo "mickeynp/combobulate")         ;;
-  ;;   :preface                               ;;
-  ;;   (setq combobulate-key-prefix "C-c o ") ;;
-  ;;   :hook (prog-mode . combobulate-mode)   ;;
-  ;;   :config                                ;;
-  ;;   ;; Additional configuration as needed  ;;
-  ;;   (message "Combobulate loaded.")        ;;
-  ;;   )                                      ;;
+  (use-package combobulate                 ;;
+    :straight                              ;;
+    (combobulate                           ;;
+     :type git                             ;;
+     :host github                          ;;
+     :repo "mickeynp/combobulate")         ;;
+    :preface                               ;;
+    (setq combobulate-key-prefix "C-c o ") ;;
+    :hook (prog-mode . combobulate-mode)   ;;
+    :config                                ;;
+    ;; Additional configuration as needed  ;;
+    (message "Combobulate loaded.")        ;;
+    )                                      ;;
 #+end_src
 
 ** aggressive indent
@@ -980,8 +985,10 @@ Learn:
 ** Olivetti
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   (use-package olivetti
-    ;;:defer t
     :ensure t
+    :hook (org-mode . olivetti-mode)
+    :custom
+    (olivetti-body-width 100)
     )
 #+end_src
 ** SQL
