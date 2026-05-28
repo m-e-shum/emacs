@@ -830,7 +830,8 @@ Learn:
              ("structural-bioinformatics" . (:url "http://nrusca-ldl30024.nibr.novartis.net:8002/mcp"))
              ("confluence" . (:url "http://nrusca-ldl30024.nibr.novartis.net:8004/mcp"))
              ("opentargets" . (:url "http://nrusca-ldl30024.nibr.novartis.net:8006/mcp"))
-             ("visualizer" . (:url "http://nrusca-ldl30024.nibr.novartis.net:8003/mcp"))
+             ("visualizer" . (:url "https://nrusca-ldl30024.nibr.novartis.net:8003/mcp"))
+             ("hithub-mcp" . (:url "https://hithub.prd.nibr.novartis.net/mcp/"))
              ))
   :config
   (require 'mcp-hub)
