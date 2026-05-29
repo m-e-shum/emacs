@@ -105,10 +105,6 @@ Learn:
       (compile-angel-on-load-mode)
       )
 #+end_src
-** DONE Identify culprits
-#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
-(use-package esup :defer t :commands esup)
-#+end_src
 ** Theme
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   (defun disable-all-themes ()
