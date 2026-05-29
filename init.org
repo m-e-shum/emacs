@@ -121,7 +121,7 @@ Learn:
   (use-package ef-themes)
   (load-theme 'modus-vivendi-tinted t)
   #+end_src
-** PATH
+** DONE PATH
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   (use-package exec-path-from-shell)
   (when (memq window-system '(mac ns x))
@@ -151,7 +151,7 @@ Learn:
     ("M-l" . downcase-dwim)
     ("M-u" . upcase-dwim)))
 #+end_src
-** Mouse
+** DONE Mouse
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   (unless window-system
     (require 'mouse)
@@ -164,7 +164,7 @@ Learn:
                                 (scroll-up 1)))
     (setq mouse-sel-mode t))
 #+end_src
-** Auto-revert, recentf, saveihst, save-place
+** DONE Auto-revert, recentf, saveihst, save-place
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   ;; Auto-revert in Emacs is a feature that automatically updates the
   ;; contents of a buffer to reflect changes made to the underlying file
@@ -388,7 +388,7 @@ Learn:
     ("M-p" . completion-preview-prev-candidate)))
 
 #+end_src
-** Code folding, crux, shell
+** DONE Code folding, crux, shell
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   ;; Code Folding
   (use-package outline-indent
@@ -607,68 +607,65 @@ Learn:
 #+end_src
 ** Visuals:
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
+(use-package hl-line
+  :straight (:type built-in)
+  :commands (hl-line-mode)
+  :config
+  (setq hl-line-sticky-flag nil)
+  (setq hl-line-overlay-priority -50)
+  )
 
-  (use-package hl-line
-    :straight (:type built-in)
-    :commands (hl-line-mode)
-    :config
-    (setq hl-line-sticky-flag nil)
-    (setq hl-line-overlay-priority -50)
-    )
+(use-package pulsar
+  :config
+  (setopt pulsar-pulse t
+          pulsar-delay 0.055
+          pulsar-iterations 10
+          pulsar-face 'pulsar-yellow
+          pulsar-highlight-face 'pulsar-yellow)
+  (pulsar-global-mode 1)  
+  )
 
-  (use-package pulsar
-    
-    :config
-    (setopt pulsar-pulse t
-            pulsar-delay 0.055
-            pulsar-iterations 10
-            pulsar-face 'pulsar-yellow
-            pulsar-highlight-face 'pulsar-yellow)
-    (pulsar-global-mode 1)  
-    )
+(use-package lin
+  :hook (after-init . lin-global-mode)
+  :config
+  (setq lin-face 'lin-magenta))
 
-  (use-package lin
-    
-    :hook (after-init . lin-global-mode)
-    :config
-    (setq lin-face 'lin-magenta))
+(use-package spacious-padding
+  :hook (after-init . spacious-padding-mode)
+  :init
+  ;; These are defaults
+  (setq spacious-padding-widths
+        '( :internal-border-width 30
+           :header-line-width 4
+           :mode-line-width 6
+           :tab-width 4
+           :right-divider-width 30
+           :scroll-bar-width 8
+           :left-fringe-width 20
+           :right-fringe-width 20)))
 
-  (use-package spacious-padding
-    :hook (after-init . spacious-padding-mode)
-    :init
-    ;; These are defaults
-    (setq spacious-padding-widths
-          '( :internal-border-width 30
-             :header-line-width 4
-             :mode-line-width 6
-             :tab-width 4
-             :right-divider-width 30
-             :scroll-bar-width 8
-             :left-fringe-width 20
-             :right-fringe-width 20)))
+(use-package whitespace
+  :straight (:type built-in)
+  )
 
-  (use-package whitespace
-    :straight (:type built-in)
-    )
+(use-package display-line-numbers
+  :straight (:type built-in)
+  :config
+  (setq-default display-line-numbers-type t)
+  ;;(setq display-line-numbers-width-start t)
+  (setq-default display-line-numbers-width 5)
+  ;;(setq-default display-line-numbers-grow-only t)
+  (setq display-line-numbers-major-tick 0)
+  (setq display-line-numbers-minor-tick 0)
+  (setq display-line-numbers-type 'visual)
+  ;;(setq-default display-line-numbers-widen t)
+  )
 
-  (use-package display-line-numbers
-    :straight (:type built-in)
-    :config
-    (setq-default display-line-numbers-type t)
-    ;;(setq display-line-numbers-width-start t)
-    (setq-default display-line-numbers-width 5)
-    ;;(setq-default display-line-numbers-grow-only t)
-    (setq display-line-numbers-major-tick 0)
-    (setq display-line-numbers-minor-tick 0)
-    (setq display-line-numbers-type 'visual)
-    ;;(setq-default display-line-numbers-widen t)
-    )
-
-  (use-package indent-bars
-    :hook ((prog-mode) . indent-bars-mode))
+(use-package indent-bars
+  :hook ((prog-mode) . indent-bars-mode))
 
 
-(use-package golden-ratio)
+(use-package golden-ratio-)
 (golden-ratio-mode 1)
 
 ;; Visuals
@@ -688,7 +685,7 @@ Learn:
   (set-face-foreground face (face-attribute 'default :background)))
 (set-face-background 'fringe (face-attribute 'default :background))
 #+end_src
-** Other Customizations
+** DONE Other Customizations
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   ;; Other customizations
   ;; Hide warnings and display only errors
@@ -933,7 +930,7 @@ Learn:
     )                                      ;;
 #+end_src
 
-** aggressive indent
+** DONE aggressive indent
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
 (use-package aggressive-indent
   :bind (:map aggressive-indent-mode-map
