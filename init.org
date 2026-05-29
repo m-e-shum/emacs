@@ -70,7 +70,7 @@ Learn:
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   (straight-use-package 'use-package)
 #+end_src
-** Devel branch
+** DONE Devel branch
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   (add-to-list 'package-archives '("gnu-devel" . "https://elpa.gnu.org/devel/"))
   #+end_src
@@ -190,7 +190,7 @@ Learn:
   ;; the precise point where you previously left off.
   (add-hook 'after-init-hook #'save-place-mode)
 #+end_src
-** Terminal Emulator =vterm=
+** DONE Terminal Emulator
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   ;; Terminal Emulator in C
   ;; (use-package vterm
@@ -563,8 +563,7 @@ Learn:
 ** DONE Keycast
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   (use-package keycast
-    
-    :defer
+    :defer t
     :custom
     (keycast-mode-line-format "%2s%k%c%R")
     (keycast-mode-line-insert-after 'prot-modeline-vc-branch)
@@ -579,18 +578,16 @@ Learn:
       (add-to-list 'keycast-substitute-alist `(,event nil))))
 
 #+end_src
-** Menu
+** DONE Menu
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   (use-package transient
     :straight (:type built-in))
-  ;;( use-package casual
-   ;;  :after transient)
+  
 #+end_src
 
-** Magit (Git)
+** DONE Magit (Git)
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   ;;GIT
-
   (use-package magit  
     :after transient
     :demand t
@@ -599,15 +596,13 @@ Learn:
     (setq magit-define-global-key-bindings nil)
     (setq magit-section-visibility-indicator '(" 󰅀"))
     :config
-    (setq git-commit-summary-max-length 50)
+    (setq git-commit-summary-max-length 88)
     ;; NOTE 2023-01-24: I used to also include `overlong-summary-line'
     ;; in this list, but I realised I do not need it.  My summaries are
     ;; always in check.  When I exceed the limit, it is for a good
     ;; reason.
     (setq git-commit-style-convention-checks '(non-empty-second-line))
-
     (setq magit-diff-refine-hunk t)
-
     )
 #+end_src
 ** Visuals:
@@ -760,10 +755,9 @@ Learn:
   ;; Enable on-the-fly spell checking (Flyspell mode).
   ;;(add-hook text-mode-hook #'flyspell-mode) ;; broken Emacs 30
 #+end_src
-** Set character count
+** DONE Set character count
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   (setq-default fill-column 88)
-  ;; (add-hook 'text-mode-hook #'auto-fill-mode)
   #+end_src
 ** gptel
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
@@ -885,7 +879,7 @@ Learn:
   ;; (define-key copilot-completion-map (kbd "TAB") 'copilot-accept-completion)   ;;
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 #+end_src
-** EGLOT
+** DONE EGLOT
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   ;; EGLOT
 (use-package jsonrpc
@@ -983,23 +977,22 @@ Learn:
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   (add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-mode))
 #+end_src
-** Olivetti
+** DONE Olivetti
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   (use-package olivetti
     :ensure t
     :hook (org-mode . olivetti-mode)
     :custom
-    (olivetti-body-width 100)
-    )
-#+end_src
-** SQL
+    (olivetti-body-width 100))
+    #+end_src
+** DONE SQL
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   (use-package sql
     :mode ("\\.ddl\\'" . sql-mode)
     :config
     (setq tab-width 4))
 #+end_src
-** Markdown
+** DONE Markdown
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   (use-package markdown-mode
     :defer t
@@ -1008,14 +1001,14 @@ Learn:
     :bind (:map markdown-mode-map
                 ("C-c C-e" . markdown-do)))
 #+end_src
-** Dockerfile
+** DONE Dockerfile
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   (use-package dockerfile-mode
     :defer t)
   (use-package groovy-mode
     :defer t)
 #+end_src
-** Font
+** DONE Font
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   ;; Set the default font to DejaVu Sans Mono with specific size and weight
   (set-face-attribute 'default nil
@@ -1023,7 +1016,7 @@ Learn:
   (use-package all-the-icons
     :if (display-graphic-p))
 #+end_src
-** Startup time
+** DONE Startup time
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   (defun display-startup-time ()
     "Display the startup time and number of garbage collections."
