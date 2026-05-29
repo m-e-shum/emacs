@@ -84,7 +84,7 @@ Learn:
       :custom
       ;; Set `compile-angel-verbose` to nil to suppress output from compile-angel.
       ;; Drawback: The minibuffer will not display compile-angel's actions.
-      (compile-angel-verbose t)
+      (compile-angel-verbose nil)
 
       :config
       ;; The following directive prevents compile-angel from compiling your init
@@ -105,6 +105,10 @@ Learn:
       (compile-angel-on-load-mode)
       )
 #+end_src
+** DONE Identify culprits
+#+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
+(use-package esup :defer t :commands esup)
+#+end_src
 ** Theme
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   (defun disable-all-themes ()
@@ -118,15 +122,22 @@ Learn:
     (dolist (theme custom-enabled-themes)
       (disable-theme theme)))
 
-  (use-package ef-themes)
+  (use-package ef-themes
+    :defer t)
   (load-theme 'modus-vivendi-tinted t)
   #+end_src
 ** DONE PATH
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
-  (use-package exec-path-from-shell)
-  (when (memq window-system '(mac ns x))
-    (exec-path-from-shell-initialize))
-  (when (daemonp)
+  ;; (use-package exec-path-from-shell)
+  ;; (when (memq window-system '(mac ns x))
+  ;;   (exec-path-from-shell-initialize))
+  ;; (when (daemonp)
+  ;;   (exec-path-from-shell-initialize))
+
+  (use-package exec-path-from-shell
+    :if (or (memq window-system '(mac ns x)) (daemonp))
+    :config
+    (setq exec-path-from-shell-arguments nil)  ;; skip interactive shell
     (exec-path-from-shell-initialize))
 #+end_src
 ** Emacs
@@ -204,7 +215,10 @@ Learn:
 
   ;; ghostel
   (use-package ghostel
-    :ensure t)
+    :ensure t
+    :defer t
+    :commands (ghostel)
+    )
 
 #+end_src
 ** Completion
@@ -413,6 +427,7 @@ Learn:
   (global-set-key (kbd "C-c z a") 'kirigami-toggle-fold)   ; Toggle fold at point
 
   (use-package crux
+    :defer t
     :bind
     (("C-a" . crux-move-beginning-of-line)))
 
@@ -473,19 +488,22 @@ Learn:
         org-agenda-tags-column 0
         org-todo-keywords '((sequence "TODO(t)" "IN-PROGRESS(i)" "PAUSED(p)" "|" "DONE(d)")
                             (sequence "|" "LATER(l)" "CANCELLED(c)"))
-        ))
-
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((emacs-lisp . t)
-   (python . t)
-   (shell . t)
-   ))
+        )
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((emacs-lisp . t)
+     (python . t)
+     (shell . t)
+     ))
+  )
 
 (use-package org-bullets
+  :defer t
   :hook (org-mode . org-bullets-mode))
 
-(use-package htmlize)
+(use-package htmlize
+  :defer t
+  :commands (htmlize-buffer htmlize-region))
 #+end_src
 ** DONE Modeline
 *** prot-modeline
@@ -794,7 +812,6 @@ Learn:
   ;; Or set response prefix separately
   (setq gptel-response-prefix-alist
         '((markdown-mode . "## ")))
-
     
   :hook
   (gptel-mode . visual-line-mode)
@@ -808,10 +825,12 @@ Learn:
 
 
 (use-package gptel-agent
-  :ensure t;;(:host github :repo "karthink/gptel-agent")
+  :ensure t
+  :after gptel
+  :defer t
+  :commands (gptel-agent-update)
   :config
-  (setq gptel-model 'claude-sonnet-4.6)
-  (gptel-agent-update))
+  (setq gptel-model 'claude-sonnet-4.6))
 
 
 (use-package mcp
@@ -829,7 +848,7 @@ Learn:
   :config
   (require 'mcp-hub)
   (require 'gptel-integrations)
-  :hook (after-init . mcp-hub-start-all-server))
+  :hook (gptel-mode . mcp-hub-start-all-server))
 
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -862,10 +881,11 @@ Learn:
 #+end_src
 ** copilot
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
-
   (use-package copilot
     :straight (:host github :repo "copilot-emacs/copilot.el" :files ("*.el"))
     :ensure t
+    :defer t
+    :commands (copilot-mode)
     :bind (:map copilot-completion-map
                 ("TAB" . copilot-accept-completion)
                 ("<tab>" . copilot-accept-completion))
@@ -882,9 +902,7 @@ Learn:
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   ;; EGLOT
 (use-package jsonrpc
-  :ensure t
-  :demand t)
-
+  :ensure t)
 
 (use-package eglot
   :straight (:type built-in)
