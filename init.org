@@ -664,26 +664,28 @@ Learn:
 (use-package indent-bars
   :hook ((prog-mode) . indent-bars-mode))
 
-
-(use-package golden-ratio-)
+(use-package golden-ratio)
 (golden-ratio-mode 1)
 
-;; Visuals
-(package-initialize)
-(menu-bar-mode -1)
-(tool-bar-mode -1)
-;;(scroll-bar-mode -1)
-;;(setq-default line-spacing 0.4) ;; only works in gui
+(use-package rainbow-delimiters)
+(add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
 
-(modify-all-frames-parameters
- '((right-divider-width . 40)
-   (internal-border-width . 40)))
-(dolist (face '(window-divider
-                window-divider-first-pixel
-                window-divider-last-pixel))
-  (face-spec-reset-face face)
-  (set-face-foreground face (face-attribute 'default :background)))
-(set-face-background 'fringe (face-attribute 'default :background))
+ ;; Visuals
+ (package-initialize)
+ (menu-bar-mode -1)
+ (tool-bar-mode -1)
+ ;;(scroll-bar-mode -1)
+ ;;(setq-default line-spacing 0.4) ;; only works in gui
+
+ (modify-all-frames-parameters
+  '((right-divider-width . 40)
+    (internal-border-width . 40)))
+ (dolist (face '(window-divider
+                 window-divider-first-pixel
+                 window-divider-last-pixel))
+   (face-spec-reset-face face)
+   (set-face-foreground face (face-attribute 'default :background)))
+ (set-face-background 'fringe (face-attribute 'default :background))
 #+end_src
 ** DONE Other Customizations
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
