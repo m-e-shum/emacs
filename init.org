@@ -68,7 +68,10 @@ Learn:
 #+end_src
 ** DONE Straight (use-package syntax)
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
-  (straight-use-package 'use-package)
+(straight-use-package 'use-package)
+
+;; For running  M-x use-package-report
+(setq use-package-compute-statistics t)
 #+end_src
 ** DONE Devel branch
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
@@ -789,9 +792,9 @@ Learn:
 
 (use-package gptel
   :bind (:map global-map                                                                             ;;
-                ("C-c <RET>" . 'gptel-send)
-                ("C-c g m" . 'gptel-menu)
-                ("C-c g r" . 'gptel-rewrite))
+              ("C-c <RET>" . 'gptel-send)
+              ("C-c g m" . 'gptel-menu)
+              ("C-c g r" . 'gptel-rewrite))
   :config
   (require 'gptel-integrations)
   (setq gptel-model 'claude-sonnet-4.6)
@@ -813,13 +816,6 @@ Learn:
   (gptel-mode . visual-line-mode)
   )
 
-;; (use-package gptel-quick
-;;   :straight (:host github :repo "karthink/gptel-quick")
-;;   :bind (:map global-map
-;;               ("C-x ?" . 'gptel-quick))
-;;   )
-
-
 (use-package gptel-agent
   :ensure t
   :after gptel
@@ -840,7 +836,18 @@ Learn:
              ("opentargets" . (:url "http://nrusca-ldl30024.nibr.novartis.net:8006/mcp"))
              ("visualizer" . (:url "https://nrusca-ldl30024.nibr.novartis.net:8003/mcp"))
              ("hithub-mcp" . (:url "https://hithub.prd.nibr.novartis.net/mcp/"))
-             ))
+             ("cdf-mcp" . (
+                           :command "uv"
+                           :args ("run" "--directory" "/Users/SHUMMA1/work/sandbox/new_cdf_sandbox" "-m" "cdf_api_mcp")
+                           :env (
+                                 :CDF_URL "https://cdf.prd.nibr.novartis.net"
+                                 :HTTP_PROXY ""
+                                 :HTTPS_PROXY ""
+                                 :CDF_CA_BUNDLE "/Users/SHUMMA1/.config/requests/cert.pem"
+                                 :NO_PROXY ".novartis.net,.nibr.novartis.net,localhost,127.0.0.1"
+                                 )
+                           )
+             )))
   :config
   (require 'mcp-hub)
   (require 'gptel-integrations)
@@ -868,12 +875,6 @@ Learn:
   ;;   )                                                                                                  ;;
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-  ;; (gptel-make-openai "Github Models"
-  ;;   :host "models.inference.ai.azure.com"
-  ;;   :endpoint "/chat/completions?api-version=2024-05-01-preview"
-  ;;   :stream t
-  ;;   :key (get-password-from-authinfo "api.github.com" "m-e-shum")
-  ;;   :models '(mistral-small-2503 DeepSeek-R1)))
 #+end_src
 ** copilot
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
@@ -948,11 +949,13 @@ Learn:
 
 ** DONE aggressive indent
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
-(use-package aggressive-indent
-  :bind (:map aggressive-indent-mode-map
-              ("C-c C-q" . nil)))
+;; (use-package aggressive-indent
+;;   :bind (:map aggressive-indent-mode-map
+;;               ("C-c C-q" . nil)))
 
-(use-package sql-indent)
+(use-package sql-indent
+  :defer t
+  :hook (sql-mode . sqlind-minor-mode))
 #+end_src
 ** Tree-Sitter
 - Tree-sitter is built-in for Emacs 30 (using "treesit")
