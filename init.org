@@ -999,7 +999,7 @@ Learn:
     :ensure t
     :hook (org-mode . olivetti-mode)
     :custom
-    (olivetti-body-width 100))
+    (olivetti-body-width 120))
     #+end_src
 ** DONE SQL
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
