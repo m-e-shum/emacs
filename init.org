@@ -883,12 +883,12 @@ Learn:
              ("hithub-mcp" . (:url "https://hithub.prd.nibr.novartis.net/mcp/"))
              ("cdf-mcp" . (
                            :command "uv"
-                           :args ("run" "--directory" "~/work/sandbox/new_cdf_sandbox" "-m" "cdf_api_mcp")
+                           :args ("run" "--directory" ,(expand-file-name "~/work/sandbox/new_cdf_sandbox") "-m" "cdf_api_mcp")
                            :env (
                                  :CDF_URL "https://cdf.prd.nibr.novartis.net"
                                  :HTTP_PROXY ""
                                  :HTTPS_PROXY ""
-                                 :CDF_CA_BUNDLE "~/.config/requests/cert.pem"
+                                 :CDF_CA_BUNDLE ,(expand-file-name "~/.config/requests/cert.pem")
                                  :NO_PROXY ".novartis.net,.nibr.novartis.net,localhost,127.0.0.1"
                                  )
                            )
