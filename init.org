@@ -123,7 +123,13 @@ Learn:
 
   (use-package ef-themes
     :defer t)
+
+  (use-package kusanagi-theme
+    :straight (:host github :repo "LionyxML/kusanagi-theme"))
+    
+  ;;(load-theme 'kusanagi t)
   (load-theme 'modus-vivendi-tinted t)
+  
   #+end_src
 ** DONE PATH
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
@@ -414,8 +420,9 @@ Learn:
     (add-hook 'python-mode-hook #'outline-indent-minor-mode)
     ;;(add-hook 'yaml-mode-hook #'outline-indent-minor-mode)
 
-    :custom
-    (outline-indent-ellipsis " ▼ "))
+    ;;:custom
+    ;;(outline-indent-ellipsis " ▼ ")
+    )
 
   (use-package kirigami)
   (global-set-key (kbd "C-c z o") 'kirigami-open-fold)     ; Open fold at point
@@ -433,6 +440,16 @@ Learn:
 #+end_src
 ** ORG mode
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
+;; (modify-all-frames-parameters
+;;  '((right-divider-width . 40)
+;;    (internal-border-width . 40)))
+;; (dolist (face '(window-divider
+;;                 window-divider-first-pixel
+;;                 window-divider-last-pixel))
+;;   (face-spec-reset-face face)
+;;   (set-face-foreground face (face-attribute 'default :background)))
+;; (set-face-background 'fringe (face-attribute 'default :background))
+
 ;; ORG mode
 (use-package org
   :straight (:type built-in)
@@ -496,9 +513,25 @@ Learn:
      ))
   )
 
-(use-package org-bullets
-  :defer t
-  :hook (org-mode . org-bullets-mode))
+(use-package org-modern
+  :hook (org-mode . org-modern-mode)
+  :config
+  (setq org-modern-star nil)
+  )
+;; 
+(use-package org-modern-indent
+  :straight (org-modern-indent :type git :host github :repo "jdtsmith/org-modern-indent")
+  :custom
+  (org-modern-hide-stars nil)		; adds extra indentation
+  (org-modern-table nil)
+  :config
+  (add-hook 'org-agenda-finalize-hook #'org-modern-agenda 90)
+  (add-hook 'org-mode-hook #'org-modern-indent-mode 90)
+  )
+
+(use-package org-bullets-mode
+  :ensure org-bullets
+  :hook org-mode)
 
 (use-package htmlize
   :defer t
@@ -561,23 +594,7 @@ Learn:
       (prot/modeline-spacious-indicators)
 
       (add-hook 'spacious-padding-mode-hook #'prot/modeline-spacious-indicators)))
-#+end_src
-*** CANCELLED Moody
-#+begin_src
-  ;;  emacs-lisp :tangle "post-init.el" :mkdirp yes
-  (use-package moody
-    :ensure t
-    :custom
-    (x-underline-at-descent-line t)
-    :config
-    ;;(moody-replace-mode-line-front-space)
-    (moody-replace-mode-line-buffer-identification)
-    (moody-replace-vc-mode))
-
-
-
-    #+end_src
-    
+#+end_src    
 ** DONE Keycast
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   (use-package keycast
@@ -606,7 +623,8 @@ Learn:
 ** DONE Magit (Git)
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   ;;GIT
-  (use-package magit  
+  (use-package magit
+    :ensure t
     :after transient
     :demand t
     :bind ("C-x g" . magit-status)
@@ -682,8 +700,8 @@ Learn:
 (use-package indent-bars
   :hook ((prog-mode) . indent-bars-mode))
 
-(use-package golden-ratio)
-(golden-ratio-mode 1)
+(use-package golden-ratio
+  :defer t)
 
 (use-package rainbow-delimiters)
 (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
@@ -707,7 +725,7 @@ Learn:
 
 
 (use-package speedbar
-  :ensure nil
+  :straight nil
   ;; :bind
   ;; (("M-I" . (lambda () ;; Toggles / focuses speedbar on side window
   ;;             (interactive)
@@ -1094,7 +1112,6 @@ Learn:
   ;;:straight (:local-repo "~/projects/kitty-graphics")
   :straight (:host github :repo "cashmeredev/kitty-graphics.el" :files ("*.el"))
   :config
-  (setq kitty-gfx-enable-video t)   ; optional: inline mpv playback
+  (setq kitty-gfx-enable-video nil)   ; optional: inline mpv playback
   (kitty-graphics-setup))
 #+end_src
-
