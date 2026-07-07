@@ -124,12 +124,16 @@ Learn:
   (use-package ef-themes
     :defer t)
 
-  (use-package kusanagi-theme
-    :straight (:host github :repo "LionyxML/kusanagi-theme"))
+  (use-package tokyonight-themes
+    :straight (:host github :repo "xuchengpeng/tokyonight-themes"))
+
+;; (use-package kusanagi-theme
+;;   :straight (:host github :repo "LionyxML/kusanagi-theme"))
+
+;;(load-theme 'kusanagi t)
+;;(load-theme 'modus-vivendi-tinted t)
+  (load-theme 'tokyonight-moon t)
     
-  ;;(load-theme 'kusanagi t)
-  (load-theme 'modus-vivendi-tinted t)
-  
   #+end_src
 ** DONE PATH
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
@@ -494,7 +498,7 @@ Learn:
         org-src-tab-acts-natively t
         org-edit-src-turn-on-auto-save nil
         org-default-priority ?C
-        org-tags-column -100
+        org-tags-column -88
         org-catch-invisible-edits 'show-and-error
         org-special-ctrl-a/e t
         org-insert-heading-respect-content t
@@ -522,7 +526,7 @@ Learn:
 (use-package org-modern-indent
   :straight (org-modern-indent :type git :host github :repo "jdtsmith/org-modern-indent")
   :custom
-  (org-modern-hide-stars nil)		; adds extra indentation
+  (org-modern-hide-stars t)		; adds extra indentation
   (org-modern-table nil)
   :config
   (add-hook 'org-agenda-finalize-hook #'org-modern-agenda 90)
@@ -540,78 +544,99 @@ Learn:
 ** DONE Modeline
 *** prot-modeline
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
-  ;; 
-  ;; Download appropriate prot-modeline files
-  (straight-use-package
-   '(prot-modeline :type git
-                   :host gitlab
-                   :repo "protesilaos/dotfiles"
-                   :files ("emacs/.emacs.d/prot-lisp/prot-modeline.el"
-  			 "emacs/.emacs.d/prot-lisp/prot-icons.el"
-                           "emacs/.emacs.d/prot-lisp/prot-common.el")
-                   :main "emacs/.emacs.d/prot-lisp/prot-modeline.el"))
+;; 
+;; Download appropriate prot-modeline files
+(straight-use-package
+ '(prot-modeline :type git
+                 :host gitlab
+                 :repo "protesilaos/dotfiles"
+                 :files ("emacs/.emacs.d/prot-lisp/prot-modeline.el"
+  		       "emacs/.emacs.d/prot-lisp/prot-icons.el"
+                         "emacs/.emacs.d/prot-lisp/prot-common.el")
+                 :main "emacs/.emacs.d/prot-lisp/prot-modeline.el"))
 
-  ;; Now set the config with use-package
-  (use-package prot-modeline
-    :ensure nil
-    :config
-    (setq mode-line-compact nil) ; Emacs 28
-    (setq mode-line-right-align-edge 'right-margin) ; Emacs 30
-    (setq prot-modeline-show-frame-name (alist-get 'undecorated initial-frame-alist))
-    (setq-default mode-line-format
-                  '("%e"
-                    prot-modeline-kbd-macro
-                    prot-modeline-narrow
-                    prot-modeline-buffer-status
-                    prot-modeline-window-dedicated-status
-                    prot-modeline-input-method
-                    "  "
-                    prot-modeline-buffer-identification
-                    "  "
-                    prot-modeline-major-mode
-                    prot-modeline-process
-                    "  "
-                    prot-modeline-vc-branch
-                    "  "
-                    prot-modeline-eglot
-                    "  "
-                    prot-modeline-flymake
-                    "  "
-                    mode-line-format-right-align ; Emacs 30
-                    prot-modeline-notmuch-indicator
-                    "  "
-                    prot-modeline-misc-info))
-
-    (with-eval-after-load 'spacious-padding
-      (defun prot/modeline-spacious-indicators ()
-        "Set box attribute to `'prot-modeline-indicator-button' if spacious-padding is enabled."
-        (if (bound-and-true-p spacious-padding-mode)
-            (set-face-attribute 'prot-modeline-indicator-button nil :box t)
-          (set-face-attribute 'prot-modeline-indicator-button nil :box 'unspecified)))
+;; Now set the config with use-package
+(use-package prot-modeline
+  :ensure nil
+  :config
+  (setq mode-line-compact nil) ; Emacs 28
+  (setq mode-line-right-align-edge 'right-margin) ; Emacs 30
+  (setq prot-modeline-show-frame-name (alist-get 'undecorated initial-frame-alist))
+  (setq-default mode-line-format
+                '("%e"
+                  prot-modeline-kbd-macro
+                  prot-modeline-narrow
+                  prot-modeline-buffer-status
+                  prot-modeline-window-dedicated-status
+                  prot-modeline-input-method
+                  "  "
+                  prot-modeline-buffer-identification
+                  "  "
+                  prot-modeline-major-mode
+                  prot-modeline-process
+                  "  "
+                  prot-modeline-vc-branch
+                  "  "
+                  prot-modeline-eglot
+                  "  "
+                  prot-modeline-flymake
+                  "  "
+                  mode-line-format-right-align ; Emacs 30
+                  prot-modeline-notmuch-indicator
+                  "  "
+                  prot-modeline-misc-info))
       
-      ;; Run it at startup and then afterwards whenever
-      ;; `spacious-padding-mode' is toggled on/off.
-      (prot/modeline-spacious-indicators)
-
-      (add-hook 'spacious-padding-mode-hook #'prot/modeline-spacious-indicators)))
-#+end_src    
+  (defun prot/modeline-set-faces ()
+    (modus-themes-with-colors
+         (custom-set-faces
+          `(prot-modeline-indicator-red ((,c :inherit bold :foreground ,red)))
+          `(prot-modeline-indicator-green ((,c :inherit bold :foreground ,green)))
+          `(prot-modeline-indicator-yellow ((,c :inherit bold :foreground ,yellow)))
+          `(prot-modeline-indicator-blue ((,c :inherit bold :foreground ,blue)))
+          `(prot-modeline-indicator-magenta ((,c :inherit bold :foreground ,magenta)))
+          `(prot-modeline-indicator-cyan ((,c :inherit bold :foreground ,cyan)))
+          `(prot-modeline-indicator-red-bg ((,c :inherit (bold prot-modeline-indicator-button) :background ,bg-red-intense :foreground ,fg-main)))
+          `(prot-modeline-indicator-green-bg ((,c :inherit (bold prot-modeline-indicator-button) :background ,bg-green-intense :foreground ,fg-main)))
+          `(prot-modeline-indicator-yellow-bg ((,c :inherit (bold prot-modeline-indicator-button) :background ,bg-yellow-intense :foreground ,fg-main)))
+          `(prot-modeline-indicator-blue-bg ((,c :inherit (bold prot-modeline-indicator-button) :background ,bg-blue-intense :foreground ,fg-main)))
+          `(prot-modeline-indicator-magenta-bg ((,c :inherit (bold prot-modeline-indicator-button) :background ,bg-magenta-intense :foreground ,fg-main)))
+          `(prot-modeline-indicator-cyan-bg ((,c :inherit (bold prot-modeline-indicator-button) :background ,bg-cyan-intense :foreground ,fg-main))))))
+  
+  (add-hook 'modus-themes-after-load-theme-hook #'prot/modeline-set-faces)
+  
+  (with-eval-after-load 'spacious-padding
+    (defun prot/modeline-spacious-indicators ()
+      "Set box attribute to `'prot-modeline-indicator-button' if spacious-padding is enabled."
+      (if (bound-and-true-p spacious-padding-mode)
+          (set-face-attribute 'prot-modeline-indicator-button nil :box t)
+        (set-face-attribute 'prot-modeline-indicator-button nil :box 'unspecified)))
+    
+    ;; Run it at startup and then afterwards whenever
+    ;; `spacious-padding-mode' is toggled on/off.
+    (prot/modeline-spacious-indicators)
+    
+    (add-hook 'spacious-padding-mode-hook #'prot/modeline-spacious-indicators))
+  )
+#+end_src
 ** DONE Keycast
+*** Config is used with prot-modeline
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
-  (use-package keycast
-    :defer t
-    :custom
-    (keycast-mode-line-format "%2s%k%c%R")
-    (keycast-mode-line-insert-after 'prot-modeline-vc-branch)
-    (keycast-mode-line-window-predicate 'mode-line-window-selected-p)
-    (keycast-mode-line-remove-tail-elements nil)
-    :config
-    (dolist (input '(self-insert-command org-self-insert-command))
-      (add-to-list 'keycast-substitute-alist `(,input "." "Typing…")))
 
-    (dolist (event '( mouse-event-p mouse-movement-p mwheel-scroll handle-select-window
-                      mouse-set-point mouse-drag-region))
-      (add-to-list 'keycast-substitute-alist `(,event nil))))
+;; This config is used with prot-modeline
+(use-package keycast
+  :defer t
+  :custom
+  (keycast-mode-line-format "%2s%k%c%R")
+  (keycast-mode-line-insert-after 'prot-modeline-vc-branch)
+  (keycast-mode-line-window-predicate 'mode-line-window-selected-p)
+  (keycast-mode-line-remove-tail-elements nil)
+  :config
+  (dolist (input '(self-insert-command org-self-insert-command))
+    (add-to-list 'keycast-substitute-alist `(,input "." "Typing…")))
 
+  (dolist (event '( mouse-event-p mouse-movement-p mwheel-scroll handle-select-window
+                    mouse-set-point mouse-drag-region))
+    (add-to-list 'keycast-substitute-alist `(,event nil))))
 #+end_src
 ** DONE Menu
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
@@ -710,7 +735,7 @@ Learn:
  (package-initialize)
  (menu-bar-mode -1)
  (tool-bar-mode -1)
- ;;(scroll-bar-mode -1)
+ (scroll-bar-mode -1)
  ;;(setq-default line-spacing 0.4) ;; only works in gui
 
  (modify-all-frames-parameters
@@ -1089,11 +1114,22 @@ Learn:
 #+end_src
 ** DONE Font
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
-  ;; Set the default font to DejaVu Sans Mono with specific size and weight
-  (set-face-attribute 'default nil
-                      :height 170 :weight 'normal :family "Iosevka Term")
-  (use-package all-the-icons
-    :if (display-graphic-p))
+;; Set the default font to DejaVu Sans Mono with specific size and weight
+(set-face-attribute 'default nil
+                    :height 170 :weight 'normal :family "Iosevka Term")
+
+(use-package all-the-icons
+  :if (display-graphic-p))
+
+(use-package nerd-icons
+  :ensure t)
+
+(use-package nerd-icons-dired
+  :ensure t
+  :hook
+  (dired-mode . nerd-icons-dired-mode))
+
+
 #+end_src
 ** DONE Startup time
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
