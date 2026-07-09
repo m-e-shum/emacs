@@ -560,7 +560,7 @@ Learn:
   :ensure nil
   :config
   (setq mode-line-compact nil) ; Emacs 28
-  (setq mode-line-right-align-edge 'right-margin) ; Emacs 30
+  ;;(setq mode-line-right-align-edge 'right-margin) ;; Emacs 30, ignore for now because I want far right edge, not margin
   (setq prot-modeline-show-frame-name (alist-get 'undecorated initial-frame-alist))
   (setq-default mode-line-format
                 '("%e"
@@ -735,7 +735,7 @@ Learn:
  (package-initialize)
  (menu-bar-mode -1)
  (tool-bar-mode -1)
- ;;(scroll-bar-mode -1) ;; not available in linux server
+ ;;(scroll-bar-mode -1) ;; not available in linux serverq
  ;;(setq-default line-spacing 0.4) ;; only works in gui
 
  (modify-all-frames-parameters
@@ -865,18 +865,18 @@ Learn:
   #+end_src
 ** gptel
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
-  (require 'auth-source)
+(require 'auth-source)
 
-  (defun get-password-from-authinfo (host user)
-    "Retrieve the password for HOST and USER from auth-sources (e.g., ~/.authinfo)."
-    (let ((auth-result (car (auth-source-search :host host :user user :require '(:secret)))))
-      (when auth-result
-        (let ((secret (plist-get auth-result :secret)))
-          ;; If the secret is a function, call it to retrieve the actual password
-          (if (functionp secret)
-              (funcall secret)
+(defun get-password-from-authinfo (host user)
+  "Retrieve the password for HOST and USER from auth-sources (e.g., ~/.authinfo)."
+  (let ((auth-result (car (auth-source-search :host host :user user :require '(:secret)))))
+    (when auth-result
+      (let ((secret (plist-get auth-result :secret)))
+        ;; If the secret is a function, call it to retrieve the actual password
+        (if (functionp secret)
+            (funcall secret)
             
-            secret)))))
+          secret)))))
 
 (use-package gptel
   :bind (:map global-map                                                                             ;;
@@ -922,7 +922,7 @@ Learn:
              ("structural-bioinformatics" . (:url "http://nrusca-ldl30024.nibr.novartis.net:8002/mcp"))
              ("confluence" . (:url "http://nrusca-ldl30024.nibr.novartis.net:8004/mcp"))
              ("opentargets" . (:url "http://nrusca-ldl30024.nibr.novartis.net:8006/mcp"))
-             ("visualizer" . (:url "https://nrusca-ldl30024.nibr.novartis.net:8003/mcp"))
+             ;;("visualizer" . (:url "https://nrusca-ldl30024.nibr.novartis.net:8003/mcp"))
              ("hithub-mcp" . (:url "https://hithub.prd.nibr.novartis.net/mcp/"))
              ("cdf-mcp" . (
                            :command "uv"
@@ -1085,7 +1085,7 @@ Learn:
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   (use-package olivetti
     :ensure t
-    :hook (org-mode . olivetti-mode)
+    ;;:hook (org-mode . olivetti-mode) ;; turn off
     :custom
     (olivetti-body-width 120))
     #+end_src
