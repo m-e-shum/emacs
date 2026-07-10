@@ -68,10 +68,12 @@ Learn:
 #+end_src
 ** DONE Straight (use-package syntax)
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
+
 (straight-use-package 'use-package)
 
 ;; For running  M-x use-package-report
 (setq use-package-compute-statistics t)
+  
 #+end_src
 ** DONE Devel branch
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
@@ -82,7 +84,7 @@ Learn:
     ;; Speed up Emacs
     ;; MUST be at the top of this file
     (use-package compile-angel
-      :ensure t
+      :straight t
       :demand t
       :custom
       ;; Set `compile-angel-verbose` to nil to suppress output from compile-angel.
@@ -224,7 +226,7 @@ Learn:
 
   ;; ghostel
   (use-package ghostel
-    :ensure t
+    :straight t
     :defer t
     :commands (ghostel)
     )
@@ -235,7 +237,7 @@ Learn:
 ;; Completion
 (use-package vertico
   ;; (Note: It is recommended to also enable the savehist package.)
-  :ensure t
+  :straight t
   :config
   (vertico-mode))
 
@@ -243,7 +245,7 @@ Learn:
   ;; Vertico leverages Orderless' flexible matching capabilities, allowing users
   ;; to input multiple patterns separated by spaces, which Orderless then
   ;; matches in any order against the candidates.
-  :ensure t
+  :straight t
   :custom
   (completion-styles '(orderless basic))
   (completion-category-defaults nil)
@@ -253,7 +255,7 @@ Learn:
   ;; Marginalia allows Embark to offer you preconfigured actions in more contexts.
   ;; In addition to that, Marginalia also enhances Vertico by adding rich
   ;; annotations to the completion candidates displayed in Vertico's interface.
-  :ensure t
+  :straight t
   :commands (marginalia-mode marginalia-cycle)
   :hook (after-init . marginalia-mode))
 
@@ -261,7 +263,7 @@ Learn:
   ;; Embark is an Emacs package that acts like a context menu, allowing
   ;; users to perform context-sensitive actions on selected items
   ;; directly from the completion interface.
-  :ensure t
+  :straight t
   :commands (embark-act
              embark-dwim
              embark-export
@@ -284,12 +286,12 @@ Learn:
                  (window-parameters (mode-line-format . none)))))
 
 (use-package embark-consult
-  :ensure t
+  :straight t
   :hook
   (embark-collect-mode . consult-preview-at-point-mode))
 
 (use-package consult
-  :ensure t
+  :straight t
   :bind (;; C-c bindings in `mode-specific-map'
          ("C-c M-x" . consult-mode-command)
          ("C-c h" . consult-history)
@@ -371,7 +373,7 @@ Learn:
 
 (use-package corfu
   
-  :ensure t
+  :straight t
   :commands (corfu-mode global-corfu-mode)
 
   :hook ((prog-mode . corfu-mode)
@@ -392,7 +394,7 @@ Learn:
 
 (use-package cape
   
-  :ensure t
+  :straight t
   :commands (cape-dabbrev cape-file cape-elisp-block)
   :bind ("C-c p" . cape-prefix-map)
   :init
@@ -534,7 +536,7 @@ Learn:
   )
 
 (use-package org-bullets-mode
-  :ensure org-bullets
+  :straight org-bullets
   :hook org-mode)
 
 (use-package htmlize
@@ -640,16 +642,17 @@ Learn:
 #+end_src
 ** DONE Menu
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
-  (use-package transient
-    :straight (:type built-in))
-  
+(use-package compat
+  :straight t)
+(use-package transient
+  :straight t)
 #+end_src
 
 ** DONE Magit (Git)
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   ;;GIT
   (use-package magit
-    :ensure t
+    :straight t
     :after transient
     :demand t
     :bind ("C-x g" . magit-status)
@@ -905,7 +908,7 @@ Learn:
   )
 
 (use-package gptel-agent
-  :ensure t
+  :straight t
   :after gptel
   :defer t
   :commands (gptel-agent-update)
@@ -914,7 +917,7 @@ Learn:
 
 
 (use-package mcp
-  :ensure t
+  :straight t
   :after gptel
   :custom (mcp-hub-servers
            `(("askit-tools" . (:url "http://nrusca-ldl30024.nibr.novartis.net:8000/mcp"))
@@ -968,7 +971,7 @@ Learn:
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   (use-package copilot
     :straight (:host github :repo "copilot-emacs/copilot.el" :files ("*.el"))
-    :ensure t
+    :straight t
     :defer t
     :commands (copilot-mode)
     :bind (:map copilot-completion-map
@@ -987,7 +990,7 @@ Learn:
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   ;; EGLOT
 (use-package jsonrpc
-  :ensure t)
+  :straight t)
 
 (use-package eglot
   :straight (:type built-in)
@@ -1084,7 +1087,7 @@ Learn:
 ** DONE Olivetti
 #+begin_src emacs-lisp :tangle "post-init.el" :mkdirp yes
   (use-package olivetti
-    :ensure t
+    :straight t
     ;;:hook (org-mode . olivetti-mode) ;; turn off
     :custom
     (olivetti-body-width 120))
@@ -1122,10 +1125,10 @@ Learn:
   :if (display-graphic-p))
 
 (use-package nerd-icons
-  :ensure t)
+  :straight t)
 
 (use-package nerd-icons-dired
-  :ensure t
+  :straight t
   :hook
   (dired-mode . nerd-icons-dired-mode))
 
