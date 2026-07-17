@@ -1010,6 +1010,7 @@ Learn:
   :config
   (setq eglot-sync-connect nil)
   (setq eglot-autoshutdown nil)
+  (add-to-list 'eglot-server-programs '(python-mode . ("ruff" "server")))
   )
 
 (use-package flymake
