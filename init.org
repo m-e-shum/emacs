@@ -524,12 +524,13 @@ Learn:
   :config
   (setq org-modern-star nil)
   )
-;; 
+
 (use-package org-modern-indent
   :straight (org-modern-indent :type git :host github :repo "jdtsmith/org-modern-indent")
   :custom
   (org-modern-hide-stars t)		; adds extra indentation
   (org-modern-table nil)
+  (org-modern-todo nil)
   :config
   (add-hook 'org-agenda-finalize-hook #'org-modern-agenda 90)
   (add-hook 'org-mode-hook #'org-modern-indent-mode 90)
@@ -560,6 +561,8 @@ Learn:
 ;; Now set the config with use-package
 (use-package prot-modeline
   :ensure nil
+  :custom
+  (prot-modeline-string-truncate-length 15) ; default is 9
   :config
   (setq mode-line-compact nil) ; Emacs 28
   ;;(setq mode-line-right-align-edge 'right-margin) ;; Emacs 30, ignore for now because I want far right edge, not margin
@@ -926,7 +929,8 @@ Learn:
              ("confluence" . (:url "http://nrusca-ldl30024.nibr.novartis.net:8004/mcp"))
              ("opentargets" . (:url "http://nrusca-ldl30024.nibr.novartis.net:8006/mcp"))
              ;;("visualizer" . (:url "https://nrusca-ldl30024.nibr.novartis.net:8003/mcp"))
-             ("hithub-mcp" . (:url "https://hithub.prd.nibr.novartis.net/mcp/"))
+             ("hithub-mcp" . (:url "https://hithub.prd.nibr.novartis.net/mcp/"
+                              :env (:USER "shumma1")))
              ("cdf-mcp" . (
                            :command "uv"
                            :args ("run" "--directory" ,(expand-file-name "~/work/sandbox/new_cdf_sandbox") "-m" "cdf_api_mcp")
